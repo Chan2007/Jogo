@@ -1,0 +1,16 @@
+# --- Específico do CLion ---
+.idea/
+cmake-build-*/
+
+# --- Específico do Visual Studio 2019 ---
+.vs/
+out/
+build/
+*.sln
+*.vcxproj
+*.user
+
+# --- Arquivos temporários do CMake ---
+CMakeFiles/
+CMakeCache.txt
+CMakeUserPresets.json
