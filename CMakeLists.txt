@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ProjetoLegado CXX)
+project(Jogo_TecProg CXX)
 
 # Força o padrão C++ 2003
 set(CMAKE_CXX_STANDARD 98)
