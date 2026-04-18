@@ -11,6 +11,22 @@ Música de fundo:
 - Reflection, Queen's Gardens, The White Lady (Hollow Knight)
 - City Ruins - Rays of Light (NieR:Automata)
 - Dawn Winery, Happy Journey, Twilight Serenity, Dusk in Mondstadt (Genshin Impact)
+- Miquella's Haligtree (Elden Ring)
+- Ezio's Family (Assassin's Creed II)
+- 
+
+
+
+-||-
+
+- Character Creation (Elden Ring)
+- The Only Thing They Fear Is You (DOOM Eternal)
+- Stratospheric, Champion Select Music, Level Up (Worlds 2024) (League of Legends)
+- Bitten Bullet (MSI 2022) (League of Legends)
+- Champion Select (MSI 2019) (League of Legends)
+- Champion Select (Worlds 2018) (League of Legends)
+- Aerolite - Alec Justice (LCK 2024) (League of Legends)
+- Champion Select QF T1 vs AL (Worlds 2025) (League of Legends)
 
 Chefão:
 
@@ -27,3 +43,13 @@ Chefão:
 - Wolds Orchestral OST (League of Legends)
 - Amusement Part (NieR:Automata)
 - Caelestinum Finale Termini, Rite of Battle (Genshin Impact)
+- My Rules (Worlds 2020) (League of Legends)
+- Champion Select (LCK 2024) (League of Legends)
+- Worlds 2016 Finals (Login Screen) (League of Legends)
+- Dimensions Collide - Chris Brett (League of Legends)
+- Season 2016 (Login Screen) (League of Legends)
+- Main Theme (Batman Arkham City)
+- Main Theme (Assassin's Creed Origins)
+- Unity - Chris Tilton (Assissin's Creed Unity)
+- Main Theme (Assassin's Creed IV: Black Flag)
+- Main Theme (Assassin's Creed III)
