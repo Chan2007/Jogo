@@ -35,13 +35,9 @@ void BackgroundAnimator::updateBlend(float blend) {
     currentSprite->setTexture(frames[currentFrame], true);
     nextSprite->setTexture(frames[nextFrameIndex], true);
 
-    if (nextFrameIndex == 0) {
-        currentSprite->setColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(255.0f * (1.0f - blend))));
-        nextSprite->setColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(255.0f * blend)));
-    } else {
-        currentSprite->setColor(sf::Color(255, 255, 255, 255));
-        nextSprite->setColor(sf::Color(255, 255, 255, 0));
-    }
+    // Avoid blending the last frame into the first one, which causes a visible flash.
+    currentSprite->setColor(sf::Color(255, 255, 255, 255));
+    nextSprite->setColor(sf::Color(255, 255, 255, 0));
 }
 
 bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames, int startIndex, int frameStep) {
