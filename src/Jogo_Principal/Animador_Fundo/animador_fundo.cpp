@@ -1,6 +1,7 @@
 #include "animador_fundo.h"
 
-#include <cstdio>
+#include <iomanip>
+#include <sstream>
 
 BackgroundAnimator::BackgroundAnimator() : currentSprite(NULL), nextSprite(NULL), currentFrame(0), frameAccumulator(0.0f), frameTime(1.0f / 60.0f), frameSize() {
 }
@@ -58,9 +59,9 @@ bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames
 
     const int endIndex = startIndex + numFrames;
     for (int i = startIndex; i < endIndex; i += frameStep) {
-        char buf[64];
-        sprintf_s(buf, "%sframe%04d.png", pathPrefix.c_str(), i);
-        framePaths.push_back(buf);
+        std::ostringstream pathBuilder;
+        pathBuilder << pathPrefix << "frame" << std::setw(4) << std::setfill('0') << i << ".png";
+        framePaths.push_back(pathBuilder.str());
     }
 
     std::vector<std::string>::const_iterator pathIt;
