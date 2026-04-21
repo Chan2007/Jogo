@@ -7,6 +7,7 @@
 
 #include "Diretorio/find_Directory.h"
 #include "Animador_Fundo/animador_fundo.h"
+#include "Audio/Audio.h"
 
 int computeFrameStep(const int totalFrames, int preferredStep, const int maxFramesToLoad) {
     if (preferredStep <= 0) {
@@ -47,17 +48,29 @@ int main() {
 
     const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Fullscreen);
-    Animador_Fundo bg;
-    bg.setTargetSize(window.getSize());
+    Animador_Fundo bgAnimation;
+    bgAnimation.setTargetSize(window.getSize());
 
     Find_Directory directoryFinder;
+
     const int frameStep = computeFrameStep(totalFrames, pulodeFrames, maximodeFrames);
     const std::string frameDirectory = directoryFinder.findFolderDirectory("assets/bg_frames/");
-    const bool loaded = !frameDirectory.empty() && bg.loadFrames(frameDirectory, totalFrames, 1, frameStep);
-
+    const bool loaded = !frameDirectory.empty() && bgAnimation.loadFrames(frameDirectory, totalFrames, 1, frameStep);
     if (!loaded) {
         std::cerr << "Nao foi possivel localizar a pasta assets ou carregar os frames de fundo." << std::endl;
         return -1;
+    }
+
+    const std::string audioDirectory = directoryFinder.findFolderDirectory("assets/bg_audios/bg_music");
+    Audio bgMusic;
+    if (!audioDirectory.empty()) {
+        std::string separador = (audioDirectory.back() == '/' || audioDirectory.back() == '\\') ? "" : "/";
+        const std::string musicPath = audioDirectory + separador + "Aurora_s-Theme.ogg";
+        if (bgMusic.loadMusic(musicPath)) {
+            bgMusic.setVolume(50.0f);  // 50% de volume
+            bgMusic.play();
+            bgMusic.setLoop(true);
+        }
     }
 
     while (window.isOpen()) {
@@ -69,8 +82,8 @@ int main() {
         }
 
         window.clear();
-        bg.update();
-        bg.draw(window);
+        bgAnimation.update();
+        bgAnimation.draw(window);
         window.display();
     }
 

@@ -1,8 +1,8 @@
 #include "animador_fundo.h"
 
-#include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include <algorithm>
 
 Animador_Fundo::Animador_Fundo() :
     currentSprite(),
@@ -15,8 +15,7 @@ Animador_Fundo::Animador_Fundo() :
     loaded(false) {
 }
 
-Animador_Fundo::~Animador_Fundo() {
-}
+Animador_Fundo::~Animador_Fundo() {}
 
 void Animador_Fundo::updateSpriteScale() {
     if (!loaded || frameSize.x == 0 || frameSize.y == 0 || targetSize.x == 0 || targetSize.y == 0) {
