@@ -7,8 +7,8 @@
 
 class BackgroundAnimator {
 private:
-    sf::Sprite* currentSprite;
-    sf::Sprite* nextSprite;
+    sf::Sprite currentSprite;
+    sf::Sprite nextSprite;
     std::vector<sf::Texture> frames;
     std::vector<std::string> framePaths;
     size_t currentFrame;
@@ -16,6 +16,8 @@ private:
     float frameAccumulator;
     float frameTime;
     sf::Vector2u frameSize;
+    sf::Vector2u targetSize;
+    bool loaded;
 
     void updateSpriteScale();
     void updateBlend(float blend);
@@ -31,6 +33,7 @@ public:
     void update();
     void draw(sf::RenderWindow& window);
     void setPosition(const sf::Vector2f& pos);
+    void setTargetSize(const sf::Vector2u& size);
 };
 
 #endif

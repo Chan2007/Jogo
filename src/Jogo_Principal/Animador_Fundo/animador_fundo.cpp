@@ -1,55 +1,60 @@
 #include "animador_fundo.h"
 
+#include <algorithm>
 #include <iomanip>
 #include <sstream>
 
-BackgroundAnimator::BackgroundAnimator() : currentSprite(NULL), nextSprite(NULL), currentFrame(0), frameAccumulator(0.0f), frameTime(1.0f / 60.0f), frameSize() {
+BackgroundAnimator::BackgroundAnimator() :
+    currentSprite(),
+    nextSprite(),
+    currentFrame(0),
+    frameAccumulator(0.0f),
+    frameTime(1.0f / 60.0f),
+    frameSize(),
+    targetSize(1920, 1080),
+    loaded(false) {
 }
 
 BackgroundAnimator::~BackgroundAnimator() {
-    delete currentSprite;
-    delete nextSprite;
 }
 
 void BackgroundAnimator::updateSpriteScale() {
-    if (currentSprite != NULL) {
-        currentSprite->setScale(1920.0f / frameSize.x, 1080.0f / frameSize.y);
-    }
-
-    if (nextSprite != NULL) {
-        nextSprite->setScale(1920.0f / frameSize.x, 1080.0f / frameSize.y);
-    }
-}
-
-void BackgroundAnimator::updateBlend(float blend) {
-    if (currentSprite == NULL || nextSprite == NULL || frames.empty()) {
+    if (!loaded || frameSize.x == 0 || frameSize.y == 0 || targetSize.x == 0 || targetSize.y == 0) {
         return;
     }
 
-    if (blend < 0.0f) {
-        blend = 0.0f;
-    } else if (blend > 1.0f) {
-        blend = 1.0f;
+    const float scaleX = static_cast<float>(targetSize.x) / static_cast<float>(frameSize.x);
+    const float scaleY = static_cast<float>(targetSize.y) / static_cast<float>(frameSize.y);
+    currentSprite.setScale(scaleX, scaleY);
+    nextSprite.setScale(scaleX, scaleY);
+}
+
+void BackgroundAnimator::updateBlend(float blend) {
+    if (!loaded || frames.empty()) {
+        return;
     }
 
-    const size_t nextFrameIndex = (currentFrame + 1) % frames.size();
-    currentSprite->setTexture(frames[currentFrame], true);
-    nextSprite->setTexture(frames[nextFrameIndex], true);
+    blend = std::max(0.0f, std::min(blend, 1.0f));
 
-    // Avoid blending the last frame into the first one, which causes a visible flash.
-    currentSprite->setColor(sf::Color(255, 255, 255, 255));
-    nextSprite->setColor(sf::Color(255, 255, 255, 0));
+    const size_t nextFrameIndex = (currentFrame + 1) % frames.size();
+
+    currentSprite.setTexture(frames[currentFrame], true);
+    nextSprite.setTexture(frames[nextFrameIndex], true);
+
+    // A sobreposição de quadros adjacentes fez com que as regiões brilhantes "cintilassem" no olho nu.
+    // Para uma animação de fundo estável, apenas o quadro ativo aparece ("blend").
+    (void)blend;
+    currentSprite.setColor(sf::Color(255, 255, 255, 255));
+    nextSprite.setColor(sf::Color(255, 255, 255, 0));
 }
 
 bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames, int startIndex, int frameStep) {
     framePaths.clear();
     frames.clear();
-    delete currentSprite;
-    delete nextSprite;
-    currentSprite = NULL;
-    nextSprite = NULL;
     currentFrame = 0;
     frameAccumulator = 0.0f;
+    frameSize = sf::Vector2u();
+    loaded = false;
 
     if (numFrames <= 0 || startIndex < 0 || frameStep <= 0) {
         return false;
@@ -71,18 +76,20 @@ bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames
             return false;
         }
 
-        frames.push_back(tex);
-        if (frames.size() == 1) {
+        if (frames.empty()) {
             frameSize = tex.getSize();
         }
+
+        frames.push_back(tex);
     }
 
     if (frames.empty()) {
         return false;
     }
 
-    currentSprite = new sf::Sprite(frames[0]);
-    nextSprite = new sf::Sprite(frames[0]);
+    currentSprite.setTexture(frames[0], true);
+    nextSprite.setTexture(frames[0], true);
+    loaded = true;
     updateSpriteScale();
     updateBlend(0.0f);
     clock.restart();
@@ -90,7 +97,7 @@ bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames
 }
 
 void BackgroundAnimator::update() {
-    if (currentSprite == NULL || nextSprite == NULL || frames.empty()) {
+    if (!loaded || frames.empty()) {
         return;
     }
 
@@ -110,18 +117,24 @@ void BackgroundAnimator::update() {
 }
 
 void BackgroundAnimator::draw(sf::RenderWindow& window) {
-    if (currentSprite != NULL && nextSprite != NULL) {
-        window.draw(*currentSprite);
-        window.draw(*nextSprite);
+    if (!loaded) {
+        return;
     }
+
+    window.draw(currentSprite);
+    window.draw(nextSprite);
 }
 
 void BackgroundAnimator::setPosition(const sf::Vector2f& pos) {
-    if (currentSprite != NULL) {
-        currentSprite->setPosition(pos);
+    if (!loaded) {
+        return;
     }
 
-    if (nextSprite != NULL) {
-        nextSprite->setPosition(pos);
-    }
+    currentSprite.setPosition(pos);
+    nextSprite.setPosition(pos);
+}
+
+void BackgroundAnimator::setTargetSize(const sf::Vector2u& size) {
+    targetSize = size;
+    updateSpriteScale();
 }
