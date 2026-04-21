@@ -12,7 +12,6 @@ int main() {
     const int totalFrames = 376;
     const int frameStep = 2;
     const char* framePaths[] = {
-        "assets/bg_frames/",
         "../assets/bg_frames/",
         "../../assets/bg_frames/"
     };
