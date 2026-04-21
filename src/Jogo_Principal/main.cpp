@@ -1,66 +1,14 @@
 #include "main.h"
 
-#include <direct.h>
 #include <iostream>
-#include <sstream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
-#include <sys/stat.h>
 
+#include "Diretorio/find_Directory.h"
 #include "Animador_Fundo/animador_fundo.h"
 
-namespace {
-
-bool fileExists(const std::string& path) {
-    struct _stat fileInfo;
-    return _stat(path.c_str(), &fileInfo) == 0;
-}
-
-std::string joinPath(const std::string& left, const std::string& right) {
-    if (left.empty()) {
-        return right;
-    }
-
-    if (left[left.size() - 1] == '/' || left[left.size() - 1] == '\\') {
-        return left + right;
-    }
-
-    return left + "/" + right;
-}
-
-std::string getParentPath(const std::string& path) {
-    const std::string::size_type slashPos = path.find_last_of("/\\");
-    if (slashPos == std::string::npos) {
-        return std::string();
-    }
-
-    return path.substr(0, slashPos);
-}
-
-std::string findAssetsFrameDirectory() {
-    char currentDirectoryBuffer[_MAX_PATH];
-    if (_getcwd(currentDirectoryBuffer, sizeof(currentDirectoryBuffer)) == NULL)
-        return std::string();
-
-    std::string currentPath(currentDirectoryBuffer);
-    while (!currentPath.empty()) {
-        const std::string candidate = joinPath(currentPath, "assets/bg_frames/frame0001.png");
-        if (fileExists(candidate)) {
-            return joinPath(currentPath, "assets/bg_frames/");
-        }
-
-        const std::string parentPath = getParentPath(currentPath);
-        if (parentPath == currentPath) {
-            break;
-        }
-
-        currentPath = parentPath;
-    }
-
-    return std::string();
-}
-
-int computeFrameStep(int totalFrames, int preferredStep, int maxFramesToLoad) {
+int computeFrameStep(const int totalFrames, int preferredStep, const int maxFramesToLoad) {
     if (preferredStep <= 0) {
         preferredStep = 1;
     }
@@ -73,19 +21,38 @@ int computeFrameStep(int totalFrames, int preferredStep, int maxFramesToLoad) {
     return preferredStep > requiredStep ? preferredStep : requiredStep;
 }
 
-}
-
 int main() {
+    const int totalFrames = 376;
+    int pulodeFrames = 0;
+    int maximodeFrames = 0;
+    while (true) {
+        std::cout << "Quantos frames intercalar: ";
+        // Obs.: Se pulodeFrames for muito grande, pode ser que a qualidade do cenario caia.
+        if (std::cin >> pulodeFrames && pulodeFrames > 0 && pulodeFrames < totalFrames)
+            break;
+        std::cout << "Entrada invalida! Digite um numero positivo." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+    }
+
+    while (true) {
+        std::cout << "Maximo de frames a rodar: ";
+        // Obs.: Se maxideFrames for muito pequeno, pode ser que a qualidade do cenario caia.
+        if (std::cin >> maximodeFrames && maximodeFrames > 0 && maximodeFrames < totalFrames)
+            break;
+        std::cout << "Entrada invalida! Digite um numero positivo." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+    }
+
     const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Fullscreen);
-
-    BackgroundAnimator bg;
+    Animador_Fundo bg;
     bg.setTargetSize(window.getSize());
-    const int totalFrames = 376;
-    const int preferredFrameStep = 2;
-    const int maxFramesToLoad = 376;
-    const int frameStep = computeFrameStep(totalFrames, preferredFrameStep, maxFramesToLoad);
-    const std::string frameDirectory = findAssetsFrameDirectory();
+
+    Find_Directory directoryFinder;
+    const int frameStep = computeFrameStep(totalFrames, pulodeFrames, maximodeFrames);
+    const std::string frameDirectory = directoryFinder.findFolderDirectory("assets/bg_frames/");
     const bool loaded = !frameDirectory.empty() && bg.loadFrames(frameDirectory, totalFrames, 1, frameStep);
 
     if (!loaded) {

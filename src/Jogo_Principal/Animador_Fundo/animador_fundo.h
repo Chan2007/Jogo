@@ -5,35 +5,35 @@
 #include <string>
 #include <vector>
 
-class BackgroundAnimator {
-private:
-    sf::Sprite currentSprite;
-    sf::Sprite nextSprite;
-    std::vector<sf::Texture> frames;
-    std::vector<std::string> framePaths;
-    size_t currentFrame;
-    sf::Clock clock;
-    float frameAccumulator;
-    float frameTime;
-    sf::Vector2u frameSize;
-    sf::Vector2u targetSize;
-    bool loaded;
+class Animador_Fundo {
+    private:
+        sf::Sprite currentSprite;
+        sf::Sprite nextSprite;
+        std::vector<sf::Texture> frames;
+        std::vector<std::string> framePaths;
+        size_t currentFrame;
+        sf::Clock clock;
+        float frameAccumulator;
+        float frameTime;
+        sf::Vector2u frameSize;
+        sf::Vector2u targetSize;
+        bool loaded;
 
-    void updateSpriteScale();
-    void updateBlend(float blend);
+        void updateSpriteScale();
+        void updateBlend(float blend);
 
-    BackgroundAnimator(const BackgroundAnimator&);
-    BackgroundAnimator& operator=(const BackgroundAnimator&);
+        Animador_Fundo(const Animador_Fundo&);
+        Animador_Fundo &operator=(const Animador_Fundo&);
 
-public:
-    BackgroundAnimator();
-    ~BackgroundAnimator();
+    public:
+        Animador_Fundo();
+        ~Animador_Fundo();
 
-    bool loadFrames(const std::string& pathPrefix, int numFrames, int startIndex = 0, int frameStep = 1);
-    void update();
-    void draw(sf::RenderWindow& window);
-    void setPosition(const sf::Vector2f& pos);
-    void setTargetSize(const sf::Vector2u& size);
+        bool loadFrames(const std::string& pathPrefix, int numFrames, int startIndex = 0, int frameStep = 1);
+        void update();
+        void draw(sf::RenderWindow& window);
+        void setPosition(const sf::Vector2f& pos);
+        void setTargetSize(const sf::Vector2u& size);
 };
 
 #endif

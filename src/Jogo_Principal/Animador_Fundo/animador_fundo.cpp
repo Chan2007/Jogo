@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <sstream>
 
-BackgroundAnimator::BackgroundAnimator() :
+Animador_Fundo::Animador_Fundo() :
     currentSprite(),
     nextSprite(),
     currentFrame(0),
@@ -15,10 +15,10 @@ BackgroundAnimator::BackgroundAnimator() :
     loaded(false) {
 }
 
-BackgroundAnimator::~BackgroundAnimator() {
+Animador_Fundo::~Animador_Fundo() {
 }
 
-void BackgroundAnimator::updateSpriteScale() {
+void Animador_Fundo::updateSpriteScale() {
     if (!loaded || frameSize.x == 0 || frameSize.y == 0 || targetSize.x == 0 || targetSize.y == 0) {
         return;
     }
@@ -29,7 +29,7 @@ void BackgroundAnimator::updateSpriteScale() {
     nextSprite.setScale(scaleX, scaleY);
 }
 
-void BackgroundAnimator::updateBlend(float blend) {
+void Animador_Fundo::updateBlend(float blend) {
     if (!loaded || frames.empty()) {
         return;
     }
@@ -43,12 +43,12 @@ void BackgroundAnimator::updateBlend(float blend) {
 
     // A sobreposição de quadros adjacentes fez com que as regiões brilhantes "cintilassem" no olho nu.
     // Para uma animação de fundo estável, apenas o quadro ativo aparece ("blend").
-    (void)blend;
+    (void) blend;
     currentSprite.setColor(sf::Color(255, 255, 255, 255));
     nextSprite.setColor(sf::Color(255, 255, 255, 0));
 }
 
-bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames, int startIndex, int frameStep) {
+bool Animador_Fundo::loadFrames(const std::string& pathPrefix, int numFrames, int startIndex, int frameStep) {
     framePaths.clear();
     frames.clear();
     currentFrame = 0;
@@ -96,7 +96,7 @@ bool BackgroundAnimator::loadFrames(const std::string& pathPrefix, int numFrames
     return true;
 }
 
-void BackgroundAnimator::update() {
+void Animador_Fundo::update() {
     if (!loaded || frames.empty()) {
         return;
     }
@@ -116,7 +116,7 @@ void BackgroundAnimator::update() {
     updateBlend(frameAccumulator / frameTime);
 }
 
-void BackgroundAnimator::draw(sf::RenderWindow& window) {
+void Animador_Fundo::draw(sf::RenderWindow& window) {
     if (!loaded) {
         return;
     }
@@ -125,7 +125,7 @@ void BackgroundAnimator::draw(sf::RenderWindow& window) {
     window.draw(nextSprite);
 }
 
-void BackgroundAnimator::setPosition(const sf::Vector2f& pos) {
+void Animador_Fundo::setPosition(const sf::Vector2f& pos) {
     if (!loaded) {
         return;
     }
@@ -134,7 +134,7 @@ void BackgroundAnimator::setPosition(const sf::Vector2f& pos) {
     nextSprite.setPosition(pos);
 }
 
-void BackgroundAnimator::setTargetSize(const sf::Vector2u& size) {
+void Animador_Fundo::setTargetSize(const sf::Vector2u& size) {
     targetSize = size;
     updateSpriteScale();
 }
