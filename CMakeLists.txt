@@ -12,8 +12,7 @@ set(SFML_BINARY_DIR "${SFML_ROOT}/bin")
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
-add_executable(Jogo ${SOURCES}
-)
+add_executable(Jogo ${SOURCES})
 
 target_include_directories(Jogo PRIVATE
         src

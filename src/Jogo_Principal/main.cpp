@@ -2,12 +2,12 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/audio.hpp>
 #include <string>
 
 #include "Diretorio/find_Directory.h"
 #include "Animador_Fundo/animador_fundo.h"
-#include "Audio/Audio.h"
+#include "Audio/audio.h"
 
 int computeFrameStep(const int totalFrames, int preferredStep, const int maxFramesToLoad) {
     if (preferredStep <= 0) {
@@ -48,6 +48,7 @@ int main() {
 
     const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Fullscreen);
+    window.setFramerateLimit(60);
     Animador_Fundo bgAnimation;
     bgAnimation.setTargetSize(window.getSize());
 
@@ -62,12 +63,12 @@ int main() {
     }
 
     const std::string audioDirectory = directoryFinder.findFolderDirectory("assets/bg_audios/bg_music");
-    Audio bgMusic;
+    audio bgMusic;
     if (!audioDirectory.empty()) {
         std::string separador = (audioDirectory.back() == '/' || audioDirectory.back() == '\\') ? "" : "/";
-        const std::string musicPath = audioDirectory + separador + "Aurora_s-Theme.ogg";
+        const std::string musicPath = audioDirectory + separador + "Bolmus-Populi.ogg";
         if (bgMusic.loadMusic(musicPath)) {
-            bgMusic.setVolume(50.0f);  // 50% de volume
+            bgMusic.setVolume(10.0f);  // 50% de volume
             bgMusic.play();
             bgMusic.setLoop(true);
         }
@@ -84,6 +85,9 @@ int main() {
         window.clear();
         bgAnimation.update();
         bgAnimation.draw(window);
+        sf::RectangleShape player({40.f, 40.f});
+        player.setFillColor(sf::Color::Green);
+        player.setPosition(100.f, 50.f);
         window.display();
     }
 
