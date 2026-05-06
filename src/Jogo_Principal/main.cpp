@@ -1,85 +1,88 @@
 #include "main.h"
 
-#include <iostream>
 #include <SFML/Graphics.hpp>
-#include <SFML/audio.hpp>
+#include <SFML/Audio.hpp>
+
 #include <string>
-
-#include "Diretorio/find_Directory.h"
+#include <iostream>
+#include <cmath>
+#include "Diretorio/Encontrar_Diretorio.h"
 #include "Animador_Fundo/animador_fundo.h"
-#include "Audio/audio.h"
+#include "Audio/Audio.h"
+using namespace std;
 
-int computeFrameStep(const int totalFrames, int preferredStep, const int maxFramesToLoad) {
-    if (preferredStep <= 0) {
-        preferredStep = 1;
-    }
-
-    if (maxFramesToLoad <= 0 || totalFrames <= maxFramesToLoad) {
-        return preferredStep;
-    }
-
-    const int requiredStep = (totalFrames + maxFramesToLoad - 1) / maxFramesToLoad;
-    return preferredStep > requiredStep ? preferredStep : requiredStep;
+int checarIntercalo(const int totalFrames, int step, const int frames) {
+    const int min_step = ceil(static_cast<double>(totalFrames)/ frames);
+    return (step > min_step ? step : min_step);
 }
 
 int main() {
     const int totalFrames = 376;
-    int pulodeFrames = 0;
-    int maximodeFrames = 0;
+    const int max_intercalarFrames = 5;
+    int intercalarFrames = 0;
+    int Frames = 0;
     while (true) {
-        std::cout << "Quantos frames intercalar: ";
-        // Obs.: Se pulodeFrames for muito grande, pode ser que a qualidade do cenario caia.
-        if (std::cin >> pulodeFrames && pulodeFrames > 0 && pulodeFrames < totalFrames)
-            break;
-        std::cout << "Entrada invalida! Digite um numero positivo." << std::endl;
-        std::cin.clear();
-        std::cin.ignore(10000, '\n');
+        cout << "Quantos frames intercalar: " << "(maximo recomendado: " << max_intercalarFrames << ")" << endl;
+        // Obs.: Se intercalarFrames for muito grande, a qualidade do cenário irá cair.
+        if (cin >> intercalarFrames && intercalarFrames > 0 && intercalarFrames <= totalFrames) break;
+        cout << "Entrada inválida! Digite um número positivo." << endl;
+        cin.clear();
+        cin.ignore(10000, '\n');
     }
 
     while (true) {
-        std::cout << "Maximo de frames a rodar: ";
-        // Obs.: Se maxideFrames for muito pequeno, pode ser que a qualidade do cenario caia.
-        if (std::cin >> maximodeFrames && maximodeFrames > 0 && maximodeFrames < totalFrames)
-            break;
-        std::cout << "Entrada invalida! Digite um numero positivo." << std::endl;
-        std::cin.clear();
-        std::cin.ignore(10000, '\n');
+        cout << "Maximo de frames a rodar: " << "(maximo: " << totalFrames << ")" << endl;
+        // Obs.: Se maxFrames for muito pequeno, a qualidade do cenario irá dessincronizar.
+        if (cin >> Frames && Frames > 0 && Frames < totalFrames) break;
+        cout << "Entrada inválida! Digite um número positivo." << std::endl;
+        cin.clear();
+        cin.ignore(10000, '\n');
     }
+    intercalarFrames = checarIntercalo(totalFrames, intercalarFrames, Frames);
 
     const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Fullscreen);
     window.setFramerateLimit(60);
+
     Animador_Fundo bgAnimation;
     bgAnimation.setTargetSize(window.getSize());
 
-    Find_Directory directoryFinder;
+    Encontrar_Diretorio diretorio;
 
-    const int frameStep = computeFrameStep(totalFrames, pulodeFrames, maximodeFrames);
-    const std::string frameDirectory = directoryFinder.findFolderDirectory("assets/bg_frames/");
-    const bool loaded = !frameDirectory.empty() && bgAnimation.loadFrames(frameDirectory, totalFrames, 1, frameStep);
-    if (!loaded) {
-        std::cerr << "Nao foi possivel localizar a pasta assets ou carregar os frames de fundo." << std::endl;
+    const string diretorio_Frame = diretorio.acharDiretorio_Arquivo("assets/bg_frames/");
+    if (!diretorio_Frame.empty()) {
+        if (bgAnimation.loadFrames(diretorio_Frame, totalFrames, 1, intercalarFrames))
+            cout << "Frames de background carregados com sucesso!" << endl;
+        else {
+            cerr << "Falha ao carregar os frames de background. Verifique se os arquivos estão corretos." << endl;
+            return -1;
+        }
+    }
+    else {
+        cerr << "Não foi possível localizar o diretório." << endl;
         return -1;
     }
 
-    const std::string audioDirectory = directoryFinder.findFolderDirectory("assets/bg_audios/bg_music");
-    audio bgMusic;
-    if (!audioDirectory.empty()) {
-        std::string separador = (audioDirectory.back() == '/' || audioDirectory.back() == '\\') ? "" : "/";
-        const std::string musicPath = audioDirectory + separador + "Bolmus-Populi.ogg";
-        if (bgMusic.loadMusic(musicPath)) {
-            bgMusic.setVolume(10.0f);  // 50% de volume
+    Audio bgMusic;
+    const string diretorio_Audio = diretorio.acharDiretorio_Arquivo("assets/bg_audios/bg_music");
+    if (!diretorio_Audio.empty()) {
+        const string diretorio_Musica = Encontrar_Diretorio::concatenarEnderecos(diretorio_Audio,  "Aurora_s-Theme.ogg");
+        if (bgMusic.loadMusic(diretorio_Musica)) {
+            // Volume
+            bgMusic.setVolume(0.0f);
             bgMusic.play();
+            // Loop da música
             bgMusic.setLoop(true);
         }
+        else {cerr << "Não foi possível carregar a música." << endl;}
     }
+    else { cerr << "Não foi possível localizar a pasta de áudio. A música de fundo não será reproduzida." << endl; }
 
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+            if (event.type == sf::Event::Closed)
                 window.close();
-            }
         }
 
         window.clear();

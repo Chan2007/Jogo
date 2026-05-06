@@ -5,13 +5,13 @@
 #ifndef JOGO_AUDIO_H
 #define JOGO_AUDIO_H
 
-#include <SFML/audio.hpp>
+#include <SFML/Audio.hpp>
 #include <string>
 
-class audio {
+class Audio {
     public:
-        audio();
-        ~audio();
+        Audio();
+        ~Audio();
         bool loadMusic(const std::string& filePath);
         void setVolume(float volumePercent);
         float getVolume() const;

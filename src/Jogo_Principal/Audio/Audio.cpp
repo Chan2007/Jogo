@@ -2,17 +2,17 @@
 // Created by Henrique on 21/04/2026.
 //
 
-#include "audio.h"
+#include "Audio.h"
 
 #include <algorithm>
 
-audio::audio() {}
+Audio::Audio() {}
 
-audio::~audio() {
+Audio::~Audio() {
     music.stop();
 }
 
-bool audio::loadMusic(const std::string& filePath) {
+bool Audio::loadMusic(const std::string& filePath) {
     if (music.openFromFile(filePath)) {
         music.setLoop(true);
         return true;
@@ -20,31 +20,31 @@ bool audio::loadMusic(const std::string& filePath) {
     return false;
 }
 
-void audio::setVolume(float volumePercent) {
+void Audio::setVolume(float volumePercent) {
     volumePercent = std::max(0.0f, std::min(volumePercent, 100.0f));
     music.setVolume(volumePercent);
 }
 
-float audio::getVolume() const {
+float Audio::getVolume() const {
     return music.getVolume();
 }
 
-void audio::play() {
+void Audio::play() {
     music.play();
 }
 
-void audio::pause() {
+void Audio::pause() {
     music.pause();
 }
 
-void audio::stop() {
+void Audio::stop() {
     music.stop();
 }
 
-void audio::setLoop(bool loop) {
+void Audio::setLoop(bool loop) {
     music.setLoop(loop);
 }
 
-bool audio::isPlaying() const {
+bool Audio::isPlaying() const {
     return music.getStatus() == sf::Music::Playing;
 }
