@@ -11,7 +11,7 @@ class Animador_Fundo {
         sf::Sprite nextSprite;
         std::vector<sf::Texture> frames;
         std::vector<std::string> framePaths;
-        size_t currentFrame;
+        size_t currentFrameIndex;
         sf::Clock clock;
         float frameAccumulator;
         float frameTime;
@@ -29,7 +29,7 @@ class Animador_Fundo {
         Animador_Fundo();
         ~Animador_Fundo();
 
-        bool loadFrames(const std::string& pathPrefix, int numFrames, int startIndex = 0, int frameStep = 1);
+        bool loadFrames(const std::string& pathPrefix, int numFrames = 376, int startIndex = 1, int frameStep = 2);
         void update();
         void draw(sf::RenderWindow& window);
         void setPosition(const sf::Vector2f& pos);

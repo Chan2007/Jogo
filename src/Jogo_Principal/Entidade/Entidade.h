@@ -4,10 +4,11 @@
 
 #ifndef JOGO_ENTIDADE_H
 #define JOGO_ENTIDADE_H
-
+#include "Jogo_Principal/Listas/ListaEntidades.h"
 
 class Entidade {
     private:
+        ListaEntidades* listaEntidades;
         float x, y, vx, vy, ax, ay;
     protected:
         void salvarDataBuffer();

@@ -9,6 +9,8 @@
 #include <string>
 
 class Audio {
+    private:
+        sf::Music music;
     public:
         Audio();
         ~Audio();
@@ -20,9 +22,6 @@ class Audio {
         void stop();
         void setLoop(bool loop);
         bool isPlaying() const;
-
-    private:
-        sf::Music music;
 };
 
 #endif //JOGO_AUDIO_H
