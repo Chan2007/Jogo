@@ -6,18 +6,21 @@
 #define JOGO_LISTAENTIDADES_H
 #include "Lista.h"
 
-class Entidade;
+namespace Entidades {
+    class Entidade;
+}
+
 class ListaEntidades {
     private:
-        Lista <Entidade>* LEntidade;
+        Lista <Entidades::Entidade>* LEntidade;
     public:
         ListaEntidades();
         ~ListaEntidades();
-        bool incluirEntidade(Entidade* E);
+        bool incluirEntidade(Entidades::Entidade *E);
         void limparLista();
-        Elemento <Entidade>* localizarEntidade(Elemento <Entidade>* E);
-        Entidade* localizarInfo(Entidade* E);
-        Entidade* localizarNome(std::string nome);
+        Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E);
+        Entidades::Entidade* localizarInfo(Entidades::Entidade* E);
+        Entidades::Entidade* localizarNome(std::string nome);
 };
 
 

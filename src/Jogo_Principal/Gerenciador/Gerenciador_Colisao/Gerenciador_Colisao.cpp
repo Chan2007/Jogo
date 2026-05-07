@@ -4,37 +4,33 @@
 
 #include "Gerenciador_Colisao.h"
 #include "Jogo_Principal/Entidade/Entidade.h"
-
+#include "Jogo_Principal/Entidade/Obstaculo/Obstaculo.h"
+#include "Jogo_Principal/Entidade/Personagem/Jogador/Jogador.h"
+#include "Jogo_Principal/Entidade/Personagem/Inimigo/Inimigo.h"
+#include "Jogo_Principal/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
     Gerenciador_Colisao::Gerenciador_Colisao() {}
-
     Gerenciador_Colisao& Gerenciador_Colisao::getInstancia() {
         static Gerenciador_Colisao instancia;
         return instancia;
     }
-
-    Gerenciador_Colisao::~Gerenciador_Colisao() {
-        limpar();
-    }
-
+    Gerenciador_Colisao::~Gerenciador_Colisao() {limpar();}
     void Gerenciador_Colisao::limpar() {
         Linimigos.clear();
         Lobstaculos.clear();
         Lprojetil.clear();
         Ljogadores.clear();
     }
-
-
-    void Gerenciador_Colisao::incluirEntidade(Entidade* entidade) {
+    void Gerenciador_Colisao::incluirEntidade(Entidades::Entidade* entidade) {
         if (!entidade) return;
-        Entidades::Jogador* jogador = NULL;
-        Entidades::Obstaculo* obstaculo = NULL;
-        Entidades::Inimigo* inimigo = NULL;
+        Personagens::Jogador* jogador = NULL;
+        Obstaculos::Obstaculo* obstaculo = NULL;
+        Personagens::Inimigo* inimigo = NULL;
         Entidades::Projetil* projetil = NULL;
-        jogador = dynamic_cast<Entidades::Jogador*>(entidade);
-        inimigo = dynamic_cast<Entidades::Inimigo*>(entidade);
-        obstaculo = dynamic_cast<Entidades::Obstaculo*>(entidade);
+        jogador = dynamic_cast<Personagens::Jogador*>(entidade);
+        obstaculo = dynamic_cast<Obstaculos::Obstaculo*>(entidade);
+        inimigo = dynamic_cast<Personagens::Inimigo*>(entidade);
         projetil = dynamic_cast<Entidades::Projetil*>(entidade);
         if (obstaculo) incluirNaLista(Lobstaculos, obstaculo);
         else if (projetil) incluirNaLista(Lprojetil, projetil);
@@ -42,15 +38,15 @@ namespace Gerenciadores {
         else if (jogador) incluirNaLista(Ljogadores, jogador);
     }
 
-    void Gerenciador_Colisao::removerEntidade(Entidade* entidade) {
+    void Gerenciador_Colisao::removerEntidade(Entidades::Entidade* entidade) {
         if (!entidade) return;
-        Entidades::Jogador* jogador = NULL;
-        Entidades::Obstaculo* obstaculo = NULL;
-        Entidades::Inimigo* inimigo = NULL;
+        Personagens::Jogador* jogador = NULL;
+        Obstaculos::Obstaculo* obstaculo = NULL;
+        Personagens::Inimigo* inimigo = NULL;
         Entidades::Projetil* projetil = NULL;
-        jogador = dynamic_cast<Entidades::Jogador*>(entidade);
-        obstaculo = dynamic_cast<Entidades::Obstaculo*>(entidade);
-        inimigo = dynamic_cast<Entidades::Inimigo*>(entidade);
+        jogador = dynamic_cast<Personagens::Jogador*>(entidade);
+        obstaculo = dynamic_cast<Obstaculos::Obstaculo*>(entidade);
+        inimigo = dynamic_cast<Personagens::Inimigo*>(entidade);
         projetil = dynamic_cast<Entidades::Projetil*>(entidade);
         if (jogador) removerDaLista(Ljogadores, jogador);
         else if (obstaculo) removerDaLista(Lobstaculos, obstaculo);
@@ -58,105 +54,85 @@ namespace Gerenciadores {
         else if (projetil) removerDaLista(Lprojetil, projetil);
     }
 
-    bool Gerenciador_Colisao::colidiu(Entidade* entidade, Entidade* jogador) {
-        const float x_j = jogador->getPosicao().x;
-        const float y_j = jogador->getPosicao().y;
+    bool Gerenciador_Colisao::colidiu(const Entidades::Entidade* entidade, const Entidades::Entidade* movel) {
+        if (!entidade || !movel) {cerr << "Ponteiro nulo!" << endl; return false;}
+        const float x_m = movel->getPosicao().x;
+        const float y_m = movel->getPosicao().y;
         const float x_e = entidade->getPosicao().x;
         const float y_e = entidade->getPosicao().y;
 
-        const float hbox_x_j = x_j + jogador->getTamanho().x;
-        const float hbox_y_j = y_j + jogador->getTamanho().y;
-        const float hbox_x_e = x_e + entidade->getTamanho().x;
-        const float hbox_y_e = y_e + entidade->getTamanho().y;
+        const float hitbox_x_m = x_m + movel->getTamanho().x;
+        const float hitbox_y_m = y_m + movel->getTamanho().y;
+        const float hitbox_x_e = x_e + entidade->getTamanho().x;
+        const float hitbox_y_e = y_e + entidade->getTamanho().y;
 
-        return (x_j < hbox_x_e && hbox_x_j > x_e && y_j < hbox_y_e && hbox_y_j > y_e);
+        return (x_m < hitbox_x_e && hitbox_x_m > x_e && y_m < hitbox_y_e && hitbox_y_m > y_e);
     }
 
-    void Gerenciador_Colisao::calculaColisao(Entidade* entidade, Entidade* jogador) {
-        const sf::Vector2f posJ = jogador->getPosicao();
-        const sf::Vector2f tamJ = jogador->getTamanho();
+    void Gerenciador_Colisao::calculaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
+        if (!entidade || !movel) return;
+        movel->setColisao(true);
+        const sf::Vector2f posP = movel->getPosicao();
+        const sf::Vector2f tamP = movel->getTamanho();
         const sf::Vector2f posE = entidade->getPosicao();
         const sf::Vector2f tamE = entidade->getTamanho();
 
-        const float centroJ_x = posJ.x + (tamJ.x / 2.0f);
-        const float centroJ_y = posJ.y + (tamJ.y / 2.0f);
+        const float centroP_x = posP.x + (tamP.x / 2.0f);
+        const float centroP_y = posP.y + (tamP.y / 2.0f);
         const float centroE_x = posE.x + (tamE.x / 2.0f);
         const float centroE_y = posE.y + (tamE.y / 2.0f);
 
-        const float dx = centroJ_x - centroE_x;
-        const float dy = centroJ_y - centroE_y;
+        const float dx = centroP_x - centroE_x;
+        const float dy = centroP_y - centroE_y;
 
-        const float intersecX = (tamJ.x / 2.0f + tamE.x / 2.0f) - static_cast<float>(fabs(dx));
-        const float intersecY = (tamJ.y / 2.0f + tamE.y / 2.0f) - static_cast<float>(fabs(dy));
+        const float intersecX = (tamP.x / 2.0f + tamE.x / 2.0f) - static_cast<float>(fabs(dx));
+        const float intersecY = (tamP.y / 2.0f + tamE.y / 2.0f) - static_cast<float>(fabs(dy));
 
         if (intersecX < intersecY) {
             if (dx > 0.0f)
-                jogador->setPosicao(sf::Vector2f(posJ.x + intersecX, posJ.y));
+                movel->setPosicao(sf::Vector2f(posP.x + intersecX, posP.y));
             else
-                jogador->setPosicao(sf::Vector2f(posJ.x - intersecX, posJ.y));
+                movel->setPosicao(sf::Vector2f(posP.x - intersecX, posP.y));
         }
         else {
             if (dy > 0.0f)
-                jogador->setPosicao(sf::Vector2f(posJ.x, posJ.y + intersecY));
+                movel->setPosicao(sf::Vector2f(posP.x, posP.y + intersecY));
             else
-                jogador->setPosicao(sf::Vector2f(posJ.x, posJ.y - intersecY));
+                movel->setPosicao(sf::Vector2f(posP.x, posP.y - intersecY));
         }
-
-        jogador->setColisao(true);
     }
 
-    bool Gerenciador_Colisao::testarColisao(Entidade* entidade, Jogador* jogador) {
-        if (!entidade || !jogador)
-            return false;
-
-        if (colidiu(entidade, jogador)) {
-            calculaColisao(entidade, jogador);
+    bool Gerenciador_Colisao::implementarColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
+        if (!entidade || !movel) return false;
+        movel->setColisao(false);
+        if (colidiu(entidade, movel)) {
+            calculaColisao(entidade, movel);
+            movel->setColisao(true);
             return true;
         }
-
-        jogador->setColisao(false);
         return false;
     }
 
-    void Gerenciador_Colisao::verificaColisao(Entidade* entidade, Entidade* jogador) {
-        testarColisao(entidade, jogador);
+    void Gerenciador_Colisao::verificaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
+        implementarColisao(entidade, movel);
+    }
+    void Gerenciador_Colisao::verificaObstaculo(Entidades::Entidade* entidade) {
+        colisao_Entidade_Classe(Lobstaculos, entidade);
     }
 
-    void Gerenciador_Colisao::mediarComJogadores(Entidade* entidade) {
-        for (size_t i = 0; i < Ljogadores.size(); i++)
-            testarColisao(entidade, Ljogadores[i]);
+    void Gerenciador_Colisao::verificaProjetil(Entidades::Entidade* entidade) {
+        colisao_Entidade_Classe(Lprojetil, entidade);
     }
 
-    void Gerenciador_Colisao::colisao_Obstaculo_Jogador() {
-        for (size_t i = 0; i < Lobstaculos.size(); i++)
-            mediarComJogadores(Lobstaculos[i]);
+    void Gerenciador_Colisao::verificaInimigo(Entidades::Entidade* entidade) {
+        colisao_Entidade_Classe(Linimigos, entidade);
     }
-
-    void Gerenciador_Colisao::colisao_Projetil_Jogador() {
-        for (size_t i = 0; i < Lprojetil.size(); i++)
-            mediarComJogadores(Lprojetil[i]);
+    void Gerenciador_Colisao::verificaJogador(Entidades::Entidade* entidade) {
+        colisao_Entidade_Classe(Ljogadores, entidade);
     }
-
-    void Gerenciador_Colisao::colisao_Inimigo_Jogador() {
-        for (size_t i = 0; i < Linimigos.size(); i++)
-            mediarComJogadores(Linimigos[i]);
-    }
-
-    void Gerenciador_Colisao::verificaObstaculo() {
-        colisao_Obstaculo_Jogador();
-    }
-
-    void Gerenciador_Colisao::verificaProjetil() {
-        colisao_Projetil_Jogador();
-    }
-
-    void Gerenciador_Colisao::verificaInimigo() {
-        colisao_Inimigo_Jogador();
-    }
-
-    void Gerenciador_Colisao::executar() {
-        verificaObstaculo();
-        verificaProjetil();
-        verificaInimigo();
+    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade) {
+        verificaObstaculo(entidade);
+        verificaProjetil(entidade);
+        verificaInimigo(entidade);
     }
 } // Gerenciador

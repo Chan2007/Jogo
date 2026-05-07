@@ -4,24 +4,28 @@
 
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
-#include "Observer_Jogador.h"
+#include "Observer_Jogador/Observer_Jogador.h"
 #include "Jogo_Principal/Entidade/Personagem/Personagem.h"
 
-class Inimigo;
-class Jogador: public Personagem {
+namespace Personagens {
+    class Inimigo;
+}
+namespace Personagens {
+    class Jogador: public Personagem {
     private:
-        Observer_Jogador* observer_jogador;
+        Observador_Jogador* observer_jogador;
     protected:
-        int pontos;
-        int escudo;
+        float sorte;
+        float pontos;
+        float escudo;
     public:
         Jogador();
         ~Jogador();
-        bool colidir(Inimigo* I);
+        bool colidir(Personagens::Inimigo* I);
         void executar();
         void salvar();
-        Observer_Jogador* get_observer_jogador();
-};
-
+        Observador_Jogador* get_observer_jogador();
+    };
+} // Personagens
 
 #endif //JOGO_JOGADOR_H

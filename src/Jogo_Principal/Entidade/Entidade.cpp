@@ -3,3 +3,6 @@
 //
 
 #include "Entidade.h"
+void Entidades::Entidade::setColisao(bool valor) {
+    colisao = valor;
+}

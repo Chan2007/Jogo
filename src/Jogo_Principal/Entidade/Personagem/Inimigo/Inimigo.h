@@ -7,7 +7,8 @@
 #include "Jogo_Principal/Entidade/Personagem/Personagem.h"
 
 class Jogador;
-class Inimigo: public Personagem {
+namespace Personagens {
+    class Inimigo: public Personagem {
     protected:
         int vida;
         int ataque;
@@ -20,7 +21,8 @@ class Inimigo: public Personagem {
         virtual void executar() = 0;
         virtual void salvar() = 0;
         virtual void danificar(Jogador* J) = 0;
-};
+    };
+}
 
 
 #endif //JOGO_INIMIGO_H

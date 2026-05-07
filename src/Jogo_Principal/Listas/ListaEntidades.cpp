@@ -5,9 +5,10 @@
 #include "ListaEntidades.h"
 #include "Elemento.h"
 #include "Lista.h"
+#include "Jogo_Principal/Entidade/Entidade.h"
 
 ListaEntidades::ListaEntidades() {
-    LEntidade = new Lista <Entidade>();
+    LEntidade = new Lista <Entidades::Entidade>();
 }
 
 ListaEntidades::~ListaEntidades() {
@@ -16,7 +17,7 @@ ListaEntidades::~ListaEntidades() {
     LEntidade = NULL;
 }
 
-bool ListaEntidades::incluirEntidade(Entidade* E) {
+bool ListaEntidades::incluirEntidade(Entidades::Entidade *E)  {
     return LEntidade->incluirInfo(E);
 }
 
@@ -24,14 +25,14 @@ void ListaEntidades::limparLista() {
     LEntidade->limpar();
 }
 
-Elemento<Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidade>* E) {
+Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) {
     return LEntidade->localizarElemento(E);
 }
 
-Entidade* ListaEntidades::localizarInfo(Entidade* E) {
+Entidades::Entidade* ListaEntidades::localizarInfo(Entidades::Entidade* E) {
     return LEntidade->localizarInfo(E);
 }
 
-Entidade* ListaEntidades::localizarNome(std::string nome) {
+Entidades::Entidade* ListaEntidades::localizarNome(const std::string nome) {
     return LEntidade->localizarNome(nome);
 }

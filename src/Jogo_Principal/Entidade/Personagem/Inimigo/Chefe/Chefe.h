@@ -6,7 +6,7 @@
 #define JOGO_CHEFE_H
 #include "Jogo_Principal/Entidade/Personagem/Inimigo/Inimigo.h"
 
-class Chefe: public Inimigo {
+class Chefe: public Personagens::Inimigo {
     private:
         float raio;
         int tamanho;

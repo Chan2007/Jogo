@@ -6,7 +6,7 @@
 #define JOGO_INIMIGO_MEDIO_H
 #include "Jogo_Principal/Entidade/Personagem/Inimigo/Inimigo.h"
 
-class Inimigo_Medio:public Inimigo{
+class Inimigo_Medio:public Personagens::Inimigo{
     private:
         float raio;
         int tamanho;

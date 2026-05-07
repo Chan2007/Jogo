@@ -93,7 +93,7 @@ tipo* Lista <tipo>::localizarNome(std::string nome){
     if (nome.empty()) return NULL;
     Elemento <tipo>* pAux = pPrimeiro;
     while (pAux) {
-        if (pAux->getInfo()->getNome == nome) return pAux->getInfo();
+        if (pAux->getInfo()->getNome() == nome) return pAux->getInfo();
         pAux = pAux->getProximo();
     }
     return NULL;

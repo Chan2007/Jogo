@@ -1,0 +1,24 @@
+//
+// Created by Henrique on 06/05/2026.
+//
+
+#ifndef JOGO_OBSTACULO_FACIL_H
+#define JOGO_OBSTACULO_FACIL_H
+#include "Jogo_Principal/Entidade/Obstaculo/Obstaculo.h"
+
+namespace Obstaculos {
+    class Obstaculo_Facil: public Obstaculo {
+        private:
+            float altura;
+            float dano;
+        public:
+            Obstaculo_Facil();
+            ~Obstaculo_Facil();
+            void executar();
+            float getAltura();
+            float getDano();
+            void setPlataforma(Jogador* J);
+    };
+} // Obstaculo
+
+#endif //JOGO_OBSTACULO_FACIL_H

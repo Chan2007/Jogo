@@ -11,21 +11,28 @@
 using namespace sf;
 using namespace std;
 
-class Entidade;
 namespace Entidades {
+    class Entidade;
     class Projetil;
-    class Obstaculo;
+}
+
+namespace Personagens {
+    class Personagem;
     class Jogador;
     class Inimigo;
+}
+
+namespace Obstaculos {
+    class Obstaculo;
 }
 
 namespace Gerenciadores {
     class Gerenciador_Colisao {
         private:
-            vector <Entidades::Obstaculo*> Lobstaculos;
-            vector <Entidades::Inimigo*> Linimigos;
+            vector <Obstaculos::Obstaculo*> Lobstaculos;
+            vector <Personagens::Inimigo*> Linimigos;
             vector <Entidades::Projetil*> Lprojetil;
-            vector <Entidades::Jogador*> Ljogadores;
+            vector <Personagens::Jogador*> Ljogadores;
 
             Gerenciador_Colisao();
 
@@ -43,27 +50,29 @@ namespace Gerenciadores {
             void removerDaLista(vector <tipo*>& lista, tipo* entidade) {
                 lista.erase(remove(lista.begin(), lista.end(), entidade), lista.end());
             }
-            void mediarComJogadores(Entidade* entidade);
-            void colisao_Obstaculo_Jogador();
-            void colisao_Projetil_Jogador();
-            void colisao_Inimigo_Jogador();
+            template <class tipo>
+            void colisao_Entidade_Classe(vector <tipo*>& lista, Entidades::Entidade* entidade) {
+                for (size_t i = 0; i < lista.size(); i++)
+                    implementarColisao(lista[i], entidade);
+            }
+
             void limpar();
+            static bool colidiu(const Entidades::Entidade *entidade, const Entidades::Entidade *movel);
+            static void calculaColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
+            static bool implementarColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
+
         public:
             static Gerenciador_Colisao& getInstancia();
             ~Gerenciador_Colisao();
 
-            void incluirEntidade(Entidade* entidade);
-            void removerEntidade(Entidade* entidade);
-
-            bool colidiu(Entidade* entidade, Entidade* jogador);
-            void calculaColisao(Entidade* entidade, Entidade* jogador);
-            bool testarColisao(Entidade* entidade, Entidade* jogador);
-
-            void verificaColisao(Entidade* entidade, Entidade* jogador);
-            void verificaObstaculo();
-            void verificaProjetil();
-            void verificaInimigo();
-            void executar();
+            void incluirEntidade(Entidades::Entidade* entidade);
+            void removerEntidade(Entidades::Entidade* entidade);
+            static void verificaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel);
+            void verificaObstaculo(Entidades::Entidade* entidade);
+            void verificaProjetil(Entidades::Entidade* entidade);
+            void verificaInimigo(Entidades::Entidade* entidade);
+            void verificaJogador(Entidades::Entidade* entidade);
+            void executar(Entidades::Entidade* entidade);
     };
 } // Gerenciador
 

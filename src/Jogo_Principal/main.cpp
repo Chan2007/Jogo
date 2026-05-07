@@ -41,7 +41,7 @@ int main() {
     intercalarFrames = checarIntercalo(totalFrames, intercalarFrames, Frames);
 
     const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
-    sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Fullscreen);
+    sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Default);
     window.setFramerateLimit(60);
 
     Animador_Fundo bgAnimation;
