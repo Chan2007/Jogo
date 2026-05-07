@@ -134,5 +134,6 @@ namespace Gerenciadores {
         verificaObstaculo(entidade);
         verificaProjetil(entidade);
         verificaInimigo(entidade);
+        verificaJogador(entidade);
     }
 } // Gerenciador
