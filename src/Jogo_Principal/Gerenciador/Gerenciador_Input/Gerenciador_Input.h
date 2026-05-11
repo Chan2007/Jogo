@@ -7,27 +7,27 @@
 
 #include <SFML/Window.hpp>
 #include <vector>
-#include "Jogo_Principal/Sistema/Input/Observador_Teclas.h"
-#include "Jogo_Principal/Sistema/Input/Mapeador_Teclas.h"
+#include "Jogo_Principal/Sistema/Input/Observador_Input.h"
+#include "Jogo_Principal/Sistema/Input/Mapeador_Input.h"
 
 namespace Gerenciadores {
     class Tecla;
-    class Mapeador_Teclas;
+    class Mapeador_Input;
     class Gerenciador_Input {
         private:
-            std::vector <Observador_Teclas*> observadores;
-            Mapeador_Teclas mapeador;
+            std::vector <Observador_Input*> observadores;
+            Mapeador_Input mapeador;
 
         public:
             Gerenciador_Input();
             ~Gerenciador_Input();
 
             // Padrão observer
-            void inscrever(Tecla* obs);
-            void desinscrever(Tecla* obs);
+            void inscrever(Observador_Input* obs){if (obs) observadores.push_back(obs); }
+            void desinscrever(Observador_Input* obs){if (obs) observadores.push_back(obs);}
             void notificarObservadores(const sf::Event& evento) const;
 
-            Mapeador_Teclas* getMapeador() {return &mapeador;}
+            Mapeador_Input* getMapeador() {return &mapeador;}
 
     };
 } // Sistema

@@ -14,9 +14,9 @@ namespace Gerenciadores {
             bool pressionada;
     };
 
-    class Observador_Teclas {
+    class Observador_Input {
         public:
-            virtual ~Observador_Teclas() {}
+            virtual ~Observador_Input() {}
             virtual void aoApertarTecla(const Tecla& evento) = 0;
     };
 

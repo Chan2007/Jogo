@@ -4,7 +4,7 @@
 
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
-#include "Jogo_Principal/Sistema/Input/Observador_Teclas.h"
+#include "Jogo_Principal/Sistema/Input/Observador_Input.h"
 #include "Jogo_Principal/Entidade/Personagem/Personagem.h"
 
 namespace Obstaculos {
