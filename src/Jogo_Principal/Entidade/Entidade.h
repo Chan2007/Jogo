@@ -5,38 +5,63 @@
 #ifndef JOGO_ENTIDADE_H
 #define JOGO_ENTIDADE_H
 
-#include <SFML/Graphics.hpp> // Necessário para sf::Vector2f
+#include <SFML/Graphics.hpp>
 #include "Jogo_Principal/Listas/ListaEntidades.h"
 
+namespace Obstaculos {
+    class Obstaculo;
+}
+
+namespace Personagens {
+    class Inimigo;
+    class Jogador;
+}
+
+namespace Gerenciadores {
+    class Mediador_Colisao;
+}
+
 namespace Entidades {
+    class Projetil;
+
     class Entidade {
         private:
-            static ListaEntidades* listaEntidades;
-            float x, y, vx, vy, ax, ay;
+            sf::Sprite corpo;
+            sf::Texture textura;
+            static Listas::ListaEntidades* listaEntidades;
             bool colisao;
-            sf::Vector2f tamanho;
             std::string nome;
-
+            bool ativo;
         protected:
             virtual void salvarDataBuffer();
+            static Gerenciadores::Mediador_Colisao* mediador_colisao;
 
         public:
-            Entidade();
+            Entidade(std::string nam, Gerenciadores::Mediador_Colisao* mediador);
             virtual ~Entidade();
 
-            virtual void executar() = 0;
+            virtual void atualizar() = 0;
             virtual void salvar() = 0;
             virtual void mover() = 0;
+            virtual void desenhar(sf::RenderWindow& window) = 0;
 
-            sf::Vector2f getPosicao() const {return sf::Vector2f(x, y);}
-            sf::Vector2f getVelocidade() const {return sf::Vector2f(vx, vy);}
-            sf::Vector2f getAceleracao() const {return sf::Vector2f(ax, ay);}
-            sf::Vector2f getTamanho() const {return tamanho;}
-            void setPosicao(sf::Vector2f pos) { x = pos.x; y = pos.y; }
-            void setColisao(bool col);
-            void setNome(std::string n){nome = n;}
-            std::string getNome(){return nome;}
-            static ListaEntidades* getListaEntidades() {return listaEntidades;}
+            // Padrão visitor
+            virtual void aoColidir(Entidade* entidade) = 0;
+            virtual void interagir_Colisao(Personagens::Jogador* J) = 0;
+            virtual void interagir_Colisao(Personagens::Inimigo* I) = 0;
+            virtual void interagir_Colisao(Obstaculos::Obstaculo* O) = 0;
+            virtual void interagir_Colisao(Projetil* P) = 0;
+
+            sf::Vector2f getPosicao() const {return corpo.getPosition();}
+            sf::FloatRect getTamanho() const {return corpo.getGlobalBounds();}
+            void setPosicao(sf::Vector2f pos) {corpo.setPosition(pos);}
+            void setColisao(bool col) {colisao = col;}
+            void setNome(const std::string n) {if (!n.empty()) nome = n;}
+            std::string getNome() {return nome;}
+            void setAtivo(bool a) {ativo = a;};
+            bool getAtivo() const {return ativo;}
+            static Listas::ListaEntidades* getListaEntidades() {return listaEntidades;}
+
     };
 } // Entidade
 

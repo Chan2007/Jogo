@@ -3,6 +3,7 @@
 //
 
 #include "Obstaculo.h"
-
+#include "Jogo_Principal/Entidade/Entidade.h"
 namespace Obstaculos {
+
 } // Obstaculo

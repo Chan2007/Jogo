@@ -9,8 +9,8 @@
 namespace Entidades {
     class Entidade;
 }
-
-class ListaEntidades {
+namespace Listas {
+    class ListaEntidades {
     private:
         Lista <Entidades::Entidade>* LEntidade;
     public:
@@ -21,7 +21,8 @@ class ListaEntidades {
         Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E);
         Entidades::Entidade* localizarInfo(Entidades::Entidade* E);
         Entidades::Entidade* localizarNome(std::string nome);
-};
+    };
+}
 
 
 #endif //JOGO_LISTAENTIDADES_H

@@ -4,12 +4,10 @@
 
 #ifndef JOGO_GERENCIADOR_COLISAO_H
 #define JOGO_GERENCIADOR_COLISAO_H
-#include <SFML/Graphics.hpp>
-#include <algorithm>
-#include <vector>
 
-using namespace sf;
-using namespace std;
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include "Jogo_Principal/Sistema/Fisica/Mediador_Colisao.h"
 
 namespace Entidades {
     class Entidade;
@@ -27,51 +25,51 @@ namespace Obstaculos {
 }
 
 namespace Gerenciadores {
-    class Gerenciador_Colisao {
+    class Gerenciador_Colisao: public Mediador_Colisao {
         private:
-            vector <Obstaculos::Obstaculo*> Lobstaculos;
-            vector <Personagens::Inimigo*> Linimigos;
-            vector <Entidades::Projetil*> Lprojetil;
-            vector <Personagens::Jogador*> Ljogadores;
+            std::vector <Obstaculos::Obstaculo*> Lobstaculos;
+            std::vector <Personagens::Inimigo*> Linimigos;
+            std::vector <Entidades::Projetil*> Lprojetil;
+            std::vector <Personagens::Jogador*> Ljogadores;
 
             Gerenciador_Colisao();
+            static Gerenciador_Colisao* gerenciador_colisao;
 
             // Proibir o uso de construtora de cópia e atribuição à cópias
             Gerenciador_Colisao(const Gerenciador_Colisao&);
             Gerenciador_Colisao& operator=(const Gerenciador_Colisao&);
 
             template <class tipo>
-            void incluirNaLista(vector <tipo*>& lista, tipo* entidade) {
+            void incluirNaLista(std::vector <tipo*>& lista, tipo* entidade) {
                 if (!entidade) return;
                 if (find(lista.begin(), lista.end(), entidade) == lista.end())
                     lista.push_back(entidade);
             }
             template <class tipo>
-            void removerDaLista(vector <tipo*>& lista, tipo* entidade) {
+            void removerDaLista(std::vector <tipo*>& lista, tipo* entidade) {
                 lista.erase(remove(lista.begin(), lista.end(), entidade), lista.end());
             }
             template <class tipo>
-            void colisao_Entidade_Classe(vector <tipo*>& lista, Entidades::Entidade* entidade) {
+            void colisao_Entidade_Classe(std::vector <tipo*>& lista, Entidades::Entidade* entidade) {
                 for (size_t i = 0; i < lista.size(); i++)
-                    implementarColisao(lista[i], entidade);
+                    verificarColisao(lista[i], entidade);
             }
 
             void limpar();
             static bool colidiu(const Entidades::Entidade *entidade, const Entidades::Entidade *movel);
             static void calculaColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
-            static bool implementarColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
-
+            static bool verificarLimitesJanela(Entidades::Entidade* entidade);
         public:
             static Gerenciador_Colisao& getInstancia();
             ~Gerenciador_Colisao();
-
             void incluirEntidade(Entidades::Entidade* entidade);
             void removerEntidade(Entidades::Entidade* entidade);
-            static void verificaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel);
-            void verificaObstaculo(Entidades::Entidade* entidade);
-            void verificaProjetil(Entidades::Entidade* entidade);
-            void verificaInimigo(Entidades::Entidade* entidade);
-            void verificaJogador(Entidades::Entidade* entidade);
+            static void verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel);
+            virtual void aoColidir(Entidades::Entidade* E1, Entidades::Entidade* E2){}
+            void verificarObstaculo(Entidades::Entidade* entidade);
+            void verificarProjetil(Entidades::Entidade* entidade);
+            void verificarInimigo(Entidades::Entidade* entidade);
+            void verificarJogador(Entidades::Entidade* entidade);
             void executar(Entidades::Entidade* entidade);
     };
 } // Gerenciador

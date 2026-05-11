@@ -14,7 +14,7 @@ namespace Obstaculos {
         public:
             Obstaculo_Facil();
             ~Obstaculo_Facil();
-            void executar();
+            void atualizar();
             float getAltura();
             float getDano();
             void setPlataforma(Jogador* J);

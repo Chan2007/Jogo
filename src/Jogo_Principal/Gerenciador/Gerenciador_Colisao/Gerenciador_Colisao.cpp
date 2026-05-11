@@ -3,6 +3,7 @@
 //
 
 #include "Gerenciador_Colisao.h"
+
 #include "Jogo_Principal/Entidade/Entidade.h"
 #include "Jogo_Principal/Entidade/Obstaculo/Obstaculo.h"
 #include "Jogo_Principal/Entidade/Personagem/Jogador/Jogador.h"
@@ -10,10 +11,15 @@
 #include "Jogo_Principal/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
-    Gerenciador_Colisao::Gerenciador_Colisao() {}
+    class Mediador_Colisao;
+}
+namespace Gerenciadores {
+    Gerenciador_Colisao* Gerenciador_Colisao::gerenciador_colisao = NULL;
+
+    Gerenciador_Colisao::Gerenciador_Colisao(): Mediador_Colisao() {}
     Gerenciador_Colisao& Gerenciador_Colisao::getInstancia() {
-        static Gerenciador_Colisao instancia;
-        return instancia;
+        if (!gerenciador_colisao) gerenciador_colisao = new Gerenciador_Colisao();
+        return *gerenciador_colisao;
     }
     Gerenciador_Colisao::~Gerenciador_Colisao() {limpar();}
     void Gerenciador_Colisao::limpar() {
@@ -55,85 +61,116 @@ namespace Gerenciadores {
     }
 
     bool Gerenciador_Colisao::colidiu(const Entidades::Entidade* entidade, const Entidades::Entidade* movel) {
-        if (!entidade || !movel) {cerr << "Ponteiro nulo!" << endl; return false;}
-        const float x_m = movel->getPosicao().x;
-        const float y_m = movel->getPosicao().y;
-        const float x_e = entidade->getPosicao().x;
-        const float y_e = entidade->getPosicao().y;
+        if (!entidade || !movel) return false;
+        const sf::Vector2f posE = entidade->getPosicao();
+        const sf::FloatRect tamE = entidade->getTamanho();
+        const sf::Vector2f posM = movel->getPosicao();
+        const sf::FloatRect tamM = movel->getTamanho();
 
-        const float hitbox_x_m = x_m + movel->getTamanho().x;
-        const float hitbox_y_m = y_m + movel->getTamanho().y;
-        const float hitbox_x_e = x_e + entidade->getTamanho().x;
-        const float hitbox_y_e = y_e + entidade->getTamanho().y;
-
-        return (x_m < hitbox_x_e && hitbox_x_m > x_e && y_m < hitbox_y_e && hitbox_y_m > y_e);
+        return (posE.x < posM.x + tamM.width && posE.x + tamE.width > posM.x && posE.y < posM.y + tamM.height && posE.y + tamE.height > posM.y);
     }
-
     void Gerenciador_Colisao::calculaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
         if (!entidade || !movel) return;
-        movel->setColisao(true);
-        const sf::Vector2f posP = movel->getPosicao();
-        const sf::Vector2f tamP = movel->getTamanho();
+        const sf::Vector2f posM = movel->getPosicao();
+        const sf::FloatRect tamM = movel->getTamanho();
         const sf::Vector2f posE = entidade->getPosicao();
-        const sf::Vector2f tamE = entidade->getTamanho();
+        const sf::FloatRect tamE = entidade->getTamanho();
 
-        const float centroP_x = posP.x + (tamP.x / 2.0f);
-        const float centroP_y = posP.y + (tamP.y / 2.0f);
-        const float centroE_x = posE.x + (tamE.x / 2.0f);
-        const float centroE_y = posE.y + (tamE.y / 2.0f);
+        const float centroP_x = posM.x + (tamM.width / 2.0f);
+        const float centroP_y = posM.y + (tamM.height / 2.0f);
+        const float centroE_x = posE.x + (tamE.width / 2.0f);
+        const float centroE_y = posE.y + (tamE.height / 2.0f);
 
         const float dx = centroP_x - centroE_x;
         const float dy = centroP_y - centroE_y;
 
-        const float intersecX = (tamP.x / 2.0f + tamE.x / 2.0f) - static_cast<float>(fabs(dx));
-        const float intersecY = (tamP.y / 2.0f + tamE.y / 2.0f) - static_cast<float>(fabs(dy));
+        const float intersecX = (tamM.width / 2.0f + tamE.width / 2.0f) - static_cast<float>(fabs(dx));
+        const float intersecY = (tamM.height / 2.0f + tamE.height / 2.0f) - static_cast<float>(fabs(dy));
 
         if (intersecX < intersecY) {
             if (dx > 0.0f)
-                movel->setPosicao(sf::Vector2f(posP.x + intersecX, posP.y));
+                movel->setPosicao(sf::Vector2f(posM.x + intersecX, posM.y));
             else
-                movel->setPosicao(sf::Vector2f(posP.x - intersecX, posP.y));
+                movel->setPosicao(sf::Vector2f(posM.x - intersecX, posM.y));
         }
         else {
             if (dy > 0.0f)
-                movel->setPosicao(sf::Vector2f(posP.x, posP.y + intersecY));
+                movel->setPosicao(sf::Vector2f(posM.x, posM.y + intersecY));
             else
-                movel->setPosicao(sf::Vector2f(posP.x, posP.y - intersecY));
+                movel->setPosicao(sf::Vector2f(posM.x, posM.y - intersecY));
         }
     }
 
-    bool Gerenciador_Colisao::implementarColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
-        if (!entidade || !movel) return false;
+    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade) {
+        if (!entidade) return false;
+        const sf::Vector2f posicaoAtual = entidade->getPosicao();
+        const sf::FloatRect tamanho = entidade->getTamanho();
+        const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
+        sf::Vector2f novaPosicao = posicaoAtual;
+        bool colidiuBorda = false;
+        if (novaPosicao.x < 0.0f) {
+            novaPosicao.x = 0.0f;
+            colidiuBorda = true;
+        }
+        else if (novaPosicao.x + tamanho.width > desktopMode.width) {
+            novaPosicao.x = desktopMode.width - tamanho.width;
+            colidiuBorda = true;
+        }
+        if (novaPosicao.y - tamanho.height < 0.0f) {
+            novaPosicao.y = tamanho.height;
+            colidiuBorda = true;
+        }
+        else if (novaPosicao.y  > desktopMode.height) {
+            novaPosicao.y = desktopMode.height;
+            colidiuBorda = true;
+        }
+        if (colidiuBorda) {
+            entidade->setPosicao(novaPosicao);
+            entidade->setColisao(true)
+
+
+
+
+
+
+
+
+
+
+            ;
+        }
+        return colidiuBorda;
+    }
+
+    void Gerenciador_Colisao::verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel) {
+        if (!entidade || !movel) return;
         movel->setColisao(false);
         if (colidiu(entidade, movel)) {
             calculaColisao(entidade, movel);
             movel->setColisao(true);
-            return true;
+            movel->aoColidir(entidade);
+            entidade->aoColidir(movel);
         }
-        return false;
     }
-
-    void Gerenciador_Colisao::verificaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
-        implementarColisao(entidade, movel);
-    }
-    void Gerenciador_Colisao::verificaObstaculo(Entidades::Entidade* entidade) {
+    void Gerenciador_Colisao::verificarObstaculo(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Lobstaculos, entidade);
     }
 
-    void Gerenciador_Colisao::verificaProjetil(Entidades::Entidade* entidade) {
+    void Gerenciador_Colisao::verificarProjetil(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Lprojetil, entidade);
     }
 
-    void Gerenciador_Colisao::verificaInimigo(Entidades::Entidade* entidade) {
+    void Gerenciador_Colisao::verificarInimigo(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Linimigos, entidade);
     }
-    void Gerenciador_Colisao::verificaJogador(Entidades::Entidade* entidade) {
+    void Gerenciador_Colisao::verificarJogador(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Ljogadores, entidade);
     }
     void Gerenciador_Colisao::executar(Entidades::Entidade* entidade) {
-        verificaObstaculo(entidade);
-        verificaProjetil(entidade);
-        verificaInimigo(entidade);
-        verificaJogador(entidade);
+        verificarObstaculo(entidade);
+        verificarProjetil(entidade);
+        verificarInimigo(entidade);
+        verificarJogador(entidade);
+        verificarLimitesJanela(entidade);
     }
 } // Gerenciador

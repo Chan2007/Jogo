@@ -15,7 +15,7 @@ class Inimigo_Medio:public Personagens::Inimigo{
         Inimigo_Medio();
         ~Inimigo_Medio();
         void danificar(Jogador* J);
-        void executar();
+        void atualizar();
         float getRaio(){return raio;}
         int getTamanho(){return tamanho;};
         short int getForca(){return forca;};

@@ -17,7 +17,7 @@ namespace Obstaculos {
     public:
         Obstaculo_Dificil();
         ~Obstaculo_Dificil();
-        void executar();
+        void atualizar();
         float getAltura();
         float getLargura();
         float getDano();

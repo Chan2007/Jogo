@@ -12,7 +12,12 @@ set(SFML_BINARY_DIR "${SFML_ROOT}/bin")
 
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
-add_executable(Jogo ${SOURCES})
+add_executable(Jogo ${SOURCES}
+        src/Jogo_Principal/Gerenciador/Gerenciador_Input/Gerenciador_Input.h
+        src/Jogo_Principal/Sistema/Input/Mapeador_Teclas.cpp
+        src/Jogo_Principal/Sistema/Fisica/Mediador_Gravidade.h
+        src/Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.cpp
+        src/Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h)
 
 target_include_directories(Jogo PRIVATE
         src

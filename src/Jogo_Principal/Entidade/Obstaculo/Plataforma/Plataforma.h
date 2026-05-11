@@ -14,7 +14,7 @@ namespace Obstaculos{
             public:
                 Plataforma();
                 ~Plataforma();
-                void executar();
+                void atualizar();
                 float getAltura();
                 float getLargura();
                 void setPlataforma(Jogador* J);

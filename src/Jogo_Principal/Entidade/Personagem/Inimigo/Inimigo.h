@@ -18,9 +18,15 @@ namespace Personagens {
         Inimigo();
         ~Inimigo();
         void salvarDataBuffer();
-        virtual void executar() = 0;
+        virtual void atualizar() = 0;
         virtual void salvar() = 0;
         virtual void danificar(Jogador* J) = 0;
+        // Padrão visitor
+        void aoColidir(Entidade* E) {E->interagir_Colisao(this);}
+        void interagir_Colisao(Inimigo* I);
+        void interagir_Colisao(Obstaculos::Obstaculo* O);
+        void interagir_Colisao(Entidades::Projetil* P);
+        void interagir_Colisao(Jogador* J);
     };
 }
 

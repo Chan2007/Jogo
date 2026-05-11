@@ -4,8 +4,12 @@
 
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
-#include "Observer_Jogador/Observer_Jogador.h"
+#include "Jogo_Principal/Sistema/Input/Observador_Teclas.h"
 #include "Jogo_Principal/Entidade/Personagem/Personagem.h"
+
+namespace Obstaculos {
+    class Plataforma;
+}
 
 namespace Personagens {
     class Inimigo;
@@ -13,7 +17,7 @@ namespace Personagens {
 namespace Personagens {
     class Jogador: public Personagem {
     private:
-        Observador_Jogador* observer_jogador;
+        Observador_Teclas* observer_jogador;
     protected:
         float sorte;
         float pontos;
@@ -21,10 +25,16 @@ namespace Personagens {
     public:
         Jogador();
         ~Jogador();
-        bool colidir(Personagens::Inimigo* I);
-        void executar();
+        bool colidir(Inimigo* I);
+        void atualizar();
         void salvar();
-        Observador_Jogador* get_observer_jogador();
+        Observador_Teclas* get_observer_jogador();
+        // Padrão visitor
+        void aoColidir(Entidade* E) {E->interagir_Colisao(this);}
+        void interagir_Colisao(Inimigo* I);
+        void interagir_Colisao(Obstaculos::Obstaculo* O);
+        void interagir_Colisao(Entidades::Projetil* P);
+        void interagir_Colisao(Jogador* J);
     };
 } // Personagens
 

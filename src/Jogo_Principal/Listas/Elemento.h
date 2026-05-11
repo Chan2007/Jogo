@@ -4,7 +4,7 @@
 
 #ifndef JOGO_ELEMENTO_H
 #define JOGO_ELEMENTO_H
-#include <iostream>
+
 template <class tipo>
 class Elemento {
     private:
