@@ -14,7 +14,7 @@ class Chefe: public Personagens::Inimigo {
     public:
         Chefe();
         ~Chefe();
-        void danificar(Jogador* J);
+        void danificar(Personagens::Jogador* J);
         void atualizar();
         float getRaio(){return raio;}
         int getTamanho(){return tamanho;};

@@ -7,6 +7,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <cmath>
+
 #include "Jogo_Principal/Sistema/Fisica/Mediador_Colisao.h"
 
 namespace Entidades {

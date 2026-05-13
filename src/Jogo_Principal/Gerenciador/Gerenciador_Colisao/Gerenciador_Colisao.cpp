@@ -84,8 +84,8 @@ namespace Gerenciadores {
         const float dx = centroP_x - centroE_x;
         const float dy = centroP_y - centroE_y;
 
-        const float intersecX = (tamM.width / 2.0f + tamE.width / 2.0f) - static_cast<float>(fabs(dx));
-        const float intersecY = (tamM.height / 2.0f + tamE.height / 2.0f) - static_cast<float>(fabs(dy));
+        const float intersecX = (tamM.width / 2.0f + tamE.width / 2.0f) - std::fabs(dx);
+        const float intersecY = (tamM.height / 2.0f + tamE.height / 2.0f) - std::fabs(dy);
 
         if (intersecX < intersecY) {
             if (dx > 0.0f)

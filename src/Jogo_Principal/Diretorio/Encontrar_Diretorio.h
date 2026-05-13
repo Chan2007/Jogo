@@ -16,7 +16,7 @@ class Encontrar_Diretorio {
     public:
         Encontrar_Diretorio();
         ~Encontrar_Diretorio();
-        static std::string concatenarEnderecos(const std::string &left, const std::string &right);
-        std::string acharDiretorio_Arquivo(const std::string &exampleFileDirectory);
+        static const std::string concatenarEnderecos(const std::string &left, const std::string &right);
+        const std::string acharDiretorio_Arquivo(const std::string &exampleFileDirectory);
 };
 #endif

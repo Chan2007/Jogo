@@ -14,7 +14,7 @@ class Inimigo_Dificil:public Personagens::Inimigo {
     public:
         Inimigo_Dificil();
         ~Inimigo_Dificil();
-        void danificar(Jogador* J);
+        void danificar(Personagens::Jogador* J);
         void atualizar();
         float getRaio(){return raio;}
         int getTamanho(){return tamanho;};
