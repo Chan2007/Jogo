@@ -5,6 +5,8 @@
 #ifndef JOGO_ELEMENTO_H
 #define JOGO_ELEMENTO_H
 
+#include <cstdlib>
+
 template <class tipo>
 class Elemento {
     private:

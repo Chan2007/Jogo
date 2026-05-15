@@ -6,7 +6,6 @@
 #define JOGO_FIND_DIRECTORY_H
 
 #include <string>
-#include "Jogo_Principal/Animador_Fundo/animador_fundo.h"
 
 
 class Encontrar_Diretorio {

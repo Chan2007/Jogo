@@ -17,7 +17,7 @@ namespace Obstaculos {
             void atualizar();
             float getAltura();
             float getDano();
-            void setPlataforma(Jogador* J);
+            void setPlataforma(Personagens::Jogador* J);
     };
 } // Obstaculo
 

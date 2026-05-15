@@ -17,7 +17,9 @@ add_executable(Jogo ${SOURCES}
         src/Jogo_Principal/Sistema/Input/Mapeador_Input.cpp
         src/Jogo_Principal/Sistema/Fisica/Mediador_Gravidade.h
         src/Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.cpp
-        src/Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h)
+        src/Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h
+        src/Jogo_Principal/Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.cpp
+        src/Jogo_Principal/Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h)
 
 target_include_directories(Jogo PRIVATE
         src

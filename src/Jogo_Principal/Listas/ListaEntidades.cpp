@@ -6,33 +6,34 @@
 #include "Elemento.h"
 #include "Lista.h"
 #include "Jogo_Principal/Entidade/Entidade.h"
+namespace Listas {
+    ListaEntidades::ListaEntidades() {
+        LEntidade = new Lista <Entidades::Entidade>();
+    }
 
-ListaEntidades::ListaEntidades() {
-    LEntidade = new Lista <Entidades::Entidade>();
-}
+    ListaEntidades::~ListaEntidades() {
+        LEntidade->limpar();
+        delete LEntidade;
+        LEntidade = NULL;
+    }
 
-ListaEntidades::~ListaEntidades() {
-    LEntidade->limpar();
-    delete LEntidade;
-    LEntidade = NULL;
-}
+    bool ListaEntidades::incluirEntidade(Entidades::Entidade *E)  {
+        return LEntidade->incluirInfo(E);
+    }
 
-bool ListaEntidades::incluirEntidade(Entidades::Entidade *E)  {
-    return LEntidade->incluirInfo(E);
-}
+    void ListaEntidades::limparLista() {
+        LEntidade->limpar();
+    }
 
-void ListaEntidades::limparLista() {
-    LEntidade->limpar();
-}
+    Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) {
+        return LEntidade->localizarElemento(E);
+    }
 
-Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) {
-    return LEntidade->localizarElemento(E);
-}
+    Entidades::Entidade* ListaEntidades::localizarInfo(Entidades::Entidade* E) {
+        return LEntidade->localizarInfo(E);
+    }
 
-Entidades::Entidade* ListaEntidades::localizarInfo(Entidades::Entidade* E) {
-    return LEntidade->localizarInfo(E);
-}
-
-Entidades::Entidade* ListaEntidades::localizarNome(const std::string nome) {
-    return LEntidade->localizarNome(nome);
+    Entidades::Entidade* ListaEntidades::localizarNome(const std::string nome) {
+        return LEntidade->localizarNome(nome);
+    }
 }

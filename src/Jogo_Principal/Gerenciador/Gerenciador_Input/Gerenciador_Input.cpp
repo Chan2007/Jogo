@@ -11,7 +11,7 @@ namespace Gerenciadores {
 namespace Gerenciadores {
     void Gerenciador_Input::notificarObservadores(const sf::Event& evento) const {
         if (evento.type == sf::Event::KeyPressed) {
-            std::string acao = mapeador.getAcaoTecla(evento.key.code);
+            std::string acao = mapeador.getAcao(evento.key.code);
             if (!acao.empty()) {
                 Tecla e;
                 e.acao = acao;
@@ -19,6 +19,9 @@ namespace Gerenciadores {
                 for (int i = 0; i < static_cast<int>(observadores.size()); i++) observadores[i]->aoApertarTecla(e);
             }
         }
+
+        else if (evento.type == sf::Event::MouseButtonPressed) {}
+        else if (evento.type == sf::Event::JoystickButtonPressed) {}
     }
 
 } // Sistema

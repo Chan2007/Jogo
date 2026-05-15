@@ -3,7 +3,7 @@
 //
 
 #include "Gerenciador_Gravidade.h"
-
+#include <cmath>
 #include "Jogo_Principal/Entidade/Entidade.h"
 #include "Jogo_Principal/Entidade/Personagem/Personagem.h"
 #include "Jogo_Principal/Entidade/Projetil/Projetil.h"
@@ -115,7 +115,7 @@ namespace Gerenciadores {
             sf::Vector2f vel = Personagem->getVelocidade();
             vel.x *= atrito;
             // Se a velocidade em módulo por pequena demais, zera ela
-            if (fabs(vel.x) < 1.0f) vel.x = 0.0f;
+            if (std::fabs(vel.x) < 1.0f) vel.x = 0.0f;
             Personagem->setVelocidade(vel);
         }
         if (Projetil) {
