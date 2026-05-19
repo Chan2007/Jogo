@@ -41,6 +41,9 @@ private:
 
 public:
     explicit Animador_Fundo(Gerenciador_Textura* gerenciadorTextura);
+
+    Animador_Fundo();
+
     ~Animador_Fundo();
 
     bool loadFrames(const std::string& pathPrefix, int numFrames = 376, int startIndex = 1,
