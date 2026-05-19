@@ -17,7 +17,15 @@ int main() {
     const int intercalarFrames = 1;
 
     const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
-    sf::RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Default);
+    sf::RenderWindow window(
+        sf::VideoMode(desktopMode.width, desktopMode.height),
+        "Jogo LoL",
+        sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close
+    );
+    window.setPosition(sf::Vector2i(0, 0));
+    window.setView(sf::View(sf::FloatRect(0.f, 0.f,
+        static_cast<float>(window.getSize().x),
+        static_cast<float>(window.getSize().y))));
     window.setFramerateLimit(60);
 
     Gerenciador_Textura gerenciadorTextura;
@@ -68,6 +76,9 @@ int main() {
                 window.close();
             else if (event.type == sf::Event::Resized) {
                 const sf::Vector2u novoTamanho(event.size.width, event.size.height);
+                window.setView(sf::View(sf::FloatRect(0.f, 0.f,
+                    static_cast<float>(novoTamanho.x),
+                    static_cast<float>(novoTamanho.y))));
                 bgAnimation.setTargetSize(novoTamanho);
                 bgAnimation.setPosicao(sf::Vector2f(0.f, 0.f));
             }
