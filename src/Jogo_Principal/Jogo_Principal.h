@@ -11,9 +11,12 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include "Jogo_Principal/Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
+#include "Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Diretorio/Encontrar_Diretorio.h"
 #include "Animador_Fundo/animador_fundo.h"
 #include "Audio/Audio.h"
+#include "Entidade/Personagem/Jogador/Jogador.h"
 
 
 class Jogo_Principal {
@@ -24,6 +27,9 @@ private:
     int Frames;
     const sf::VideoMode desktopMode;
     sf::RenderWindow window;
+    sf::Clock relogio_fisica;
+    Gerenciadores::Gerenciador_Gravidade gerenciador_grav;
+    Gerenciador_Textura gerenciador_txt;
     Animador_Fundo bgAnimation;
     Encontrar_Diretorio diretorio;
     const std::string diretorio_Frame;
@@ -31,24 +37,18 @@ private:
     const std::string diretorio_Audio;
     const std::string diretorio_Musica;
     sf::Event event;
-    sf::RectangleShape player;
+    Personagens::Jogador jogador;
 
 public:
-    Jogo_Principal() :
-    totalFrames(376), max_intercalarFrames(5),
-    intercalarFrames(0), Frames(0), desktopMode(sf::VideoMode::getDesktopMode()),
-    window(desktopMode, "Jogo LoL", sf::Style::Default), bgAnimation(), diretorio(),
-    diretorio_Frame(diretorio.acharDiretorio_Arquivo("assets/bg_frames/")), bgMusic(),
-    diretorio_Audio(diretorio.acharDiretorio_Arquivo("assets/bg_audios/bg_music")),
-    diretorio_Musica(), event(), player(sf::Vector2f(40.0f, 40.0f))
-    {}
-    ~Jogo_Principal() {}
+    Jogo_Principal();
+    ~Jogo_Principal();
     int checarIntercalo(const int totalFrames, int step, const int frames);
     void executar();
     void Renderiza_Background();
     void Renderiza_Audio();
+    void Inicializa_Jogador();
     void exibicao();
 };
 
 
-#endif //JOGO_JOGO_PRINCIPAL_H
+#endif //JOGO_JOGO_PRINCIPAL_H;

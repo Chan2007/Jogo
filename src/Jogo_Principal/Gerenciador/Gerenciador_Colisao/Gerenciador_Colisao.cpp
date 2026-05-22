@@ -3,7 +3,7 @@
 //
 
 #include "Gerenciador_Colisao.h"
-
+#include "Jogo_Principal/Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Jogo_Principal/Entidade/Entidade.h"
 #include "Jogo_Principal/Entidade/Obstaculo/Obstaculo.h"
 #include "Jogo_Principal/Entidade/Personagem/Jogador/Jogador.h"
@@ -101,49 +101,57 @@ namespace Gerenciadores {
         }
     }
 
-    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade) {
+    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade) {
         if (!entidade) return false;
+
         const sf::Vector2f posicaoAtual = entidade->getPosicao();
         const sf::FloatRect tamanho = entidade->getTamanho();
         const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
         sf::Vector2f novaPosicao = posicaoAtual;
         bool colidiuBorda = false;
-        if (novaPosicao.x < 0.0f) {
-            novaPosicao.x = 0.0f;
+
+        // Como a origem do sprite está no centro, precisamos trabalhar com as metades
+        float metadeLargura = tamanho.width / 2.0f;
+        float metadeAltura = tamanho.height / 2.0f;
+
+        if (novaPosicao.x - metadeLargura < 0.0f) {
+            novaPosicao.x = metadeLargura;
             colidiuBorda = true;
         }
-        else if (novaPosicao.x + tamanho.width > desktopMode.width) {
-            novaPosicao.x = desktopMode.width - tamanho.width;
+        else if (novaPosicao.x + metadeLargura > desktopMode.width) {
+            novaPosicao.x = desktopMode.width - metadeLargura;
             colidiuBorda = true;
         }
-        if (novaPosicao.y - tamanho.height < 0.0f) {
-            novaPosicao.y = tamanho.height;
+
+        if (novaPosicao.y - metadeAltura < 0.0f) {
+            novaPosicao.y = metadeAltura; // Mantém o topo do sprite colado no Y = 0
             colidiuBorda = true;
         }
-        else if (novaPosicao.y  > desktopMode.height) {
-            novaPosicao.y = desktopMode.height;
+
+        else if (novaPosicao.y + metadeAltura > desktopMode.height) {
+            novaPosicao.y = desktopMode.height - metadeAltura; // Mantém os pés no chão da tela
             colidiuBorda = true;
+
+            // SEGREDO DO PULO: Se passamos o gerenciador de gravidade, avisamos ele!
+            if (pGravidade) {
+                // Enviamos uma normal vertical para cima (0, -1). 
+                // Como -1.0f é menor que -0.5f, o seu gerenciador vai aceitar como um chão legítimo!
+                pGravidade->aoTocarChao(entidade, sf::Vector2f(0.0f, -1.0f));
+            }
         }
+
         if (colidiuBorda) {
             entidade->setPosicao(novaPosicao);
-            entidade->setColisao(true)
-
-
-
-
-
-
-
-
-
-
-            ;
+            entidade->setColisao(true);
         }
         return colidiuBorda;
     }
 
     void Gerenciador_Colisao::verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel) {
         if (!entidade || !movel) return;
+
+        if (entidade == movel) return;
+
         movel->setColisao(false);
         if (colidiu(entidade, movel)) {
             calculaColisao(entidade, movel);
@@ -166,11 +174,11 @@ namespace Gerenciadores {
     void Gerenciador_Colisao::verificarJogador(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Ljogadores, entidade);
     }
-    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade) {
+    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade) {
         verificarObstaculo(entidade);
         verificarProjetil(entidade);
         verificarInimigo(entidade);
         verificarJogador(entidade);
-        verificarLimitesJanela(entidade);
+        verificarLimitesJanela(entidade, pGravidade);
     }
 } // Gerenciador

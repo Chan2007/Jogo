@@ -4,7 +4,14 @@
 
 #include "Jogo_Principal.h"
 
-Jogo_Principal::Jogo_Principal() {
+Jogo_Principal::Jogo_Principal() :
+    totalFrames(376), max_intercalarFrames(5),
+    intercalarFrames(0), Frames(0), desktopMode(sf::VideoMode::getDesktopMode()),
+    window(desktopMode, "Jogo LoL", sf::Style::Default), gerenciador_txt(), bgAnimation(&gerenciador_txt), diretorio(),
+    diretorio_Frame(diretorio.acharDiretorio_Arquivo("assets/bg_frames/")), bgMusic(),
+    diretorio_Audio(diretorio.acharDiretorio_Arquivo("assets/bg_audios/bg_music")),
+    diretorio_Musica(), event(), jogador()
+{
     while (true) {
         std::cout << "Quantos frames intercalar: " << "(maximo recomendado: " << max_intercalarFrames << ")" << std::endl;
         // Obs.: Se intercalarFrames for muito grande, a qualidade do cenário irá cair.
@@ -26,6 +33,8 @@ Jogo_Principal::Jogo_Principal() {
 	executar();
 }
 
+Jogo_Principal::~Jogo_Principal(){}
+
 int Jogo_Principal::checarIntercalo(const int totalFrames, int step, const int frames) {
 	const int min_step = ceil(static_cast<double>(totalFrames) / frames);
 	return (step > min_step ? step : min_step);
@@ -34,10 +43,10 @@ int Jogo_Principal::checarIntercalo(const int totalFrames, int step, const int f
 void Jogo_Principal::executar() {
     Renderiza_Background();
     Renderiza_Audio();
+    Inicializa_Jogador();
     exibicao();
 
 }
-
 
 void Jogo_Principal::Renderiza_Background() {
     window.setFramerateLimit(60);
@@ -71,9 +80,33 @@ void Jogo_Principal::Renderiza_Audio() {
     else { std::cerr << "Não foi possível localizar a pasta de áudio. A música de fundo não será reproduzida." << std::endl; }
 }
 
+void Jogo_Principal::Inicializa_Jogador() {
+    int opcao = 0;
+    std::cout << "Escolha seu Campeao:\n0 - Naafiri\n1 - Yasuo\nDigite o numero: ";
+    std::cin >> opcao;
+
+    // Converte o inteiro para o tipo do Enum (C++03 exige o static_cast explícito)
+    Personagens::EscolhaCampeao escolhaDoPlayer = static_cast<Personagens::EscolhaCampeao>(opcao);
+
+    // Instancia o jogador passando a escolha dinâmica!
+    jogador.setCampeao(escolhaDoPlayer);
+
+    gerenciador_grav.aplicarGravidade(&jogador, true);
+    Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(&jogador);
+
+    jogador.setGerenciadorGravidade(&gerenciador_grav);
+}
+
+
 void Jogo_Principal::exibicao() {
+
+    jogador.setPosicao(sf::Vector2f(100.f, 50.f));
+
     while (window.isOpen()) {
+        float dt = relogio_fisica.restart().asSeconds();
+
         sf::Event event;
+
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
@@ -82,9 +115,14 @@ void Jogo_Principal::exibicao() {
 
         window.clear();
         bgAnimation.update();
+        jogador.atualizar();
+
+        gerenciador_grav.executar(dt);
+        Gerenciadores::Gerenciador_Colisao::getInstancia().executar(&jogador, &gerenciador_grav);
+
         bgAnimation.draw(window);
-        player.setFillColor(sf::Color::Green);
-        player.setPosition(100.f, 50.f);
+        jogador.desenhar(window);
+
         window.display();
     }
 }

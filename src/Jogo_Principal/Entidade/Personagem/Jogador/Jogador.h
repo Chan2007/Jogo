@@ -5,8 +5,13 @@
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
 
+#include <iostream>
 #include "Jogo_Principal/Sistema/Input/Observador_Input.h"
 #include "Jogo_Principal/Entidade/Personagem/Personagem.h"
+
+namespace Gerenciadores {
+    class Gerenciador_Gravidade;
+}
 
 namespace Obstaculos {
     class Plataforma;
@@ -14,11 +19,25 @@ namespace Obstaculos {
 
 namespace Personagens {
     class Inimigo;
+    
+    enum EscolhaCampeao {
+        CAMPEAO_NAAFIRI = 0,
+        CAMPEAO_JHIN,
+        CAMPEAO_LUX,
+        CAMPEAO_EVELYNN,
+        CAMPEAO_GWEN,
+        CAMPEAO_PYKE,
+        CAMPEAO_SETT,
+        CAMPEAO_SHACO,
+        CAMPEAO_VIEGO
+    };
 
     class Jogador: public Personagem {
     private:
         Gerenciadores::Observador_Input* observer_jogador;
+        Gerenciadores::Gerenciador_Gravidade* pGravidade;
     protected:
+        std::string caminhoArquivoSprite;
         float sorte;
         float pontos;
         float escudo;
@@ -32,10 +51,12 @@ namespace Personagens {
     public:
         Jogador();
         ~Jogador();
+        void setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g);
         bool colidir(Inimigo* I);
         void atualizar();
         void salvar();
         void mover();
+        void setCampeao(EscolhaCampeao campeao);
         void desenhar(sf::RenderWindow& window);
         Gerenciadores::Observador_Input* get_observer_jogador();
         float getSorte() const {return sorte;}

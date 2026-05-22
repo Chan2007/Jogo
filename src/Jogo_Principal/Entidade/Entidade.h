@@ -15,6 +15,7 @@ namespace Obstaculos {
 namespace Personagens {
     class Inimigo;
     class Jogador;
+    enum EscolhaCampeao;
 }
 
 namespace Gerenciadores {

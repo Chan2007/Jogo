@@ -9,6 +9,14 @@ namespace Personagens {
         Entidades::Entidade("Personagem", 0),
         velocidade(0.0f, 0.0f),
         aceleracao(0.0f, 0.0f),
+
+        tempoPorFrame(0.12f),
+        frameAcumulado(0.0f),
+        indexFrameAtual(0),
+        totalFramesAnimacao(8),
+        frameWidth(32),
+        frameHeight(32),
+
         vida(100),
         vidaMaxima(100),
         mana(100),
@@ -17,7 +25,7 @@ namespace Personagens {
         armadura(10),
         resistenciaMagica(10),
         alcanceAtaque(125),
-        velocidadeMovimento(340),
+        velocidadeMovimento(0.01f),
         chanceCritica(0),
         vampirismo(0.0f),
         regeneracaoVida(2.0f),
@@ -27,6 +35,11 @@ namespace Personagens {
     }
 
     Personagem::~Personagem() {}
+
+    void Personagem::desenhar(sf::RenderWindow& window) {
+        getCorpo().setPosition(getPosicao());
+        window.draw(getCorpo());
+    }
 
     void Personagem::salvarDataBuffer() {
         Entidades::Entidade::salvarDataBuffer();
