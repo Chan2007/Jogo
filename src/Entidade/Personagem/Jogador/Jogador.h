@@ -5,8 +5,14 @@
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
 
+#include <iostream>
 #include "Sistema/Input/Observador_Input.h"
 #include "Entidade/Personagem/Personagem.h"
+
+namespace Gerenciadores {
+    class Observador_Input;
+    class Gerenciador_Gravidade;
+}
 
 namespace Obstaculos {
     class Plataforma;
@@ -15,10 +21,24 @@ namespace Obstaculos {
 namespace Personagens {
     class Inimigo;
 
+    enum EscolhaCampeao {
+        CAMPEAO_NAAFIRI = 0,
+        CAMPEAO_JHIN,
+        CAMPEAO_LUX,
+        CAMPEAO_EVELYNN,
+        CAMPEAO_GWEN,
+        CAMPEAO_PYKE,
+        CAMPEAO_SETT,
+        CAMPEAO_SHACO,
+        CAMPEAO_VIEGO
+    };
+
     class Jogador: public Personagem {
     private:
         Gerenciadores::Observador_Input* observer_jogador;
+        Gerenciadores::Gerenciador_Gravidade* pGravidade;
     protected:
+        std::string caminhoArquivoSprite;
         float sorte;
         float pontos;
         float escudo;
@@ -32,10 +52,12 @@ namespace Personagens {
     public:
         Jogador();
         ~Jogador();
+        void setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g);
         bool colidir(Inimigo* I);
         void atualizar();
         void salvar();
         void mover();
+        void setCampeao(EscolhaCampeao campeao);
         void desenhar(sf::RenderWindow& window);
         Gerenciadores::Observador_Input* get_observer_jogador();
         float getSorte() const {return sorte;}
@@ -60,7 +82,7 @@ namespace Personagens {
         bool podeUsarUltimate() const;
         bool consumirCargaUltimate();
         int absorverDano(int dano);
-        void aoColidir(Entidades::Entidade* E) {E->interagir_Colisao(this);}
+        void aoColidir(Entidade* E) {E->interagir_Colisao(this);}
         void interagir_Colisao(Inimigo* I);
         void interagir_Colisao(Obstaculos::Obstaculo* O);
         void interagir_Colisao(Entidades::Projetil* P);

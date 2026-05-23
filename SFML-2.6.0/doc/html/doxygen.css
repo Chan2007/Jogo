@@ -41,7 +41,7 @@ p.startli, p.startdd, p.starttd {
 }
 
 p.endli {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 p.enddd {
@@ -163,8 +163,8 @@ div.line {
     word-wrap: break-word;      /* IE 5.5+ */
     text-indent: -53px;
     padding-left: 53px;
-    padding-bottom: 0px;
-    margin: 0px;
+    padding-bottom: 0;
+    margin: 0;
     line-height: normal;
 }
 
@@ -211,7 +211,7 @@ td.indexkey {
     background-color: #EBEFF6;
     font-weight: bold;
     border: 1px solid #C4CFE5;
-    margin: 2px 0px 2px 0;
+    margin: 2px 0 2px 0;
     padding: 2px 10px;
     white-space: nowrap;
     vertical-align: top;
@@ -221,7 +221,7 @@ td.indexvalue {
     background-color: #EBEFF6;
     border: 1px solid #C4CFE5;
     padding: 2px 10px;
-    margin: 2px 0px;
+    margin: 2px 0;
 }
 
 tr.memlist {
@@ -242,13 +242,13 @@ img.formulaInl {
 
 div.center {
     text-align: center;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    padding: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
 }
 
 div.center img {
-    border: 0px;
+    border: 0;
 }
 
 address.footer {
@@ -257,7 +257,7 @@ address.footer {
 }
 
 img.footer {
-    border: 0px;
+    border: 0;
     vertical-align: middle;
 }
 
@@ -333,7 +333,7 @@ th.dirtab {
 
 hr {
     display: none;
-    height: 0px;
+    height: 0;
     border: none;
     border-top: 1px solid #4A6AAA;
 }
@@ -345,8 +345,8 @@ hr.footer {
 /* @group Member Descriptions */
 
 table.memberdecls {
-    border-spacing: 0px;
-    padding: 0px;
+    border-spacing: 0;
+    padding: 0;
 }
 
 .memberdecls td, .fieldtable tr {
@@ -377,15 +377,15 @@ table.memberdecls {
 }
 
 .mdescLeft, .mdescRight {
-    padding: 0px 8px 4px 8px;
+    padding: 0 8px 4px 8px;
     color: #555;
 }
 
 .memSeparator {
     border-bottom: 1px solid #DEE4F0;
     line-height: 1px;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 .memItemLeft, .memTemplItemLeft {
@@ -453,10 +453,10 @@ table.memberdecls {
     border-top: 1px solid #A8B8D9;
     border-left: 1px solid #A8B8D9;
     border-right: 1px solid #A8B8D9;
-    padding: 6px 0px 6px 0px;
+    padding: 6px 0 6px 0;
     color: #000;
     font-weight: bold;
-    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
     background-color: #eee;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
@@ -485,7 +485,7 @@ dl.reflist dt {
 }
 
 dl.reflist dd {
-    margin: 0px 0px 10px 0px;
+    margin: 0 0 10px 0;
     padding: 5px;
 }
 
@@ -509,8 +509,8 @@ dl.reflist dd {
 }
 
 .params, .retval, .exception, .tparams {
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .params .paramname, .retval .paramname {
@@ -529,17 +529,17 @@ dl.reflist dd {
 }
 
 table.mlabels {
-    border-spacing: 0px;
+    border-spacing: 0;
 }
 
 td.mlabels-left {
     width: 100%;
-    padding: 0px;
+    padding: 0;
 }
 
 td.mlabels-right {
     vertical-align: bottom;
-    padding: 0px;
+    padding: 0;
     white-space: nowrap;
 }
 
@@ -570,7 +570,7 @@ span.mlabel {
 /* these are for tree view when not used as main index */
 
 div.directory {
-    margin: 10px 0px;
+    margin: 10px 0;
     border-top: 1px solid #bbb;
     width: 100%;
 }
@@ -580,8 +580,8 @@ div.directory {
 }
 
 .directory td {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     vertical-align: top;
 }
 
@@ -675,7 +675,7 @@ table.fieldtable {
     width: 100%;
     margin-bottom: 10px;
     border: 1px solid #A8B8D9;
-    border-spacing: 0px;
+    border-spacing: 0;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
@@ -719,7 +719,7 @@ table.fieldtable {
 
 
 .tabsearch {
-    top: 0px;
+    top: 0;
     left: 10px;
     height: 36px;
     z-index: 101;
@@ -738,8 +738,8 @@ table.fieldtable {
     color:#8AA0CC;
     border:solid 1px #C2CDE4;
     overflow:hidden;
-    margin:0px;
-    padding:0px;
+    margin:0;
+    padding:0;
 }
 
 .navpath li {
@@ -757,7 +757,7 @@ table.fieldtable {
     outline: none;
     color: #283A5D;
     font-family: 'Lucida Grande',Geneva,Helvetica,Arial,sans-serif;
-    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
     text-decoration: none;
 }
 
@@ -816,8 +816,8 @@ dl {
 
 /* dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug */
 dl.section {
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 dl.note {
@@ -881,30 +881,30 @@ dl.section dd {
 }
 
 #projectlogo img {
-    border: 0px none;
+    border: 0 none;
 }
 
 #projectname {
     font: 300% Tahoma, Arial,sans-serif;
-    margin: 0px;
-    padding: 2px 0px;
+    margin: 0;
+    padding: 2px 0;
 }
 
 #projectbrief {
     font: 120% Tahoma, Arial,sans-serif;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 #projectnumber {
     font: 50% Tahoma, Arial,sans-serif;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 #titlearea {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     width: 100%;
     border-bottom: 1px solid #5373B4;
 }
@@ -974,11 +974,11 @@ div.toc h3 {
 div.toc ul {
     list-style: none outside none;
     border: medium none;
-    padding: 0px;
+    padding: 0;
 }
 
 div.toc li.level1 {
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 div.toc li.level2 {
@@ -1006,7 +1006,7 @@ div.toc li.level4 {
 }
 
 .inherit_header td {
-    padding: 6px 0px 2px 5px;
+    padding: 6px 0 2px 5px;
 }
 
 .inherit {
@@ -1255,7 +1255,7 @@ div.contents ul li {
     height: 18px;
     margin-bottom: 4px;
     background-image:url('folderopen.png');
-    background-position: 0px -4px;
+    background-position: 0 -4px;
     background-repeat: repeat-y;
     vertical-align:top;
     display: inline-block;
@@ -1266,7 +1266,7 @@ div.contents ul li {
     height: 18px;
     margin-bottom: 4px;
     background-image:url('folderclosed.png');
-    background-position: 0px -4px;
+    background-position: 0 -4px;
     background-repeat: repeat-y;
     vertical-align:top;
     display: inline-block;
@@ -1277,7 +1277,7 @@ div.contents ul li {
     height: 18px;
     margin-bottom: 4px;
     background-image:url('doc.png');
-    background-position: 0px -4px;
+    background-position: 0 -4px;
     background-repeat: repeat-y;
     vertical-align:top;
     display: inline-block;
@@ -1324,15 +1324,15 @@ div.contents ul li {
 }
 
 #powerTip div {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     font: 12px/16px Roboto,sans-serif;
 }
 
 #powerTip:before, #powerTip:after {
     content: "";
     position: absolute;
-    margin: 0px;
+    margin: 0;
 }
 
 #powerTip.n:after,  #powerTip.n:before,
@@ -1373,12 +1373,12 @@ div.contents ul li {
 #powerTip.n:after, #powerTip.ne:after, #powerTip.nw:after {
     border-top-color: #ffffff;
     border-width: 10px;
-    margin: 0px -10px;
+    margin: 0 -10px;
 }
 #powerTip.n:before {
     border-top-color: #808080;
     border-width: 11px;
-    margin: 0px -11px;
+    margin: 0 -11px;
 }
 #powerTip.n:after, #powerTip.n:before {
     left: 50%;
@@ -1401,13 +1401,13 @@ div.contents ul li {
 #powerTip.s:after, #powerTip.se:after, #powerTip.sw:after {
     border-bottom-color: #ffffff;
     border-width: 10px;
-    margin: 0px -10px;
+    margin: 0 -10px;
 }
 
 #powerTip.s:before, #powerTip.se:before, #powerTip.sw:before {
     border-bottom-color: #808080;
     border-width: 11px;
-    margin: 0px -11px;
+    margin: 0 -11px;
 }
 
 #powerTip.s:after, #powerTip.s:before {

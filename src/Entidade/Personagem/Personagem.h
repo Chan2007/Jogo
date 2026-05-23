@@ -6,6 +6,7 @@
 #define JOGO_PERSONAGEM_H
 
 #include "Entidade/Entidade.h"
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
 namespace Entidades {
     class Entidade;
@@ -25,6 +26,16 @@ namespace Personagens {
             sf::Vector2f velocidade;
             sf::Vector2f aceleracao;
         protected:
+            sf::IntRect rectAtual;
+            sf::Clock clockAnimacao;
+            float tempoPorFrame;
+            float frameAcumulado;
+            int indexFrameAtual;
+            int totalFramesAnimacao;
+            int colunasSpritesheet;
+            int frameWidth;
+            int frameHeight;
+
             int vida;
             int vidaMaxima;
             int mana;
@@ -33,7 +44,7 @@ namespace Personagens {
             int armadura;
             int resistenciaMagica;
             int alcanceAtaque;
-            int velocidadeMovimento;
+            float velocidadeMovimento;
             int chanceCritica;
             float vampirismo;
             float regeneracaoVida;
@@ -87,6 +98,7 @@ namespace Personagens {
             void regenerarAtributos(float deltaTempo);
             void moverHorizontal(float direcao);
             void resetarCombate();
+            virtual void desenhar(sf::RenderWindow& window);
             virtual void salvarDataBuffer();
             virtual void atualizar() = 0;
             virtual void salvar() = 0;
