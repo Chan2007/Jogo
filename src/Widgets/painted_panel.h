@@ -1,0 +1,17 @@
+#ifndef PAINTED_PANEL_H
+#define PAINTED_PANEL_H
+
+#include <QFrame>
+
+class PaintedPanel : public QFrame
+{
+    Q_OBJECT
+
+public:
+    explicit PaintedPanel(QWidget *parent = 0);
+
+protected:
+    virtual void paintEvent(QPaintEvent *event);
+};
+
+#endif // PAINTED_PANEL_H
