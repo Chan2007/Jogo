@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent)
     , efeitoDestinoTransicao(0)
 {
     ui->setupUi(this);
+
+    // Obtém o BackgroundWidget que foi promovido no .ui
+    backgroundWidget = ui->backgroundWidget;
+
     configurarTelaPrincipal();
     configurarTelaConfiguracao();
     telas.setContainer(ui->stackedWidget);
@@ -34,9 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->setAttribute(Qt::WA_TranslucentBackground);
     ui->stackedWidget->setAttribute(Qt::WA_NoSystemBackground);
     ui->stackedWidget->setAutoFillBackground(false);
-    ui->stackedWidget->setAttribute(Qt::WA_TranslucentBackground);
-    ui->stackedWidget->setAttribute(Qt::WA_NoSystemBackground);
-    ui->stackedWidget->setAutoFillBackground(false);
     ui->mainPage->setAttribute(Qt::WA_TranslucentBackground);
     ui->mainPage->setAutoFillBackground(false);
     ui->settingsPage->setAttribute(Qt::WA_TranslucentBackground);
@@ -46,13 +47,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     aplicarEfeitosVisuais();
 
-    backgroundWidget = new BackgroundWidget(ui->centralwidget);
-    backgroundWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
-    backgroundWidget->setFocusPolicy(Qt::NoFocus);
-    backgroundWidget->show();
-    backgroundWidget->stackUnder(ui->stackedWidget);
+    // Configura o BackgroundWidget promovido
+    if (backgroundWidget) {
+        backgroundWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
+        backgroundWidget->setFocusPolicy(Qt::NoFocus);
+        backgroundWidget->setAutoFillBackground(false);
+        backgroundWidget->lower();
+    }
+
     ui->stackedWidget->raise();
-    ajustarFundo();
+    ui->centralwidget->raise();
 
     connect(&gameTimer, SIGNAL(timeout()), this, SLOT(atualizarJogo()));
 
@@ -72,7 +76,6 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
-    ajustarFundo();
 
     // Garante que settingsPage ocupe a tela inteira quando visível
     if (ui && ui->settingsPage && telas.currentScreen() == ui->settingsPage) {
@@ -82,10 +85,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::ajustarFundo()
 {
-    if (!backgroundWidget || !ui || !ui->centralwidget)
-        return;
-
-    backgroundWidget->setGeometry(ui->centralwidget->rect());
+    // BackgroundWidget agora é um widget promovido no .ui que ocupa toda a área
+    // Não é mais necessário ajustar manualmente sua geometria
 }
 
 void MainWindow::aplicarEfeitosVisuais()
@@ -152,10 +153,9 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
     if (!origem || !destino || origem == destino)
         return;
 
-    // Garante que BackgroundWidget está sempre visível
+    // BackgroundWidget já está no fundo com lower() chamado no construtor
     if (backgroundWidget) {
         backgroundWidget->show();
-        backgroundWidget->raise();
         backgroundWidget->update();
     }
 
@@ -164,7 +164,7 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
     else
         telas.popScreen();
 
-    // Garante que contentLayout está acima do BackgroundWidget
+    // Garante que stackedWidget está acima do BackgroundWidget
     if (ui && ui->stackedWidget) {
         ui->stackedWidget->raise();
     }
@@ -187,10 +187,6 @@ void MainWindow::atualizarJogo()
         gameTimer.stop();
         jogoInicializado = false;
         showNormal();
-        if (backgroundWidget) {
-            backgroundWidget->show();
-            backgroundWidget->update();
-        }
         raise();
         activateWindow();
         ui->statusLabel->setText("A janela do jogo foi fechada.");
@@ -223,11 +219,6 @@ void MainWindow::on_startButton_clicked()
 
 void MainWindow::on_settingsButton_clicked()
 {
-    // Garante que BackgroundWidget está visível
-    if (backgroundWidget) {
-        backgroundWidget->show();
-        backgroundWidget->update();
-    }
 
     animarTransicaoTela(ui->mainPage, ui->settingsPage, true);
     ui->statusLabel->setText("Configuracoes abertas.");
@@ -235,11 +226,6 @@ void MainWindow::on_settingsButton_clicked()
 
 void MainWindow::on_backButton_clicked()
 {
-    // Garante que BackgroundWidget está visível
-    if (backgroundWidget) {
-        backgroundWidget->show();
-        backgroundWidget->update();
-    }
 
     animarTransicaoTela(ui->settingsPage, ui->mainPage, false);
     ui->statusLabel->setText("Menu principal.");

@@ -1,5 +1,5 @@
 QMainWindow {
-    background-color: #06090f;
+    background-color: transparent;
 }
 
 QMenuBar,
@@ -9,157 +9,138 @@ QStatusBar {
     border: 0;
 }
 
-#centralwidget,
-#contentLayoutWidget,
-#stackedWidget,
-#mainPage,
-#settingsPage,
+#centralwidget {
+    background: transparent;
+}
+
+/* stackedWidget deve ser transparente para o BackgroundWidget
+   aparecer através dele, mas as páginas têm fundos próprios */
+#stackedWidget {
+    background: transparent;
+}
+
+/* MENU PRINCIPAL - Fundo Escuro com Transparência */
+#mainPage {
+    background: transparent;
+}
+
+/* TELA DE CONFIGURAÇÕES - Fundo Azul Escuro (Contraste Forte) */
+#settingsPage {
+    background-color: #1a2d4d;
+    border: 3px solid #00ff00;
+}
+
 #mainMenuPanel {
     background: transparent;
 }
 
 #topBarLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(190, 208, 230, 110);
+    color: #00ff00;
     font-size: 11px;
+    font-weight: bold;
 }
 
 #heroTitleLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(238, 246, 255, 235);
+    color: #ffffff;
     font-size: 56px;
-    font-weight: 400;
+    font-weight: bold;
 }
 
 #heroSubtitleLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(190, 215, 235, 160);
+    color: #ffff00;
     font-size: 14px;
+    font-weight: bold;
 }
 
 #statusLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(170, 195, 220, 130);
+    color: #00ffff;
     font-size: 11px;
     padding-top: 8px;
+    font-weight: bold;
 }
 
 #mainMenuPanel QPushButton {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
     font-size: 18px;
-    color: rgba(220, 236, 252, 220);
-    background: transparent;
-    border: 0;
-    border-left: 2px solid transparent;
+    color: #ffffff;
+    background-color: #003300;
+    border: 2px solid #00ff00;
+    border-left: 4px solid #00ff00;
     padding: 10px 0 10px 18px;
     text-align: left;
     min-width: 280px;
     max-width: 360px;
+    font-weight: bold;
 }
 
 #mainMenuPanel QPushButton:hover {
-    color: rgba(245, 252, 255, 255);
-    background: qlineargradient(
-        x1: 0, y1: 0.5,
-        x2: 1, y2: 0.5,
-        stop: 0.00 rgba(140, 200, 255, 55),
-        stop: 0.20 rgba(120, 185, 245, 38),
-        stop: 0.55 rgba(100, 170, 235, 15),
-        stop: 1.00 rgba(80, 150, 220, 0)
-    );
-    border-left: 2px solid rgba(180, 225, 255, 180);
+    color: #000000;
+    background-color: #00ff00;
+    border: 2px solid #ffff00;
+    border-left: 4px solid #ffff00;
     padding-left: 26px;
+    font-weight: bold;
 }
 
 #mainMenuPanel QPushButton:pressed {
-    color: rgba(255, 255, 255, 255);
-    background: qlineargradient(
-        x1: 0, y1: 0.5,
-        x2: 1, y2: 0.5,
-        stop: 0.00 rgba(160, 215, 255, 75),
-        stop: 0.30 rgba(130, 195, 250, 30),
-        stop: 1.00 rgba(100, 170, 240, 0)
-    );
-    border-left: 2px solid rgba(210, 240, 255, 220);
+    color: #000000;
+    background-color: #ffff00;
+    border: 2px solid #ff0000;
+    border-left: 4px solid #ff0000;
     padding-left: 30px;
+    font-weight: bold;
 }
 
 /* ═══════════════════════════════════════════════════════
-   TELA DE CONFIGURAÇÕES — Ender Lilies
-   Painel central com fundo escuro, moldura dupla fina,
-   atmosfera monástica/austeras como o UI do jogo.
+   TELA DE CONFIGURAÇÕES
+   Fundo azul escuro com bordas verde limão para contraste
    ═══════════════════════════════════════════════════════ */
 
-/* A settingsPage recebe um véu escuro próprio para
-   diferenciar visualmente do menu e criar profundidade */
-#settingsPage {
-    background: qlineargradient(
-        x1: 0, y1: 0,
-        x2: 0, y2: 1,
-        stop: 0.00 rgba(4,  7, 14, 255),
-        stop: 0.45 rgba(8, 13, 22, 255),
-        stop: 1.00 rgba(4,  7, 14, 255)
-    );
-}
-
-/* Painel central — caixa austeram estilo Ender Lilies:
-   fundo quase preto com leve tint azulado,
-   borda externa discreta + pseudo-moldura interna via padding e
-   segundo border simulado com outline */
 #settingsPanel {
-    background-color: rgba(10, 15, 26, 235);
-
-    /* moldura externa */
-    border: 1px solid rgba(155, 180, 210, 65);
-
-    /* sem arredondamento — austero como Ender Lilies */
+    background-color: #FF00F4;
+    border: 3px solid #00ff00;
     border-radius: 0px;
-
-    /* espaçamento interno que cria o "respiro" do painel */
     padding: 40px 52px 36px 52px;
-
-    /* largura máxima para centralização no .ui */
     min-width: 480px;
     max-width: 640px;
 }
 
-/* Ornamento: linha interna simulada via borda com inset.
-   Em QSS não existe outline, então usamos um segundo seletor
-   no QFrame pai com propriedade customizada, ou aproveitamos
-   o próprio padding + um QFrame filho com objectName="innerFrame" */
 #innerFrame {
-    border: 1px solid rgba(120, 150, 185, 28);
-    background: transparent;
+    border: 2px solid #00ff00;
+    background-color: #005FFF;
     padding: 24px 28px;
 }
 
-/* Título das configurações — caligrafia fina, tracking largo */
+/* Título das configurações */
 #settingsTitleLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(228, 238, 250, 210);
+    color: #ffff00;
     font-size: 17px;
-    font-weight: 400;
+    font-weight: bold;
     letter-spacing: 8px;
 }
 
-/* Subtítulo — quase invisível, sussurro visual */
+/* Subtítulo */
 #settingsSubtitleLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(155, 178, 200, 110);
+    color: #00ffff;
     font-size: 10px;
+    font-weight: bold;
     letter-spacing: 4px;
 }
 
-/* Divisor de seção — linha horizontal + rótulo estilo Ender Lilies */
+/* Rótulos de seção */
 #sectionTitleLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(175, 198, 220, 150);
+    color: #00ff00;
     font-size: 9px;
-    font-weight: 600;
+    font-weight: bold;
     letter-spacing: 6px;
-
-    /* linha abaixo do rótulo de seção */
-    border-bottom: 1px solid rgba(130, 160, 195, 38);
+    border-bottom: 2px solid #00ff00;
     padding-bottom: 8px;
     padding-top: 4px;
 }
@@ -168,65 +149,63 @@ QStatusBar {
 #settingLabelMusic,
 #settingLabelVolume {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(200, 218, 236, 185);
+    color: #ffffff;
     font-size: 12px;
+    font-weight: bold;
     letter-spacing: 2px;
 }
 
 #volumeValueLabel {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(175, 200, 222, 160);
+    color: #ffff00;
     font-size: 11px;
+    font-weight: bold;
     letter-spacing: 1px;
     min-width: 38px;
 }
 
 /* Frame de seção dentro do painel */
 QFrame[sectionFrame="true"] {
-    background-color: rgba(12, 18, 30, 180);
-    border-top: 1px solid rgba(120, 150, 185, 30);
-    border-bottom: 1px solid rgba(120, 150, 185, 30);
+    background-color: #4C4D19;
+    border-top: 2px solid #00ff00;
+    border-bottom: 2px solid #00ff00;
     border-left: 0;
     border-right: 0;
     border-radius: 0px;
 }
 
-/* Botão "Voltar ao Menu" — linha fina, sem preenchimento */
+/* Botão "Voltar ao Menu" */
 #settingsPanel QPushButton {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
     font-size: 11px;
     letter-spacing: 5px;
-    color: rgba(185, 208, 230, 170);
-
-    background: transparent;
-    border: 1px solid rgba(130, 160, 195, 55);
+    color: #000000;
+    background-color: #00ff00;
+    border: 2px solid #ffff00;
     border-radius: 0px;
     padding: 10px 32px;
     min-width: 200px;
+    font-weight: bold;
 }
 
 #settingsPanel QPushButton:hover {
-    color: rgba(228, 244, 255, 230);
-    background: qlineargradient(
-        x1: 0, y1: 0.5,
-        x2: 1, y2: 0.5,
-        stop: 0.00 rgba(120, 180, 235, 35),
-        stop: 0.50 rgba(100, 160, 220, 18),
-        stop: 1.00 rgba(80,  140, 205,  5)
-    );
-    border: 1px solid rgba(165, 205, 240, 100);
+    color: #000000;
+    background-color: #ffff00;
+    border: 2px solid #ff0000;
 }
 
 #settingsPanel QPushButton:pressed {
-    color: rgba(245, 255, 255, 255);
-    background: rgba(90, 150, 210, 28);
-    border: 1px solid rgba(200, 232, 255, 130);
+    color: #ffffff;
+    background-color: #ff0000;
+    border: 2px solid #ffff00;
 }
 
+/* CHECKBOX CUSTOMIZADO */
 QCheckBox {
     font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: rgba(200, 220, 238, 190);
+    color: #ffffff;
     font-size: 13px;
+    font-weight: bold;
     spacing: 10px;
 }
 
@@ -234,51 +213,43 @@ QCheckBox::indicator {
     width: 16px;
     height: 16px;
     border-radius: 1px;
-    border: 1px solid rgba(160, 190, 215, 100);
-    background: rgba(12, 18, 28, 160);
+    border: 2px solid #00ff00;
+    background-color: #003300;
 }
 
 QCheckBox::indicator:hover {
-    border: 1px solid rgba(200, 230, 255, 160);
-    background: rgba(20, 30, 45, 180);
+    border: 2px solid #ffff00;
+    background-color: #005500;
 }
 
 QCheckBox::indicator:checked {
-    background: rgba(150, 205, 248, 200);
-    border: 1px solid rgba(200, 235, 255, 180);
+    background-color: #00ff00;
+    border: 2px solid #ffff00;
 }
 
+/* SLIDER CUSTOMIZADO */
 QSlider::groove:horizontal {
     border: 0;
-    height: 2px;
-    background: rgba(80, 110, 140, 120);
+    height: 4px;
+    background-color: #003300;
+    border: 1px solid #00ff00;
 }
 
 QSlider::sub-page:horizontal {
-    background: qlineargradient(
-        x1: 0, y1: 0,
-        x2: 1, y2: 0,
-        stop: 0 rgba(120, 185, 240, 200),
-        stop: 1 rgba(170, 220, 255, 230)
-    );
-    height: 2px;
+    background-color: #00ff00;
+    height: 4px;
 }
 
 QSlider::add-page:horizontal {
-    background: rgba(50, 70, 95, 100);
-    height: 2px;
+    background-color: #003300;
+    height: 4px;
 }
 
 QSlider::handle:horizontal {
-    width: 10px;
-    height: 10px;
-    margin: -4px 0;
-    border-radius: 5px;
-    background: rgba(220, 240, 255, 220);
-    border: 1px solid rgba(140, 190, 230, 160);
-}
-
-QSlider::handle:horizontal:hover {
-    background: rgba(245, 252, 255, 255);
-    border: 1px solid rgba(190, 230, 255, 220);
+    width: 14px;
+    height: 14px;
+    margin: -5px 0;
+    border-radius: 7px;
+    background-color: #ffff00;
+    border: 2px solid #00ff00;
 }
