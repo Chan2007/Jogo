@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QVector>
 #include <QTimer>
+#include <QSize>
 
 // Estrutura simples em C++03 para guardar as informações da partícula
 struct Particle {
@@ -20,8 +21,8 @@ public:
     explicit ParticleWidget(QWidget *parent = 0);
 
 protected:
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
     void atualizarParticulas();
@@ -33,6 +34,7 @@ private:
     QTimer m_timer;
     int m_quantidade;
     float m_distanciaConexao;
+    QSize m_tamanhoAnterior;
 };
 
 #endif // PARTICLEWIDGET_H

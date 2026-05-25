@@ -1,10 +1,9 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QAbstractAnimation>
+
 #include <QGraphicsDropShadowEffect>
-#include <QGraphicsOpacityEffect>
+
+#include "ui_mainwindow.h"
 #include <QMenuBar>
-#include <QPropertyAnimation>
 #include <QPushButton>
 #include <QString>
 #include <QSizePolicy>
@@ -94,9 +93,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->raise();
     ui->centralwidget->raise();
 
-    ParticleWidget *particulas = new ParticleWidget(ui->centralwidget);
-
-    particulas->lower();
+    m_particulas = new ParticleWidget(ui->mainPage);
+    m_particulas->lower();
+    m_particulas->show();
+    reposicionarParticleWidget();
+    atualizarVisibilidadeParticleWidget();
 
     connect(&gameTimer, SIGNAL(timeout()), this, SLOT(atualizarJogo()));
 
@@ -115,11 +116,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    if (m_particulas) {
-        // Força as partículas a terem o exato tamanho atual da tela
-        m_particulas->resize(event->size());
-    }
     QMainWindow::resizeEvent(event);
+
+    reposicionarParticleWidget();
 }
 void MainWindow::aplicarEfeitosVisuais()
 {
@@ -202,6 +201,8 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
         ui->stackedWidget->raise();
     }
     ui->centralwidget->raise();
+
+    atualizarVisibilidadeParticleWidget();
 
     ui->centralwidget->update();
     this->update();
@@ -290,6 +291,47 @@ void MainWindow::animarPaginaConfiguracao(bool entrando)
 {
     // CORREÇÃO: Mantido propositalmente vazio para blindar o motor gráfico do QPainter contra colisões de opacidade
     (void)entrando;
+}
+
+void MainWindow::reposicionarParticleWidget()
+{
+    if (!m_particulas || !ui || !ui->centralwidget)
+        return;
+
+    const int larguraBase = ui->mainPage->width();
+    const int alturaBase = ui->mainPage->height();
+    if (larguraBase <= 0 || alturaBase <= 0)
+        return;
+
+    int largura = static_cast<int>((larguraBase * 2.0f) / 5.0f);
+    int altura = static_cast<int>(alturaBase * 1.0f);
+    if (largura < 1)
+        largura = 1;
+    if (altura < 1)
+        altura = 1;
+
+    const int margemDireita = 0;
+    const int margemInferior = 0;
+    int x = larguraBase - largura - margemDireita;
+    int y = alturaBase - altura - margemInferior;
+    if (x < 0)
+        x = 0;
+    if (y < 0)
+        y = 0;
+
+    m_particulas->setGeometry(x, y, largura, altura);
+    m_particulas->lower();
+}
+
+void MainWindow::atualizarVisibilidadeParticleWidget()
+{
+    if (!m_particulas || !ui || !ui->stackedWidget)
+        return;
+
+    const bool mostrar = (ui->stackedWidget->currentWidget() == ui->mainPage);
+    m_particulas->setVisible(mostrar);
+    if (mostrar)
+        m_particulas->lower();
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)

@@ -57,6 +57,8 @@ private:
     void prepararBotaoAnimado(QPushButton *botao, const QColor &bgBase, const QColor &bgHover, const QColor &bordaBase, const QColor &bordaHover);
     void iniciarAnimacaoBotao(QPushButton *botao, double destino, int duracaoMs);
     void animarPaginaConfiguracao(bool entrando);
+    void reposicionarParticleWidget();
+    void atualizarVisibilidadeParticleWidget();
     void atualizarLabelVolume(int value);
 
 

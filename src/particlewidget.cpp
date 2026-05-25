@@ -1,12 +1,15 @@
 #include "particlewidget.h"
 #include <QPainter>
+#include <QRandomGenerator>
+#include <QTime>
 #include <cmath>
-#include <cstdlib>
+#include <QResizeEvent>
 
 ParticleWidget::ParticleWidget(QWidget *parent)
     : QWidget(parent)
-    , m_quantidade(45)            // Quantidade de bolinhas na tela
-    , m_distanciaConexao(130.0f)  // Distância máxima para criar a teia/linha
+    , m_quantidade(160)
+    , m_distanciaConexao(150.0f)
+    , m_tamanhoAnterior()
 {
     // ISSO É VITAL: Faz os cliques do mouse "atravessarem" as partículas 
     // e atingirem os botões do seu menu que estão atrás/na frente delas!
@@ -15,56 +18,63 @@ ParticleWidget::ParticleWidget(QWidget *parent)
     // Deixa o fundo desse widget transparente
     setAttribute(Qt::WA_TranslucentBackground);
 
+    QRandomGenerator(static_cast<uint>(QTime::currentTime().msec()));
     iniciarParticulas();
 
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(atualizarParticulas()));
-    m_timer.start(16); // Roda a ~60 FPS (1000ms / 60)
+    m_timer.start(1);
 }
 
 void ParticleWidget::iniciarParticulas()
 {
+    if (width() <= 0 || height() <= 0)
+        return;
+
     m_particulas.clear();
     for (int i = 0; i < m_quantidade; ++i) {
         Particle p;
-        p.x = rand() % 1920; // Posição aleatória inicial
-        p.y = rand() % 1080;
-        
-        // Velocidade aleatória entre -0.5 e 0.5
-        p.vx = ((rand() % 100) / 100.0f - 0.5f) * 1.5f; 
-        p.vy = ((rand() % 100) / 100.0f - 0.5f) * 1.5f;
-        
+        p.x = static_cast<float>(qrand() % qMax(1, width()));
+        p.y = static_cast<float>(qrand() % qMax(1, height()));
+
+        // Movimento mais leve para ficar mais suave visualmente
+        p.vx = ((qrand() % 100) / 100.0f - 0.5f) * 0.65f;
+        p.vy = ((qrand() % 100) / 100.0f - 0.5f) * 0.65f;
+
         m_particulas.push_back(p);
     }
 }
 
 void ParticleWidget::resizeEvent(QResizeEvent *event)
 {
-    Q_UNUSED(event);
+    if (event) {
+        const QSize tamanhoNovo = event->size();
+        if (tamanhoNovo != m_tamanhoAnterior && tamanhoNovo.width() > 0 && tamanhoNovo.height() > 0) {
+            m_tamanhoAnterior = tamanhoNovo;
+            iniciarParticulas();
+        }
+    }
 }
 
 void ParticleWidget::atualizarParticulas()
 {
-    // A caixa invisível: Da metade da tela (50%) para a direita,
-    // e do meio da tela (50%) para baixo.
-    float limiteEsquerdo = width() * 0.50f;
-    float limiteTopo = height() * 0.50f;
+    if (width() <= 0 || height() <= 0)
+        return;
 
     for (int i = 0; i < m_particulas.size(); ++i) {
         m_particulas[i].x += m_particulas[i].vx;
         m_particulas[i].y += m_particulas[i].vy;
 
-        // Bate e volta nas paredes Esquerda e Direita
-        if (m_particulas[i].x < limiteEsquerdo) {
-            m_particulas[i].x = limiteEsquerdo;
+        // Bate e volta nas paredes usando o tamanho real do widget
+        if (m_particulas[i].x < 0.0f) {
+            m_particulas[i].x = 0.0f;
             m_particulas[i].vx *= -1;
         } else if (m_particulas[i].x > width()) {
             m_particulas[i].x = width();
             m_particulas[i].vx *= -1;
         }
 
-        // Bate e volta no Teto e no Chão
-        if (m_particulas[i].y < limiteTopo) {
-            m_particulas[i].y = limiteTopo;
+        if (m_particulas[i].y < 0.0f) {
+            m_particulas[i].y = 0.0f;
             m_particulas[i].vy *= -1;
         } else if (m_particulas[i].y > height()) {
             m_particulas[i].y = height();
@@ -79,8 +89,8 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
-    // Cor idêntica à da imagem, mas adaptada para aparecer no fundo branco
     const int corR = 0;
     const int corG = 0;
     const int corB = 0;
@@ -96,7 +106,7 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
             if (distancia < m_distanciaConexao) {
                 // Opacidade suave como na imagem de referência
                 float opacidade = 1.0f - (distancia / m_distanciaConexao);
-                int alpha = static_cast<int>(opacidade * 140);
+                int alpha = static_cast<int>(opacidade * 120.0f);
 
                 // Linha fina (espessura 1)
                 painter.setPen(QPen(QColor(corR, corG, corB, alpha), 1));
@@ -108,10 +118,9 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
 
     // 2. Desenha os nós (pontos PEQUENOS como na imagem)
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(corR, corG, corB, 200));
+    painter.setBrush(QColor(corR, corG, corB, 225));
 
     for (int i = 0; i < m_particulas.size(); ++i) {
-        // Raio 2.0 deixa as bolinhas pequenas e delicadas
-        painter.drawEllipse(QPointF(m_particulas[i].x, m_particulas[i].y), 2.0, 2.0);
+        painter.drawEllipse(QPointF(m_particulas[i].x, m_particulas[i].y), 3.2, 3.2);
     }
 }
