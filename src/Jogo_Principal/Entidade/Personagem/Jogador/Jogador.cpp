@@ -13,7 +13,7 @@ namespace Personagens {
     Jogador::Jogador():
         Personagem(),
         pGravidade(NULL),
-        caminhoArquivoSprite(""),
+
         observer_jogador(0),
         sorte(0.0f),
         pontos(0.0f),
@@ -49,7 +49,8 @@ namespace Personagens {
             frameWidth = 230;
             frameHeight = 120;
             tempoPorFrame = 0.08f;
-            caminhoArquivoSprite = "primeiro jogo/assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+            caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+            caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Stagger_Sprite_Sheet.png";
             break;
         default:
             setNome("Campeao Generico");
@@ -78,6 +79,13 @@ namespace Personagens {
             }
             else {
                 std::cerr << "Erro: A textura falhou ao carregar: " << caminhoReal << std::endl;
+            }
+        }
+        if (!caminhoArquivoSpritePulo.empty()) {
+            Encontrar_Diretorio buscador;
+            std::string caminhoRealPulo = buscador.acharDiretorio_Arquivo(caminhoArquivoSpritePulo);
+            if (!caminhoRealPulo.empty()) {
+                texturaPulo.loadFromFile(caminhoRealPulo);
             }
         }
         else {

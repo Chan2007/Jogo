@@ -10,6 +10,9 @@ namespace Personagens {
         velocidade(0.0f, 0.0f),
         aceleracao(0.0f, 0.0f),
 
+        caminhoArquivoSprite(""),
+        caminhoArquivoSpritePulo(""),
+        colunasSpritesheet(1),
         tempoPorFrame(0.12f),
         frameAcumulado(0.0f),
         indexFrameAtual(0),

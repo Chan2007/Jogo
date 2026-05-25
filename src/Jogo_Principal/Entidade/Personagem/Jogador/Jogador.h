@@ -37,7 +37,6 @@ namespace Personagens {
         Gerenciadores::Observador_Input* observer_jogador;
         Gerenciadores::Gerenciador_Gravidade* pGravidade;
     protected:
-        std::string caminhoArquivoSprite;
         float sorte;
         float pontos;
         float escudo;

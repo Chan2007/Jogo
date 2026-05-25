@@ -21,11 +21,23 @@ namespace Personagens {
         ESTADO_MORTO
     };
 
+    enum EstadoAnimacao {
+        PARADO,
+        ANDANDO,
+        PULANDO,
+        CAINDO,
+        ATACANDO
+    };
+    EstadoAnimacao estadoAnimacao;
+
     class Personagem : public Entidades::Entidade {
         private:
             sf::Vector2f velocidade;
             sf::Vector2f aceleracao;
         protected:
+            std::string caminhoArquivoSprite;
+            std::string caminhoArquivoSpritePulo;
+            sf::Texture texturaPulo;
             sf::IntRect rectAtual;
             sf::Clock clockAnimacao;
             float tempoPorFrame;
