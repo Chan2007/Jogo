@@ -44,6 +44,8 @@ private:
     void desenharPincelada(QPainter& painter, const QRect& area) const;
     void animarHover(qreal destino);
     void animarPress(qreal destino, int duracaoMs);
+    QColor interpolarCor(const QColor &corA, const QColor &corB, double t) const;
+
 
     bool hovered;
     qreal m_hoverProgress;

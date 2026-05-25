@@ -2,10 +2,14 @@
 #define MAINWINDOW_H
 
 #include <cstddef>
+#include <QColor>
 #include <QMainWindow>
+#include <QEvent>
 #include <QResizeEvent>
 #include <QTimer>
-#include "src/backgroundwidget.h"
+#include <QVariant>
+
+#include "particlewidget.h"
 #include "src/jogo.h"
 #include "src/Widgets/screen_stack.h"
 
@@ -16,6 +20,9 @@ namespace Ui {
 QT_END_NAMESPACE
 
 class QGraphicsOpacityEffect;
+class QPushButton;
+class QVariantAnimation;
+class QGraphicsDropShadowEffect;
 
 class MainWindow : public QMainWindow
 {
@@ -26,7 +33,8 @@ public:
     ~MainWindow();
 
 protected:
-    void resizeEvent(QResizeEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
+    virtual void resizeEvent(QResizeEvent *event);
 
 private slots:
     void atualizarJogo();
@@ -37,19 +45,22 @@ private slots:
     void on_musicCheckBox_toggled(bool checked);
     void on_volumeSlider_valueChanged(int value);
     void on_exitButton_clicked();
+    void atualizarAnimacaoBotao(const QVariant &valor);
 
 private:
-    void ajustarFundo();
     void aplicarEfeitosVisuais();
     void configurarTelaPrincipal();
     void configurarTelaConfiguracao();
     void animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar);
     void iniciarAnimacoesBotoes();
     void animarEntradaWidget(QWidget *widget, int atrasoMs, int deslocamentoX);
+    void prepararBotaoAnimado(QPushButton *botao, const QColor &bgBase, const QColor &bgHover, const QColor &bordaBase, const QColor &bordaHover);
+    void iniciarAnimacaoBotao(QPushButton *botao, double destino, int duracaoMs);
+    void animarPaginaConfiguracao(bool entrando);
     void atualizarLabelVolume(int value);
 
+
     Ui::MainWindow *ui;
-    BackgroundWidget *backgroundWidget;
     QTimer gameTimer;
     Jogo jogo;
     bool jogoInicializado;
@@ -57,6 +68,7 @@ private:
     bool transicaoTelaAtiva;
     QWidget *telaOrigemAnimada;
     QWidget *telaDestinoAnimada;
+    ParticleWidget *m_particulas;
     QGraphicsOpacityEffect *efeitoOrigemTransicao;
     QGraphicsOpacityEffect *efeitoDestinoTransicao;
 };

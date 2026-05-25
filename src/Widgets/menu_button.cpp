@@ -33,7 +33,7 @@ MenuButton::MenuButton(const QString& text, QWidget *parent)
     setCursor(Qt::PointingHandCursor);
     setFlat(true);
     setMouseTracking(true);
-    setMinimumHeight(52);
+    setMinimumHeight(100);
 
     // Suprime completamente a renderização nativa do QPushButton
     // (texto, borda e fundo padrão do QStyle) para que apenas
@@ -60,7 +60,7 @@ MenuButton::MenuButton(const QString& text, QWidget *parent)
 
 QSize MenuButton::sizeHint() const
 {
-    return QSize(320, 56);
+    return QSize(320, 1000);
 }
 
 void MenuButton::iniciarAnimacaoEntrada(int atrasoMs)
@@ -197,6 +197,21 @@ void MenuButton::animarPress(qreal destino, int duracaoMs)
     m_pressAnimation->start();
 }
 
+QColor MenuButton::interpolarCor(const QColor &corA, const QColor &corB, double t) const
+{
+    // Garante que o progresso fique estritamente entre 0.0 e 1.0
+    if (t < 0.0) t = 0.0;
+    if (t > 1.0) t = 1.0;
+
+    // Interpolação linear clássica para cada canal (Red, Green, Blue, Alpha)
+    int r = static_cast<int>(corA.red()   + (corB.red()   - corA.red())   * t);
+    int g = static_cast<int>(corA.green() + (corB.green() - corA.green()) * t);
+    int b = static_cast<int>(corA.blue()  + (corB.blue()  - corA.blue())  * t);
+    int a = static_cast<int>(corA.alpha() + (corB.alpha() - corA.alpha()) * t);
+
+    return QColor(r, g, b, a);
+}
+
 void MenuButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
@@ -211,14 +226,27 @@ void MenuButton::paintEvent(QPaintEvent *event)
     if (desenharHover)
         desenharPincelada(painter, area);
 
-    const QColor sombra = desenharHover ? QColor(255, 255, 255, 65) : QColor(0, 0, 0, 130);
-    const QColor texto = desenharHover ? QColor(64, 69, 77) : QColor(243, 247, 255);
+    // Definição das cores usando construtores explícitos (C++03 não aceita inicialização por chaves {})
+    const QColor sombraNormal(255, 255, 255, 130);
+    const QColor textoNormal(0, 0, 0);
+
+    const QColor sombraHover(255, 255, 255, 65);
+    const QColor textoHover(64, 69, 77);
+
+    // Substituição do qMax por uma lógica simples inline (compatível com qualquer versão do Qt)
+    double progressoVisual = (m_hoverProgress > m_pressProgress) ? m_hoverProgress : m_pressProgress;
+
+    // Chamada do méthodo da classe para calcular as cores intermediárias
+    const QColor sombraAtual = interpolarCor(sombraNormal, sombraHover, progressoVisual);
+    const QColor textoAtual  = interpolarCor(textoNormal, textoHover, progressoVisual);
+
     const int pressShift = static_cast<int>(2.0 * m_pressProgress);
     const QPoint offset = m_contentOffset + QPoint(0, pressShift);
 
-    painter.setPen(sombra);
-    painter.drawText(area.adjusted(25 + offset.x(), 2 + offset.y(), -18, 0), Qt::AlignVCenter | Qt::AlignLeft, text());
+    // Renderização com os valores interpolados
+    painter.setPen(sombraAtual);
+    painter.drawText(area.adjusted(25 + offset.x(), 25 + offset.y(), -18, 0), Qt::AlignVCenter | Qt::AlignLeft, text());
 
-    painter.setPen(texto);
-    painter.drawText(area.adjusted(24 + offset.x(), offset.y(), -18, -2), Qt::AlignVCenter | Qt::AlignLeft, text());
+    painter.setPen(textoAtual);
+    painter.drawText(area.adjusted(25 + offset.x(), 25 + offset.y(), -18, -2), Qt::AlignVCenter | Qt::AlignLeft, text());
 }

@@ -33,6 +33,8 @@ add_executable(Jogo ${SOURCES}
         mainwindow.ui
         src/qsfmlwidget.cpp
         src/qsfmlwidget.h
+        src/particlewidget.cpp
+        src/particlewidget.h
 )
 
 target_include_directories(Jogo PRIVATE src

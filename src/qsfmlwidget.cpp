@@ -1,12 +1,11 @@
 #include "qsfmlwidget.h"
+#include <QResizeEvent>
 
 QSFMLWidget::QSFMLWidget(QWidget *parent) : QWidget(parent), m_initialized(false)
 {
     setAttribute(Qt::WA_NativeWindow);
     setAttribute(Qt::WA_DontCreateNativeAncestors);
     setAttribute(Qt::WA_PaintOnScreen);
-    setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_NoSystemBackground);
     setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -38,6 +37,14 @@ void QSFMLWidget::showEvent(QShowEvent* event)
         bool contextAtivado = m_window.setActive(true);
         if (contextAtivado) {
             OnInit();
+            const QSize tamanhoAtual = size();
+            if (tamanhoAtual.width() > 0 && tamanhoAtual.height() > 0) {
+                m_window.setView(sf::View(sf::FloatRect(
+                    0.f,
+                    0.f,
+                    static_cast<float>(tamanhoAtual.width()),
+                    static_cast<float>(tamanhoAtual.height()))));
+            }
             m_window.setActive(false); // Desativa para evitar conflitos
         }
 
@@ -57,6 +64,27 @@ void QSFMLWidget::hideEvent(QHideEvent* event)
         // Apenas desativa, não fecha
         m_window.setActive(false);
     }
+}
+
+void QSFMLWidget::resizeEvent(QResizeEvent* event)
+{
+    QWidget::resizeEvent(event);
+
+    if (!m_initialized || !m_window.isOpen())
+        return;
+
+    const QSize tamanhoAtual = event ? event->size() : size();
+    if (tamanhoAtual.width() <= 0 || tamanhoAtual.height() <= 0)
+        return;
+
+    m_window.setSize(sf::Vector2u(
+        static_cast<unsigned int>(tamanhoAtual.width()),
+        static_cast<unsigned int>(tamanhoAtual.height())));
+    m_window.setView(sf::View(sf::FloatRect(
+        0.f,
+        0.f,
+        static_cast<float>(tamanhoAtual.width()),
+        static_cast<float>(tamanhoAtual.height()))));
 }
 
 void QSFMLWidget::onTimerTimeout()

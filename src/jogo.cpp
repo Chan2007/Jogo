@@ -9,7 +9,8 @@ Jogo::Jogo() :
     Frames(0),
     gerenciadorTextura(),
     bgAnimation(&gerenciadorTextura),
-    player(),
+    jogador(NULL),
+    gerenciadorGravidade(NULL),
     m_window(),
     menuFont(),
     tituloText(),
@@ -23,8 +24,7 @@ Jogo::Jogo() :
 {
 }
 
-Jogo::~Jogo()
-{
+Jogo::~Jogo(){
     fechar();
 }
 
@@ -37,9 +37,12 @@ bool Jogo::carregarRecursos()
     diretorio_Fonte = Encontrar_Diretorio::acharDiretorio_Arquivo("SFML-2.6.0/examples/island/resources/tuffy.ttf");
 
     bgAnimation.setTargetSize(tamanhoJanela);
-    player.setSize(sf::Vector2f(40.0f, 40.0f));
-    player.setFillColor(sf::Color::Green);
-    player.setPosition(100.f, 50.f);
+    if (tamanhoJanela.x == 0 || tamanhoJanela.y == 0) {
+        std::cerr << "Erro: Tamanho da janela é inválido para configurar o fundo animado." << std::endl;
+        return false;
+    }
+    if (jogador != NULL)
+        jogador->setPosicao(sf::Vector2f(40.0f, 40.0f));
 
     if (!diretorio_Frame.empty()) {
         if (bgAnimation.loadFrames(diretorio_Frame, totalFrames, intercalarFrames, 4, 3))
@@ -68,7 +71,16 @@ bool Jogo::carregarRecursos()
         std::cerr << "Falha ao carregar a fonte do menu." << std::endl;
         return false;
     }
+    if (!jogador) {
+        jogador = new Personagens::Jogador();
 
+        gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
+        jogador->setGerenciadorGravidade(gerenciadorGravidade);
+
+        jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
+        jogador->setPosicao(sf::Vector2f(640.0f, 400.0f));
+        std::cout << "Jogador criado: " << jogador->getNome() << std::endl;
+    }
     return configurarMenu();
 }
 
@@ -272,7 +284,10 @@ void Jogo::desenharGameplay()
     bgAnimation.update();
     m_window.clear(sf::Color::Black);
     bgAnimation.draw(m_window);
-    m_window.draw(player);
+    if (jogador) {
+        jogador->atualizar();  // Atualizar animação
+        jogador->desenhar(m_window);
+    }
 }
 
 void Jogo::atualizar()
@@ -306,6 +321,14 @@ void Jogo::fechar()
     if (m_window.isOpen()) {
         m_window.close();
     }
+    if (jogador) {
+        delete jogador;
+        jogador = NULL;
+    }
 
+    if (gerenciadorGravidade) {
+        delete gerenciadorGravidade;
+        gerenciadorGravidade = NULL;
+    }
     inicializado = false;
 }

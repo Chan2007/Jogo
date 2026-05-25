@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QHideEvent>
+#include <QResizeEvent>
 #include <QShowEvent>
 #include <QPaintEvent>
 #include <SFML/Graphics.hpp>
@@ -33,6 +34,7 @@ protected:
     virtual QPaintEngine* paintEngine() const;
     virtual void showEvent(QShowEvent*);
     virtual void hideEvent(QHideEvent*);
+    virtual void resizeEvent(QResizeEvent*);
     virtual void paintEvent(QPaintEvent*);
 
     bool m_initialized;

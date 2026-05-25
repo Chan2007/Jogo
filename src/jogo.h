@@ -6,66 +6,71 @@
 #include "Animador_Fundo/animador_fundo.h"
 #include "Audio/Audio.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Entidade/Personagem/Jogador/Jogador.h"
 
-class Jogo
-{
-private:
-    enum EstadoTela {
-        TelaMenu,
-        TelaGameplay
-    };
+namespace Gerenciadores {
+    class Gerenciador_Gravidade;
+}
 
-    int totalFrames;
-    int max_intercalarFrames;
-    int intercalarFrames;
-    int Frames;
+class Jogo{
+    private:
+        enum EstadoTela {
+            TelaMenu,
+            TelaGameplay
+        };
 
-    Gerenciador_Textura gerenciadorTextura;
-    Animador_Fundo bgAnimation;
-    std::string diretorio;
-    std::string diretorio_Frame;
+        int totalFrames;
+        int max_intercalarFrames;
+        int intercalarFrames;
+        int Frames;
 
-    Audio bgMusic;
-    std::string diretorio_Audio;
-    std::string diretorio_Musica;
-    std::string diretorio_Fonte;
+        Gerenciador_Textura gerenciadorTextura;
+        Animador_Fundo bgAnimation;
+        std::string diretorio;
+        std::string diretorio_Frame;
 
-    sf::Event event;
-    sf::RectangleShape player;
-    sf::RenderWindow m_window;
-    sf::Font menuFont;
-    sf::Text tituloText;
-    std::vector<sf::Text> menuOptions;
-    sf::RectangleShape menuPanel;
-    bool inicializado;
-    bool menuPronto;
-    bool musicaLigada;
-    EstadoTela estadoTela;
-    std::size_t opcaoSelecionada;
+        Audio bgMusic;
+        std::string diretorio_Audio;
+        std::string diretorio_Musica;
+        std::string diretorio_Fonte;
 
-    bool carregarRecursos();
-    bool configurarMenu();
-    void processarEventos();
-    void processarEventoMenu(const sf::Event& evento);
-    void processarEventoGameplay(const sf::Event& evento);
-    void atualizarMenuVisual();
-    void executarOpcaoMenu();
-    void desenharMenu();
-    void desenharGameplay();
+        sf::Event event{};
+        Personagens::Jogador* jogador{};
+        Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade{};
+        sf::RenderWindow m_window;
+        sf::Font menuFont;
+        sf::Text tituloText;
+        std::vector<sf::Text> menuOptions;
+        sf::RectangleShape menuPanel;
+        bool inicializado;
+        bool menuPronto;
+        bool musicaLigada;
+        EstadoTela estadoTela;
+        std::size_t opcaoSelecionada;
 
-public:
-    Jogo();
-    ~Jogo();
+        bool carregarRecursos();
+        bool configurarMenu();
+        void processarEventos();
+        void processarEventoMenu(const sf::Event& evento);
+        void processarEventoGameplay(const sf::Event& evento);
+        void atualizarMenuVisual();
+        void executarOpcaoMenu();
+        void desenharMenu();
+        void desenharGameplay();
 
-    bool inicializar();
-    void iniciarGameplay();
-    void setMusicaLigada(bool ligada);
-    void setVolumeMusica(float volume);
-    bool musicaEstaLigada() const;
-    void executar();
-    void atualizar();
-    bool estaAberto() const;
-    void fechar();
+    public:
+        Jogo();
+        ~Jogo();
+
+        bool inicializar();
+        void iniciarGameplay();
+        void setMusicaLigada(bool ligada);
+        void setVolumeMusica(float volume);
+        bool musicaEstaLigada() const;
+        void executar();
+        void atualizar();
+        bool estaAberto() const;
+        void fechar();
 };
 
 #endif // JOGO_H

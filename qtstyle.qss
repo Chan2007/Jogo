@@ -1,211 +1,154 @@
 QMainWindow {
-    background-color: transparent;
+    background-color: #FFFFFF; /* Cor caso o SFML falhe */
+}
+QWidget#centralwidget,
+#stackedWidget,
+#mainPage,
+#settingsPage {
+    background: transparent; /* Mantém as páginas transparentes para o vídeo passar */
 }
 
 QMenuBar,
 QStatusBar {
     background: transparent;
-    color: transparent;
+    color: #000000;
     border: 0;
 }
 
-#centralwidget {
-    background: transparent;
+#topBarLabel,
+#heroTitleLabel,
+#heroSubtitleLabel,
+#statusLabel,
+#settingLabelMusic,
+#settingLabelVolume,
+#volumeValueLabel,
+QCheckBox {
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    color: #000000;
+    font-weight: 900;
+}
+#settingsTitleLabel {
+    font-size: 27px;        /* <--- Aumente aqui (Ex: 22px) */
+    color:#000000;
 }
 
-/* stackedWidget deve ser transparente para o BackgroundWidget
-   aparecer através dele, mas as páginas têm fundos próprios */
-#stackedWidget {
-    background: transparent;
+#settingsSubtitleLabel {
+    color: #000000;
+    font-size: 25px;        /* <--- Aumente aqui (Ex: 13px) */
 }
-
-/* MENU PRINCIPAL - Fundo Escuro com Transparência */
-#mainPage {
-    background: transparent;
+#sectionTitleLabel {
+    font-size: 23px;         /* <--- Aumente aqui (Ex: 12px) */
+    border-bottom: 2px solid linear-gradient(to right, #000000, #ffffff); /* Cor equivalente ao QColor(0, 0, 0) */
+    padding-bottom: 8px;
+    padding-top: 4px;
 }
-
-/* TELA DE CONFIGURAÇÕES - Fundo Azul Escuro (Contraste Forte) */
-#settingsPage {
-    background-color: #1a2d4d;
-    border: 3px solid #00ff00;
-}
-
-#mainMenuPanel {
-    background: transparent;
-}
-
 #topBarLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #00ff00;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 21px;
 }
 
 #heroTitleLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #ffffff;
     font-size: 56px;
-    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 #heroSubtitleLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #ffff00;
     font-size: 14px;
-    font-weight: bold;
 }
 
 #statusLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #00ffff;
     font-size: 11px;
     padding-top: 8px;
-    font-weight: bold;
 }
 
-#mainMenuPanel QPushButton {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
+#mainMenuPanel {
+    background-color: rgba(255, 255, 255, 230);
+    border: 2px solid #000000;
+    border-radius: 14px;
+}
+
+#mainMenuPanel QPushButton,
+#settingsPanel QPushButton {
+    font-family: "Segoe UI", "Arial", "Helvetica";
     font-size: 18px;
-    color: #ffffff;
-    background-color: #003300;
-    border: 2px solid #00ff00;
-    border-left: 4px solid #00ff00;
+    color: #000000;
+    background-color: #f7f7f7;
+    border: 2px solid #9a9a9a;
     padding: 10px 0 10px 18px;
     text-align: left;
     min-width: 280px;
     max-width: 360px;
-    font-weight: bold;
+    font-weight: 900;
 }
 
-#mainMenuPanel QPushButton:hover {
+#mainMenuPanel QPushButton:hover,
+#settingsPanel QPushButton:hover {
     color: #000000;
-    background-color: #00ff00;
-    border: 2px solid #ffff00;
-    border-left: 4px solid #ffff00;
-    padding-left: 26px;
-    font-weight: bold;
+    background-color: #d0d0d0;
+    border: 2px solid #000000;
 }
 
-#mainMenuPanel QPushButton:pressed {
+#mainMenuPanel QPushButton:pressed,
+#settingsPanel QPushButton:pressed {
     color: #000000;
-    background-color: #ffff00;
-    border: 2px solid #ff0000;
-    border-left: 4px solid #ff0000;
-    padding-left: 30px;
-    font-weight: bold;
+    background-color: #a7a7a7;
+    border: 2px solid #000000;
 }
 
-/* ═══════════════════════════════════════════════════════
-   TELA DE CONFIGURAÇÕES
-   Fundo azul escuro com bordas verde limão para contraste
-   ═══════════════════════════════════════════════════════ */
+#settingsPage {
+    background: transparent;
+}
 
 #settingsPanel {
-    background-color: #FF00F4;
-    border: 3px solid #00ff00;
-    border-radius: 0px;
+    background: transparent;
+    border: none;
     padding: 40px 52px 36px 52px;
-    min-width: 480px;
+    min-width: 450px;
     max-width: 640px;
 }
 
 #innerFrame {
-    border: 2px solid #00ff00;
-    background-color: #005FFF;
+    border: 2px solid #000000;
+    background: transparent;
     padding: 24px 28px;
 }
 
-/* Título das configurações */
 #settingsTitleLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #ffff00;
-    font-size: 17px;
-    font-weight: bold;
-    letter-spacing: 8px;
-}
-
-/* Subtítulo */
-#settingsSubtitleLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #00ffff;
-    font-size: 10px;
-    font-weight: bold;
+    font-size: 37px;
     letter-spacing: 4px;
 }
 
-/* Rótulos de seção */
+#settingsSubtitleLabel {
+    font-size: 20px;
+}
+
 #sectionTitleLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #00ff00;
-    font-size: 9px;
-    font-weight: bold;
-    letter-spacing: 6px;
-    border-bottom: 2px solid #00ff00;
+    font-size: 15px;
+    letter-spacing: 3px;
+    border-bottom: 4px solid #000000;
     padding-bottom: 8px;
     padding-top: 4px;
 }
 
-/* Rótulos de controles */
 #settingLabelMusic,
 #settingLabelVolume {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #ffffff;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
+    font-size: 17px;
+
 }
 
 #volumeValueLabel {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #ffff00;
-    font-size: 11px;
-    font-weight: bold;
+    font-size: 17px;
     letter-spacing: 1px;
     min-width: 38px;
 }
 
-/* Frame de seção dentro do painel */
 QFrame[sectionFrame="true"] {
-    background-color: #4C4D19;
-    border-top: 2px solid #00ff00;
-    border-bottom: 2px solid #00ff00;
-    border-left: 0;
-    border-right: 0;
+    background: rgba(255, 255, 255, 160);
+    border: 2px solid #000000;
     border-radius: 0px;
 }
 
-/* Botão "Voltar ao Menu" */
-#settingsPanel QPushButton {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    font-size: 11px;
-    letter-spacing: 5px;
-    color: #000000;
-    background-color: #00ff00;
-    border: 2px solid #ffff00;
-    border-radius: 0px;
-    padding: 10px 32px;
-    min-width: 200px;
-    font-weight: bold;
-}
-
-#settingsPanel QPushButton:hover {
-    color: #000000;
-    background-color: #ffff00;
-    border: 2px solid #ff0000;
-}
-
-#settingsPanel QPushButton:pressed {
-    color: #ffffff;
-    background-color: #ff0000;
-    border: 2px solid #ffff00;
-}
-
-/* CHECKBOX CUSTOMIZADO */
 QCheckBox {
-    font-family: "Palatino Linotype", "Book Antiqua", "Georgia";
-    color: #ffffff;
     font-size: 13px;
-    font-weight: bold;
     spacing: 10px;
 }
 
@@ -213,35 +156,33 @@ QCheckBox::indicator {
     width: 16px;
     height: 16px;
     border-radius: 1px;
-    border: 2px solid #00ff00;
-    background-color: #003300;
+    border: 2px solid #000000;
+    background-color: #ffffff;
 }
 
 QCheckBox::indicator:hover {
-    border: 2px solid #ffff00;
-    background-color: #005500;
+    border: 2px solid #000000;
+    background-color: #d0d0d0;
 }
 
 QCheckBox::indicator:checked {
-    background-color: #00ff00;
-    border: 2px solid #ffff00;
+    background-color: #000000;
+    border: 2px solid #000000;
 }
 
-/* SLIDER CUSTOMIZADO */
 QSlider::groove:horizontal {
-    border: 0;
+    border: 1px solid #000000;
     height: 4px;
-    background-color: #003300;
-    border: 1px solid #00ff00;
+    background-color: #cfcfcf;
 }
 
 QSlider::sub-page:horizontal {
-    background-color: #00ff00;
+    background-color: #000000;
     height: 4px;
 }
 
 QSlider::add-page:horizontal {
-    background-color: #003300;
+    background-color: #cfcfcf;
     height: 4px;
 }
 
@@ -250,6 +191,48 @@ QSlider::handle:horizontal {
     height: 14px;
     margin: -5px 0;
     border-radius: 7px;
-    background-color: #ffff00;
-    border: 2px solid #00ff00;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+}
+/* Estado Normal (Repouso) */
+#mainMenuPanel QPushButton,
+#settingsPanel QPushButton {
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    font-size: 18px;
+    font-weight: 900;
+    color: #000000;              /* <--- COLOQUE A COR DO TEXTO PADRÃO AQUI (ex: preto #000000 ou branco #ffffff) */
+    background-color: #f7f7f7;   /* Cor equivalente ao QColor(247, 247, 247) */
+    border: 2px solid #9a9a9a;   /* Cor equivalente ao QColor(154, 154, 154) */
+    border-radius: 0px;
+    padding: 10px 0px 10px 18px;
+    text-align: left;
+    min-width: 280px;
+    max-width: 360px;
+}
+
+/* Estado Hover (Mouse por cima) */
+#mainMenuPanel QPushButton:hover,
+#settingsPanel QPushButton:hover {
+    background-color: #d0d0d0;   /* Cor equivalente ao QColor(208, 208, 208) */
+    border: 2px solid #000000;   /* Cor equivalente ao QColor(0, 0, 0) */
+    color: #ffffff;              /* <--- COLOQUE A COR DO TEXTO QUANDO O MOUSE PASSAR POR CIMA */
+    padding-left: 26px;          /* Simula o avanço do padding que a animação fazia (18 + 8) */
+}
+
+/* Estado Pressed (Botão Clicado) */
+#mainMenuPanel QPushButton:pressed,
+#settingsPanel QPushButton:pressed {
+    background-color: #a7a7a7;
+    border: 2px solid #000000;
+}
+
+/* Regra específica para o botão Voltar (que é centralizado) */
+#backButton {
+    text-align: center;
+    padding-left: 0px;
+    padding-right: 32px;
+}
+
+#backButton:hover {
+    padding-left: 0px; /* Mantém centralizado no hover */
 }
