@@ -33,8 +33,9 @@ void ParticleWidget::iniciarParticulas()
     m_particulas.clear();
     for (int i = 0; i < m_quantidade; ++i) {
         Particle p;
-        p.x = static_cast<float>(qrand() % qMax(1, width()));
-        p.y = static_cast<float>(qrand() % qMax(1, height()));
+        // Iniciar partículas em uma área levemente maior para evitar bordas visíveis de cara
+        p.x = static_cast<float>(qrand() % qMax(1, width() + 200)) - 100.0f;
+        p.y = static_cast<float>(qrand() % qMax(1, height() + 200)) - 100.0f;
 
         // Movimento mais leve para ficar mais suave visualmente
         p.vx = ((qrand() % 100) / 100.0f - 0.5f) * 0.65f;
@@ -64,21 +65,20 @@ void ParticleWidget::atualizarParticulas()
         m_particulas[i].x += m_particulas[i].vx;
         m_particulas[i].y += m_particulas[i].vy;
 
-        // Bate e volta nas paredes usando o tamanho real do widget
-        if (m_particulas[i].x < 0.0f) {
-            m_particulas[i].x = 0.0f;
-            m_particulas[i].vx *= -1;
-        } else if (m_particulas[i].x > width()) {
-            m_particulas[i].x = width();
-            m_particulas[i].vx *= -1;
+        // Em vez de rebater na parede, faz a partícula reaparecer do outro lado
+        // usando uma margem confortável para fora da tela, assim elas entram suavemente
+        float margem = 100.0f;
+
+        if (m_particulas[i].x < -margem) {
+            m_particulas[i].x = width() + margem;
+        } else if (m_particulas[i].x > width() + margem) {
+            m_particulas[i].x = -margem;
         }
 
-        if (m_particulas[i].y < 0.0f) {
-            m_particulas[i].y = 0.0f;
-            m_particulas[i].vy *= -1;
-        } else if (m_particulas[i].y > height()) {
-            m_particulas[i].y = height();
-            m_particulas[i].vy *= -1;
+        if (m_particulas[i].y < -margem) {
+            m_particulas[i].y = height() + margem;
+        } else if (m_particulas[i].y > height() + margem) {
+            m_particulas[i].y = -margem;
         }
     }
     update();
@@ -89,11 +89,27 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    // Remove a duplicidade do setRenderHint também
 
     const int corR = 0;
     const int corG = 0;
     const int corB = 0;
+
+    // Função lambda para calcular o fadeout de acordo com a proximidade das bordas
+    auto getFade = [this](float x, float y) {
+        float marginX = 100.0f;
+        float marginY = 100.0f;
+        float fadeX = 1.0f;
+        float fadeY = 1.0f;
+
+        if (x < marginX) fadeX = qMax(0.0f, x / marginX);
+        else if (x > width() - marginX) fadeX = qMax(0.0f, (width() - x) / marginX);
+
+        if (y < marginY) fadeY = qMax(0.0f, y / marginY);
+        else if (y > height() - marginY) fadeY = qMax(0.0f, (height() - y) / marginY);
+
+        return fadeX * fadeY;
+    };
 
     // 1. Desenha as linhas de conexão PRIMEIRO (bem finas)
     for (int i = 0; i < m_particulas.size(); ++i) {
@@ -104,23 +120,32 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
             float distancia = std::sqrt(dx * dx + dy * dy);
 
             if (distancia < m_distanciaConexao) {
-                // Opacidade suave como na imagem de referência
-                float opacidade = 1.0f - (distancia / m_distanciaConexao);
-                int alpha = static_cast<int>(opacidade * 120.0f);
+                float fadeI = getFade(m_particulas[i].x, m_particulas[i].y);
+                float fadeJ = getFade(m_particulas[j].x, m_particulas[j].y);
+                float baseFade = (fadeI + fadeJ) * 0.5f;
 
-                // Linha fina (espessura 1)
-                painter.setPen(QPen(QColor(corR, corG, corB, alpha), 1));
-                painter.drawLine(QPointF(m_particulas[i].x, m_particulas[i].y),
-                                 QPointF(m_particulas[j].x, m_particulas[j].y));
+                // Opacidade suave como na imagem de referência conjugada as bordas
+                float opacidade = 1.0f - (distancia / m_distanciaConexao);
+                int alpha = static_cast<int>(opacidade * 120.0f * baseFade);
+
+                if (alpha > 0) {
+                    painter.setPen(QPen(QColor(corR, corG, corB, alpha), 1));
+                    painter.drawLine(QPointF(m_particulas[i].x, m_particulas[i].y),
+                                     QPointF(m_particulas[j].x, m_particulas[j].y));
+                }
             }
         }
     }
 
-    // 2. Desenha os nós (pontos PEQUENOS como na imagem)
+    // 2. Desenha os nós (pontos PEQUENOS como na imagem, com fade out nas bordas)
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(corR, corG, corB, 225));
 
     for (int i = 0; i < m_particulas.size(); ++i) {
-        painter.drawEllipse(QPointF(m_particulas[i].x, m_particulas[i].y), 3.2, 3.2);
+        float fade = getFade(m_particulas[i].x, m_particulas[i].y);
+        int alpha = static_cast<int>(225 * fade);
+        if (alpha > 0) {
+            painter.setBrush(QColor(corR, corG, corB, alpha));
+            painter.drawEllipse(QPointF(m_particulas[i].x, m_particulas[i].y), 3.2, 3.2);
+        }
     }
 }
