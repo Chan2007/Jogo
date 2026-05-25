@@ -1,4 +1,73 @@
-Colocar descrição do projeto aqui:
+
+
+Este é um projeto desenvolvido em C++ que integra a interface gráfica do **Qt 5** (para menus, configurações e telas de interface) com a biblioteca de jogos **SFML 2.6.0** (para o motor do jogo, renderização e áudio).
+
+O projeto foi estruturado utilizando padrões estritos do **C++03 / C++98** e com  a biblioteca SFML, facilitando o compartilhamento e execução em diferentes ambientes de desenvolvimento (IDEs) sem a necessidade de reconfigurações complexas de caminhos no sistema.
+
+---
+
+## Pré-requisitos Obrigatórios
+
+Certificar-se de ter instalado:
+1. **Compilador MSVC (Microsoft Visual Studio 2019 ou superior):** Com *"Desenvolvimento para desktop com C++"* ativada.
+2. **Qt 5.15 (MSVC 2019 64-bit):** Instalado no diretório padrão (ex: `C:\\Qt\\5.15.19\\msvc2019_64`).
+
+*Nota: O SFML 2.6.0 (versão de 64 bits para MSVC) já está incluso na raiz do projeto dentro da pasta `/SFML-2.6.0`, portanto **não** é necessário baixá-lo ou instalá-lo manualmente.*
+
+---
+
+## Execução
+1. Clone o Repositório.
+2. Dependendo do IDE:
+- ### ***Qt Creator*** 
+    O Qt Creator utiliza o arquivo de configuração ```.pro``` para mapear o projeto de forma direta.
+  - Abra o **Qt Creator**.
+  - Clique em **Open Project** (Abrir Projeto) e selecione o arquivo ```GUI_Jogo.pro``` localizado na raiz da pasta do projeto.
+
+  - Na tela de configuração de Kits, selecione obrigatoriamente o kit correspondente ao compilador: ***Desktop Qt 5.15.x MSVC2019 64bit***
+
+  - Clique em **Configure Project**.
+
+  - No menu lateral esquerdo, clique com o botão direito sobre o nome do projeto e selecione **Run qmake**.
+
+  - Clicar no botão de "**Run**" (verde) para compilar e rodar o jogo.
+
+- ### ***Visual Studio*** 
+  O Visual Studio consegue abrir projetos baseados em CMake nativamente a partir das versões mais recentes.
+    - Abra o **Visual Studio**.
+  
+    - Na tela inicial, selecione a opção **Open a local folder** (Abrir uma pasta local).
+
+    - Selecione a pasta raiz do projeto (onde está localizado o arquivo *CMake*).
+
+    - O Visual Studio irá detectar o arquivo do CMake e começará a gerar o cache automaticamente no menu inferior.
+
+    - Na barra de ferramentas superior, localize o menu de seleção de alvos (geralmente exibe ```x64-Debug``` ou "**Selecione o Item de Inicialização**").
+
+    - Altere a seleção para ```Jogo.exe``` (subdestino) ou o nome correspondente ao executável do projeto.
+
+    - Pressione **F5** ou clique no botão de *Play/Iniciar* para compilar e rodar.
+
+- ### ***CLion*** 
+  O CLion gerencia o projeto utilizando o arquivo ```CMakeLists.txt```. Como o CLion roda os executáveis de forma isolada, precisamos garantir que o compilador correto seja selecionado.
+    1. #### Configurar o Compilador (Toolchain)
+        - No CLion, vá para ***File > Settings > Build, Execution, Deployment > Toolchains***.
+        - Clique no ícone de "*+*" para adicionar um novo toolchain.
+        - Garanta que o CLion detectou a pasta do Visual Studio e selecione o compilador do Visual Studio (*MSVC*) correspondente à versão instalada (ex: Visual Studio 2019).
+        - Mude o campo Architecture para **amd64** ou **x64**.
+        - Certifique-se de que o CMake e o Debugger estejam configurados corretamente para usar o *MSVC*.
+        - Mova essa Toolchain do Visual Studio para o topo da lista (deixando-a como *Default*). Clique em **Apply**.
+       
+    2. #### Configurar o Perfil do CMake
+       - Na janela de configurações, clique na opção *CMake* (logo abaixo de Toolchains).
+       - No seu perfil ativo (geralmente *Debug* ou *RelWithDebInfo*), altere a caixinha Toolchain de MinGW para Visual Studio, se ainda não o estar feito.
+       - Clique em OK para salvar e fechar as configurações.
+       
+    3. #### Limpar o Cache e Executar
+       - No menu superior do CLion, vá em ***Tools > CMake > Reset Cache and Reload Project***.
+       - No menu superior, vá em ***Build > Rebuild 'Jogo'*** (isso fará o *CMake* a copiar as DLLs necessárias para a pasta do executável).
+       - Clique no botão de "*Run*" Verde no topo da tela para iniciar o jogo.
+
 
 Música de fundo:
 
