@@ -74,12 +74,15 @@ bool Jogo::carregarRecursos()
     if (!jogador) {
         jogador = new Personagens::Jogador();
 
-        gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
-        jogador->setGerenciadorGravidade(gerenciadorGravidade);
+        Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(jogador);
 
         jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
         jogador->setPosicao(sf::Vector2f(640.0f, 400.0f));
         std::cout << "Jogador criado: " << jogador->getNome() << std::endl;
+
+        gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
+        gerenciadorGravidade->aplicarGravidade(jogador, true);
+        jogador->setGerenciadorGravidade(gerenciadorGravidade);
     }
     return configurarMenu();
 }
@@ -220,6 +223,18 @@ void Jogo::processarEventos()
             return;
         }
 
+        if (event.type == sf::Event::Resized) {
+
+            sf::FloatRect areaVisivel(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height));
+            m_window.setView(sf::View(areaVisivel));
+
+            bgAnimation.setTargetSize(m_window.getSize());
+
+            if (menuPronto) {
+                configurarMenu();
+            }
+        }
+
         if (estadoTela == TelaMenu)
             processarEventoMenu(event);
         else
@@ -281,11 +296,18 @@ void Jogo::desenharMenu()
 
 void Jogo::desenharGameplay()
 {
+    float dt = relogio_fisica.restart().asSeconds();
+
+    if (dt > 0.1f) { dt = 0.1f; }
+
     bgAnimation.update();
     m_window.clear(sf::Color::Black);
     bgAnimation.draw(m_window);
+
     if (jogador) {
-        jogador->atualizar();  // Atualizar animação
+        gerenciadorGravidade->executar(dt);
+        Gerenciadores::Gerenciador_Colisao::getInstancia().executar(jogador, gerenciadorGravidade, m_window.getSize());
+        jogador->atualizar();
         jogador->desenhar(m_window);
     }
 }

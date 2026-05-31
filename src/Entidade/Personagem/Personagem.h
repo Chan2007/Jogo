@@ -22,13 +22,12 @@ namespace Personagens {
     };
 
     enum EstadoAnimacao {
-        PARADO,
+        PARADO = 0,
         ANDANDO,
         PULANDO,
         CAINDO,
         ATACANDO
     };
-    EstadoAnimacao estadoAnimacao;
 
     class Personagem : public Entidades::Entidade {
         private:

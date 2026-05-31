@@ -43,10 +43,10 @@ namespace Gerenciadores {
     }
     void Gerenciador_Gravidade::atualizarGravidade(Entidades::Entidade* entidade, float dt) {
         if (!entidade) return;
-        if (estaNoChao(entidade)) {
+        /*/if (estaNoChao(entidade)) {
             setVy(entidade, 0.0f);
             return;
-        }
+        }*/
         float vy = getVy(entidade);
         vy += gravidade * dt;
         if (vy > vyTerminal) vy = vyTerminal;
@@ -56,6 +56,7 @@ namespace Gerenciadores {
         setVy(entidade, vy);
     }
     void Gerenciador_Gravidade::executar(float dt) {
+        entidadesNoChao.clear();
         for (int i = 0; i < static_cast<int>(entidadesAfetadas.size()); ++i)
             atualizarGravidade(entidadesAfetadas[i], dt);
     }
@@ -63,8 +64,8 @@ namespace Gerenciadores {
         if (!entidade) return;
 
         // -0,5 é o limite da inclinação, menor disso significa que a entidade tocou em um "chão"
-        if (normal.y < -0.5f) {
-            if (find(entidadesNoChao.begin(), entidadesNoChao.end(),entidade) == entidadesNoChao.end())
+        if (normal.y < -0.5f && getVy(entidade) >= 0.0f) {
+            if (find(entidadesNoChao.begin(), entidadesNoChao.end(), entidade) == entidadesNoChao.end())
                 entidadesNoChao.push_back(entidade);
             setVy(entidade, 0.0f);
         }

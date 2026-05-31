@@ -5,6 +5,7 @@
 #include "Personagem.h"
 
 namespace Personagens {
+
     Personagem::Personagem():
         Entidades::Entidade("Personagem", 0),
         velocidade(0.0f, 0.0f),
@@ -33,7 +34,8 @@ namespace Personagens {
         vampirismo(0.0f),
         regeneracaoVida(2.0f),
         regeneracaoMana(3.0f),
-        estado(static_cast<int>(ESTADO_OCIOSO)) {
+        estado(static_cast<int>(ESTADO_OCIOSO))
+    {
         setTipo(Entidades::ENTIDADE_GENERICA);
     }
 
