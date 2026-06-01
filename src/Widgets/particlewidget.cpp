@@ -83,7 +83,7 @@ void ParticleWidget::atualizarParticulas()
     }
     update();
 }
-// 1. Implementação da antiga lambda como um método da classe
+// 1. Implementação da antiga lambda como um méthodo da classe
 float ParticleWidget::getFade(float x, float y) const
 {
     float marginX = 100.0f;
