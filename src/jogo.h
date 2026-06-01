@@ -6,6 +6,7 @@
 #include "Animador_Fundo/animador_fundo.h"
 #include "Audio/Audio.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Entidade/Personagem/Jogador/Jogador.h"
 
 namespace Gerenciadores {
@@ -35,6 +36,7 @@ class Jogo{
         std::string diretorio_Fonte;
 
         sf::Event event{};
+        sf::Clock relogio_fisica;
         Personagens::Jogador* jogador{};
         Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade{};
         sf::RenderWindow m_window;

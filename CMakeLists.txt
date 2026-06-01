@@ -95,16 +95,8 @@ if(WIN32)
 
     # Copia AUTOMATICAMENTE as DLLs do Qt correspondentes ao modo ativo mais as dependências gráficos
     add_custom_command(TARGET Jogo POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "$<$<CONFIG:Debug>:${QT_BINARY_DIR}/Qt5Cored.dll>$<$<NOT:$<CONFIG:Debug>>:${QT_BINARY_DIR}/Qt5Core.dll>"
-            "$<$<CONFIG:Debug>:${QT_BINARY_DIR}/Qt5Guid.dll>$<$<NOT:$<CONFIG:Debug>>:${QT_BINARY_DIR}/Qt5Gui.dll>"
-            "$<$<CONFIG:Debug>:${QT_BINARY_DIR}/Qt5Widgetsd.dll>$<$<NOT:$<CONFIG:Debug>>:${QT_BINARY_DIR}/Qt5Widgets.dll>"
-            "${QT_BINARY_DIR}/D3Dcompiler_47.dll"
-            "${QT_BINARY_DIR}/libEGL.dll"
-            "${QT_BINARY_DIR}/libGLESv2.dll"
-            "${QT_BINARY_DIR}/opengl32sw.dll"
-            "$<TARGET_FILE_DIR:Jogo>"
-    )
+    COMMAND "$<TARGET_FILE_DIR:Qt5::Core>/windeployqt.exe" --debug "$<TARGET_FILE:Jogo>"
+)
 
     # Cria a pasta 'platforms' essencial do Qt e copia a DLL de janelas correta
     add_custom_command(TARGET Jogo POST_BUILD

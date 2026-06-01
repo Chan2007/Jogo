@@ -101,29 +101,45 @@ namespace Gerenciadores {
         }
     }
 
-    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade) {
+    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade, const sf::Vector2u& tamanhoJanela) {
         if (!entidade) return false;
+
         const sf::Vector2f posicaoAtual = entidade->getPosicao();
         const sf::FloatRect tamanho = entidade->getTamanho();
-        const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
+
+        float limiteLargura = static_cast<float>(tamanhoJanela.x);
+        float limiteAltura = static_cast<float>(tamanhoJanela.y);
+
         sf::Vector2f novaPosicao = posicaoAtual;
         bool colidiuBorda = false;
-        if (novaPosicao.x < 0.0f) {
-            novaPosicao.x = 0.0f;
+
+        float metadeLargura = tamanho.width / 2.0f;
+        float metadeAltura = tamanho.height / 2.0f;
+
+        if (novaPosicao.x - metadeLargura < 0.0f) {
+            novaPosicao.x = metadeLargura;
             colidiuBorda = true;
         }
-        else if (novaPosicao.x + tamanho.width > desktopMode.width) {
-            novaPosicao.x = desktopMode.width - tamanho.width;
+
+        else if (novaPosicao.x + metadeLargura > limiteLargura) {
+            novaPosicao.x = limiteLargura - metadeLargura;
             colidiuBorda = true;
         }
-        if (novaPosicao.y - tamanho.height < 0.0f) {
-            novaPosicao.y = tamanho.height;
+
+        if (novaPosicao.y - metadeAltura < 0.0f) {
+            novaPosicao.y = metadeAltura;
             colidiuBorda = true;
         }
-        else if (novaPosicao.y  > desktopMode.height) {
-            novaPosicao.y = desktopMode.height;
+
+        else if (novaPosicao.y + metadeAltura > limiteAltura) {
+            novaPosicao.y = limiteAltura - metadeAltura;
             colidiuBorda = true;
+
+            if (pGravidade) {
+                pGravidade->aoTocarChao(entidade, sf::Vector2f(0.0f, -1.0f));
+            }
         }
+
         if (colidiuBorda) {
             entidade->setPosicao(novaPosicao);
             entidade->setColisao(true);
@@ -133,6 +149,9 @@ namespace Gerenciadores {
 
     void Gerenciador_Colisao::verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel) {
         if (!entidade || !movel) return;
+
+        if (entidade == movel) return;
+
         movel->setColisao(false);
         if (colidiu(entidade, movel)) {
             calculaColisao(entidade, movel);
@@ -155,11 +174,13 @@ namespace Gerenciadores {
     void Gerenciador_Colisao::verificarJogador(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Ljogadores, entidade);
     }
-    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade) {
+    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade, const sf::Vector2u& tamanhoJanela) {
+        if (!entidade) return;
+        entidade->setColisao(false);
         verificarObstaculo(entidade);
         verificarProjetil(entidade);
         verificarInimigo(entidade);
         verificarJogador(entidade);
-        verificarLimitesJanela(entidade);
+        verificarLimitesJanela(entidade, pGravidade, tamanhoJanela);
     }
 } // Gerenciador

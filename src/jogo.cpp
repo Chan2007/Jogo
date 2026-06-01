@@ -32,7 +32,7 @@ bool Jogo::carregarRecursos()
 {
     const sf::Vector2u tamanhoJanela = m_window.getSize();
 
-    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/aumentadas");
+    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/");
     diretorio_Audio = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
     diretorio_Fonte = Encontrar_Diretorio::acharDiretorio_Arquivo("SFML-2.6.0/examples/island/resources/tuffy.ttf");
 
@@ -74,15 +74,15 @@ bool Jogo::carregarRecursos()
     if (!jogador) {
         jogador = new Personagens::Jogador();
 
-        gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
-        jogador->setGerenciadorGravidade(gerenciadorGravidade);
+        Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(jogador);
 
         jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
         jogador->setPosicao(sf::Vector2f(640.0f, 400.0f));
         std::cout << "Jogador criado: " << jogador->getNome() << std::endl;
 
-        // Aplica a gravidade para o jogador
+        gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
         gerenciadorGravidade->aplicarGravidade(jogador, true);
+        jogador->setGerenciadorGravidade(gerenciadorGravidade);
     }
     return configurarMenu();
 }
@@ -151,7 +151,6 @@ void Jogo::iniciarGameplay()
     }
 
     estadoTela = TelaGameplay;
-    relogio.restart();
 }
 
 void Jogo::setMusicaLigada(bool ligada)
@@ -224,6 +223,18 @@ void Jogo::processarEventos()
             return;
         }
 
+        if (event.type == sf::Event::Resized) {
+
+            sf::FloatRect areaVisivel(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height));
+            m_window.setView(sf::View(areaVisivel));
+
+            bgAnimation.setTargetSize(m_window.getSize());
+
+            if (menuPronto) {
+                configurarMenu();
+            }
+        }
+
         if (estadoTela == TelaMenu)
             processarEventoMenu(event);
         else
@@ -255,7 +266,6 @@ void Jogo::executarOpcaoMenu()
     switch (opcaoSelecionada) {
         case 0:
             estadoTela = TelaGameplay;
-            relogio.restart();
             break;
         case 1:
             musicaLigada = !musicaLigada;
@@ -286,30 +296,18 @@ void Jogo::desenharMenu()
 
 void Jogo::desenharGameplay()
 {
-    float dt = relogio.restart().asSeconds();
-    if (gerenciadorGravidade) {
-        gerenciadorGravidade->executar(dt);
-    }
+    float dt = relogio_fisica.restart().asSeconds();
 
-    if (jogador) {
-        sf::FloatRect bounds = jogador->getTamanho();
-        sf::Vector2f pos = jogador->getPosicao();
-        float chaoY = static_cast<float>(m_window.getSize().y) - 50.0f; // Uma margem para não ficar colado na borda
-
-        if (pos.y + bounds.height >= chaoY) {
-            pos.y = chaoY - bounds.height;
-            jogador->setPosicao(pos);
-            if (gerenciadorGravidade) {
-                gerenciadorGravidade->aoTocarChao(jogador, sf::Vector2f(0.0f, -1.0f));
-            }
-        }
-    }
+    if (dt > 0.1f) { dt = 0.1f; }
 
     bgAnimation.update();
     m_window.clear(sf::Color::Black);
     bgAnimation.draw(m_window);
+
     if (jogador) {
-        jogador->atualizar();  // Atualizar animação
+        gerenciadorGravidade->executar(dt);
+        Gerenciadores::Gerenciador_Colisao::getInstancia().executar(jogador, gerenciadorGravidade, m_window.getSize());
+        jogador->atualizar();
         jogador->desenhar(m_window);
     }
 }

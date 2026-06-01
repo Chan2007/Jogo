@@ -15,6 +15,8 @@ namespace Obstaculos{
                 Plataforma();
                 ~Plataforma();
                 void atualizar();
+                void salvar();
+                void mover();
                 float getAltura();
                 float getLargura();
                 void setPlataforma(Personagens::Jogador* J);

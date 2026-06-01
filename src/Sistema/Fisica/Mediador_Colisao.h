@@ -17,6 +17,7 @@ namespace Gerenciadores {
             Mediador_Colisao(){};
         public:
             virtual ~Mediador_Colisao() {}
+            virtual void aoColidir(Entidades::Entidade* E1, Entidades::Entidade* E2) = 0;
         };
 
 } // Gerenciador
