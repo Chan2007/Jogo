@@ -5,7 +5,6 @@
 #include <QPushButton>
 
 class QEvent;
-class QGraphicsOpacityEffect;
 class QMouseEvent;
 class QPainter;
 class QPaintEvent;
@@ -17,12 +16,16 @@ class MenuButton : public QPushButton
     Q_PROPERTY(qreal hoverProgress READ hoverProgress WRITE setHoverProgress)
     Q_PROPERTY(qreal pressProgress READ pressProgress WRITE setPressProgress)
     Q_PROPERTY(QPoint contentOffset READ contentOffset WRITE setContentOffset)
+    Q_PROPERTY(qreal borderAngle READ borderAngle WRITE setBorderAngle)
+    Q_PROPERTY(qreal opacityValue READ opacityValue WRITE setOpacityValue)
 
 public:
-    explicit MenuButton(const QString& text, QWidget *parent = 0);
-
+    explicit MenuButton(QWidget *parent = nullptr);
+    explicit MenuButton(const QString& text, QWidget *parent = nullptr);
     virtual QSize sizeHint() const;
     void iniciarAnimacaoEntrada(int atrasoMs);
+    void setTextAlignment(Qt::Alignment alignment);
+    Qt::Alignment m_textAlignment = Qt::AlignLeft | Qt::AlignVCenter;
 
     qreal hoverProgress() const;
     void setHoverProgress(qreal value);
@@ -32,6 +35,12 @@ public:
 
     QPoint contentOffset() const;
     void setContentOffset(const QPoint& value);
+
+    qreal borderAngle() const;
+    void setBorderAngle(qreal angle);
+
+    qreal opacityValue() const;
+    void setOpacityValue(qreal value);
 
 protected:
     virtual void enterEvent(QEvent *event);
@@ -46,16 +55,17 @@ private:
     void animarPress(qreal destino, int duracaoMs);
     QColor interpolarCor(const QColor &corA, const QColor &corB, double t) const;
 
-
     bool hovered;
     qreal m_hoverProgress;
     qreal m_pressProgress;
+    qreal m_borderAngle;
+    qreal m_opacityValue;
     QPoint m_contentOffset;
-    QGraphicsOpacityEffect *m_opacityEffect;
     QPropertyAnimation *m_hoverAnimation;
     QPropertyAnimation *m_pressAnimation;
     QPropertyAnimation *m_offsetAnimation;
     QPropertyAnimation *m_opacityAnimation;
+    QPropertyAnimation *m_borderAnimation;
 };
 
 #endif // MENU_BUTTON_H

@@ -1,31 +1,13 @@
-QMainWindow {
-    background-color: #FFFFFF; /* Cor caso o SFML falhe */
-}
-QWidget#centralwidget,
-#stackedWidget,
-#mainPage,
-#settingsPage {
-    background: transparent; /* Mantém as páginas transparentes para o vídeo passar */
-}
-
-QMenuBar,
-QStatusBar {
-    background: transparent;
-    color: #000000;
-    border: 0;
-}
-
 #topBarLabel,
 #heroTitleLabel,
 #heroSubtitleLabel,
 #statusLabel,
 #settingLabelMusic,
 #settingLabelVolume,
-#volumeValueLabel,
-QCheckBox {
+#volumeValueLabel{
     font-family: "Segoe UI", "Arial", "Helvetica";
     color: #000000;
-    font-weight: 900;
+    font-weight: bold;
 }
 #settingsTitleLabel {
     font-size: 27px;        /* <--- Aumente aqui (Ex: 22px) */
@@ -34,11 +16,12 @@ QCheckBox {
 
 #settingsSubtitleLabel {
     color: #000000;
-    font-size: 25px;        /* <--- Aumente aqui (Ex: 13px) */
+    font-size: 20px;        /* <--- Aumente aqui (Ex: 13px) */
 }
 #sectionTitleLabel {
-    font-size: 23px;         /* <--- Aumente aqui (Ex: 12px) */
-    border-bottom: 2px solid linear-gradient(to right, #000000, #ffffff); /* Cor equivalente ao QColor(0, 0, 0) */
+    border-bottom: 2px solid black;
+    font-size: 15px;
+    letter-spacing: 3px;
     padding-bottom: 8px;
     padding-top: 4px;
 }
@@ -57,76 +40,14 @@ QCheckBox {
 
 #statusLabel {
     font-size: 11px;
-    padding-top: 8px;
-}
-
-#mainMenuPanel {
-    background-color: rgba(255, 255, 255, 230);
-    border: 2px solid #000000;
-    border-radius: 14px;
-}
-
-#mainMenuPanel QPushButton,
-#settingsPanel QPushButton {
-    font-family: "Segoe UI", "Arial", "Helvetica";
-    font-size: 18px;
-    color: #000000;
-    background-color: #f7f7f7;
-    border: 2px solid #9a9a9a;
-    padding: 10px 0 10px 18px;
-    text-align: left;
-    min-width: 280px;
-    max-width: 360px;
-    font-weight: 900;
-}
-
-#mainMenuPanel QPushButton:hover,
-#settingsPanel QPushButton:hover {
-    color: #000000;
-    background-color: #d0d0d0;
-    border: 2px solid #000000;
-}
-
-#mainMenuPanel QPushButton:pressed,
-#settingsPanel QPushButton:pressed {
-    color: #000000;
-    background-color: #a7a7a7;
-    border: 2px solid #000000;
-}
-
-#settingsPage {
-    background: transparent;
+    padding-top: 20px;
 }
 
 #settingsPanel {
-    background: transparent;
     border: none;
-    padding: 40px 52px 36px 52px;
-    min-width: 450px;
-    max-width: 640px;
-}
-
-#innerFrame {
-    border: 2px solid #000000;
-    background: transparent;
-    padding: 24px 28px;
-}
-
-#settingsTitleLabel {
-    font-size: 37px;
-    letter-spacing: 4px;
-}
-
-#settingsSubtitleLabel {
-    font-size: 20px;
-}
-
-#sectionTitleLabel {
-    font-size: 15px;
-    letter-spacing: 3px;
-    border-bottom: 4px solid #000000;
-    padding-bottom: 8px;
-    padding-top: 4px;
+    padding: 52px 52px 36px 52px;
+    min-width: 1000px;
+    min-height: 700px;
 }
 
 #settingLabelMusic,
@@ -141,98 +62,21 @@ QCheckBox {
     min-width: 38px;
 }
 
-QFrame[sectionFrame="true"] {
-    background: rgba(255, 255, 255, 160);
-    border: 2px solid #000000;
-    border-radius: 0px;
-}
-
-QCheckBox {
-    font-size: 13px;
-    spacing: 10px;
-}
-
-QCheckBox::indicator {
-    width: 16px;
-    height: 16px;
-    border-radius: 1px;
-    border: 2px solid #000000;
-    background-color: #ffffff;
-}
-
-QCheckBox::indicator:hover {
-    border: 2px solid #000000;
-    background-color: #d0d0d0;
-}
-
-QCheckBox::indicator:checked {
-    background-color: #000000;
-    border: 2px solid #000000;
-}
-
-QSlider::groove:horizontal {
-    border: 1px solid #000000;
-    height: 4px;
-    background-color: #cfcfcf;
-}
-
-QSlider::sub-page:horizontal {
-    background-color: #000000;
-    height: 4px;
-}
-
-QSlider::add-page:horizontal {
-    background-color: #cfcfcf;
-    height: 4px;
-}
-
-QSlider::handle:horizontal {
-    width: 14px;
-    height: 14px;
-    margin: -5px 0;
-    border-radius: 7px;
-    background-color: #ffffff;
-    border: 2px solid #000000;
-}
-/* Estado Normal (Repouso) */
-#mainMenuPanel QPushButton,
-#settingsPanel QPushButton {
+#mainMenuPanel MenuButton,
+#settingsPanel MenuButton {
     font-family: "Segoe UI", "Arial", "Helvetica";
-    font-size: 18px;
+    font-size: 25px;
     font-weight: 900;
-    color: #000000;              /* <--- COLOQUE A COR DO TEXTO PADRÃO AQUI (ex: preto #000000 ou branco #ffffff) */
-    background-color: #f7f7f7;   /* Cor equivalente ao QColor(247, 247, 247) */
-    border: 2px solid #9a9a9a;   /* Cor equivalente ao QColor(154, 154, 154) */
-    border-radius: 0px;
-    padding: 10px 0px 10px 18px;
-    text-align: left;
-    min-width: 280px;
-    max-width: 360px;
+    color: transparent;
+    background-color: transparent;
+    padding: 0px 0px 0px 200px;
+    margin: 0px;
 }
-
-/* Estado Hover (Mouse por cima) */
-#mainMenuPanel QPushButton:hover,
-#settingsPanel QPushButton:hover {
-    background-color: #d0d0d0;   /* Cor equivalente ao QColor(208, 208, 208) */
-    border: 2px solid #000000;   /* Cor equivalente ao QColor(0, 0, 0) */
-    color: #ffffff;              /* <--- COLOQUE A COR DO TEXTO QUANDO O MOUSE PASSAR POR CIMA */
-    padding-left: 26px;          /* Simula o avanço do padding que a animação fazia (18 + 8) */
-}
-
-/* Estado Pressed (Botão Clicado) */
-#mainMenuPanel QPushButton:pressed,
-#settingsPanel QPushButton:pressed {
-    background-color: #a7a7a7;
-    border: 2px solid #000000;
-}
-
-/* Regra específica para o botão Voltar (que é centralizado) */
-#backButton {
+#settingsPanel MenuButton {
+    min-width: 500px;
+    max-height: 100px;
     text-align: center;
-    padding-left: 0px;
-    padding-right: 32px;
 }
-
-#backButton:hover {
-    padding-left: 0px; /* Mantém centralizado no hover */
+#mainMenuPanel{
+    max-width: 400px;
 }

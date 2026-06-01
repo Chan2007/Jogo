@@ -6,24 +6,35 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Ajustar este caminho abaixo para a pasta exata onde o Qt 5 foi instalado
-set(CMAKE_PREFIX_PATH "C:/Qt/5.15.19/msvc2019_64")
+set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/msvc2019_64")
 
 # Ativa os compiladores automáticos do Qt para ler a interface (.ui) e eventos (MOC)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 # Encontra os pacotes do Qt 5 necessários para a interface
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+# Adiciona 'Svg' na lista de REQUIRED
+find_package(Qt5 COMPONENTS Core Gui Widgets Svg REQUIRED)
 
 set(SFML_ROOT "${CMAKE_SOURCE_DIR}/SFML-2.6.0")
 set(SFML_INCLUDE_DIR "${SFML_ROOT}/include")
 set(SFML_LIBRARY_DIR "${SFML_ROOT}/lib")
 set(SFML_BINARY_DIR "${SFML_ROOT}/bin")
-set(QT_BINARY_DIR "C:/Qt/5.15.19/msvc2019_64/bin")
-set(QT_PLATFORMS_DIR "C:/Qt/5.15.19/msvc2019_64/plugins/platforms")
+set(QT_BINARY_DIR "C:/Qt/5.15.2/msvc2019_64/bin")
+set(QT_PLATFORMS_DIR "C:/Qt/5.15.2/msvc2019_64/plugins/platforms")
 
 # Procura os arquivos do jogo recursivamente
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
+file(GLOB MATERIAL_WIDGETS_SRC
+        "qt-material-widgets/components/*.cpp"
+        "qt-material-widgets/components/lib/*.cpp"
+)
+file(GLOB MATERIAL_WIDGETS_HDR
+        "qt-material-widgets/components/*.h"
+        "qt-material-widgets/components/lib/*.h"
+)
 
 # Cria o executável incluindo as classes do Qt (mainwindow) e o arquivo de design (.ui)
 add_executable(Jogo ${SOURCES}
@@ -33,13 +44,19 @@ add_executable(Jogo ${SOURCES}
         mainwindow.ui
         src/qsfmlwidget.cpp
         src/qsfmlwidget.h
-        src/particlewidget.cpp
-        src/particlewidget.h
+        src/Widgets/particlewidget.cpp
+        src/Widgets/particlewidget.h
+
+        qt-material-widgets/components/resources.qrc
+        ${MATERIAL_WIDGETS_SRC}
+        ${MATERIAL_WIDGETS_HDR}
 )
 
 target_include_directories(Jogo PRIVATE src
         "${SFML_INCLUDE_DIR}"
         "${CMAKE_CURRENT_BINARY_DIR}"
+        ${CMAKE_CURRENT_SOURCE_DIR}/qt-material-widgets/components
+        ${CMAKE_CURRENT_SOURCE_DIR}/qt-material-widgets/components/lib
 )
 
 if(MSVC)
@@ -51,6 +68,7 @@ target_link_libraries(Jogo PRIVATE
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
+        Qt5::Svg
 
         # SFML
         debug "${SFML_LIBRARY_DIR}/sfml-graphics-d.lib"

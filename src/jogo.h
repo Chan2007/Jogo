@@ -42,6 +42,7 @@ class Jogo{
         sf::Text tituloText;
         std::vector<sf::Text> menuOptions;
         sf::RectangleShape menuPanel;
+        sf::Clock relogio;
         bool inicializado;
         bool menuPronto;
         bool musicaLigada;

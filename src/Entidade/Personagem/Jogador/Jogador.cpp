@@ -50,7 +50,8 @@ namespace Personagens {
             frameWidth = 230;
             frameHeight = 120;
             tempoPorFrame = 0.08f;
-            caminhoArquivoSprite = "primeiro jogo/assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+            caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+            caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
             break;
         default:
             setNome("Campeao Generico");

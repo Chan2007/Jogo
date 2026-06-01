@@ -83,33 +83,40 @@ void ParticleWidget::atualizarParticulas()
     }
     update();
 }
+// 1. Implementação da antiga lambda como um método da classe
+float ParticleWidget::getFade(float x, float y) const
+{
+    float marginX = 100.0f;
+    float marginY = 100.0f;
+    float fadeX = 1.0f;
+    float fadeY = 1.0f;
+
+    if (x < marginX) {
+        fadeX = qMax(0.0f, x / marginX);
+    } else if (x > width() - marginX) {
+        fadeX = qMax(0.0f, (width() - x) / marginX);
+    }
+
+    if (y < marginY) {
+        fadeY = qMax(0.0f, y / marginY);
+    } else if (y > height() - marginY) {
+        fadeY = qMax(0.0f, (height() - y) / marginY);
+    }
+
+    return fadeX * fadeY;
+}
+
+// 2. O seu paintEvent atualizado sem C++11
 void ParticleWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    // Remove a duplicidade do setRenderHint também
 
     const int corR = 0;
     const int corG = 0;
     const int corB = 0;
-
-    // Função lambda para calcular o fadeout de acordo com a proximidade das bordas
-    auto getFade = [this](float x, float y) {
-        float marginX = 100.0f;
-        float marginY = 100.0f;
-        float fadeX = 1.0f;
-        float fadeY = 1.0f;
-
-        if (x < marginX) fadeX = qMax(0.0f, x / marginX);
-        else if (x > width() - marginX) fadeX = qMax(0.0f, (width() - x) / marginX);
-
-        if (y < marginY) fadeY = qMax(0.0f, y / marginY);
-        else if (y > height() - marginY) fadeY = qMax(0.0f, (height() - y) / marginY);
-
-        return fadeX * fadeY;
-    };
 
     // 1. Desenha as linhas de conexão PRIMEIRO (bem finas)
     for (int i = 0; i < m_particulas.size(); ++i) {
@@ -120,6 +127,7 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
             float distancia = std::sqrt(dx * dx + dy * dy);
 
             if (distancia < m_distanciaConexao) {
+                // Chama o novo méthodo auxiliar no lugar da lambda
                 float fadeI = getFade(m_particulas[i].x, m_particulas[i].y);
                 float fadeJ = getFade(m_particulas[j].x, m_particulas[j].y);
                 float baseFade = (fadeI + fadeJ) * 0.5f;
@@ -141,6 +149,7 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
     painter.setPen(Qt::NoPen);
 
     for (int i = 0; i < m_particulas.size(); ++i) {
+        // Chama o novo méthodo auxiliar no lugar da lambda
         float fade = getFade(m_particulas[i].x, m_particulas[i].y);
         int alpha = static_cast<int>(225 * fade);
         if (alpha > 0) {

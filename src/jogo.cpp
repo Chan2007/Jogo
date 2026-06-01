@@ -32,7 +32,7 @@ bool Jogo::carregarRecursos()
 {
     const sf::Vector2u tamanhoJanela = m_window.getSize();
 
-    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/");
+    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/aumentadas");
     diretorio_Audio = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
     diretorio_Fonte = Encontrar_Diretorio::acharDiretorio_Arquivo("SFML-2.6.0/examples/island/resources/tuffy.ttf");
 
@@ -80,6 +80,9 @@ bool Jogo::carregarRecursos()
         jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
         jogador->setPosicao(sf::Vector2f(640.0f, 400.0f));
         std::cout << "Jogador criado: " << jogador->getNome() << std::endl;
+
+        // Aplica a gravidade para o jogador
+        gerenciadorGravidade->aplicarGravidade(jogador, true);
     }
     return configurarMenu();
 }
@@ -148,6 +151,7 @@ void Jogo::iniciarGameplay()
     }
 
     estadoTela = TelaGameplay;
+    relogio.restart();
 }
 
 void Jogo::setMusicaLigada(bool ligada)
@@ -251,6 +255,7 @@ void Jogo::executarOpcaoMenu()
     switch (opcaoSelecionada) {
         case 0:
             estadoTela = TelaGameplay;
+            relogio.restart();
             break;
         case 1:
             musicaLigada = !musicaLigada;
@@ -281,6 +286,25 @@ void Jogo::desenharMenu()
 
 void Jogo::desenharGameplay()
 {
+    float dt = relogio.restart().asSeconds();
+    if (gerenciadorGravidade) {
+        gerenciadorGravidade->executar(dt);
+    }
+
+    if (jogador) {
+        sf::FloatRect bounds = jogador->getTamanho();
+        sf::Vector2f pos = jogador->getPosicao();
+        float chaoY = static_cast<float>(m_window.getSize().y) - 50.0f; // Uma margem para não ficar colado na borda
+
+        if (pos.y + bounds.height >= chaoY) {
+            pos.y = chaoY - bounds.height;
+            jogador->setPosicao(pos);
+            if (gerenciadorGravidade) {
+                gerenciadorGravidade->aoTocarChao(jogador, sf::Vector2f(0.0f, -1.0f));
+            }
+        }
+    }
+
     bgAnimation.update();
     m_window.clear(sf::Color::Black);
     bgAnimation.draw(m_window);

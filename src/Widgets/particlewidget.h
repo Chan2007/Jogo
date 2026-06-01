@@ -29,6 +29,7 @@ private slots:
 
 private:
     void iniciarParticulas();
+    float getFade(float x, float y) const;
 
     QVector<Particle> m_particulas;
     QTimer m_timer;

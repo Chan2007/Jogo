@@ -28,7 +28,7 @@ namespace Personagens {
         CAINDO,
         ATACANDO
     };
-    EstadoAnimacao estadoAnimacao;
+    extern EstadoAnimacao estadoAnimacao;
 
     class Personagem : public Entidades::Entidade {
         private:

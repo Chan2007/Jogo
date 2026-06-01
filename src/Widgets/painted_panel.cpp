@@ -19,31 +19,26 @@ void PaintedPanel::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     const QRectF frameRect = rect().adjusted(8, 8, -8, -8);
-    const qreal radius = 18.0;
+    const qreal radius = 28.0;
 
     // Sombra externa suave
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(0, 0, 0, 55));
-    painter.drawRoundedRect(frameRect.adjusted(6, 6, 6, 6), radius, radius);
+    painter.setBrush(QColor(0, 0, 0, 35));
+    painter.drawRoundedRect(frameRect.adjusted(12, 12, 12, 12), radius, radius);
 
-    // Fundo em gradiente branco/cinza suave
-    QLinearGradient fillGradient(frameRect.topLeft(), frameRect.bottomLeft());
-    fillGradient.setColorAt(0.0,  QColor(255, 255, 255, 252));
-    fillGradient.setColorAt(0.45, QColor(239, 239, 239, 250));
-    fillGradient.setColorAt(1.0,  QColor(204, 204, 204, 248));
 
     painter.setPen(Qt::NoPen);
-    painter.setBrush(fillGradient);
+    painter.setBrush(QColorConstants::Svg::white);
     painter.drawRoundedRect(frameRect, radius, radius);
 
     // Moldura externa preta
     painter.setPen(QPen(QColor(0, 0, 0, 220), 2));
     painter.setBrush(Qt::NoBrush);
-    painter.drawRoundedRect(frameRect.adjusted(1, 1, -1, -1), radius - 1.0, radius - 1.0);
+    painter.drawRoundedRect(frameRect.adjusted(3, 3, -3, -3), radius - 1.0, radius - 1.0);
 
     // Molde interno claro para dar profundidade
     painter.setPen(QPen(QColor(255, 255, 255, 120), 1));
-    painter.drawRoundedRect(frameRect.adjusted(5, 5, -5, -5), radius - 4.0, radius - 4.0);
+    painter.drawRoundedRect(frameRect.adjusted(25, 25, -25, -25), radius , radius);
 
     // Linhas horizontais decorativas com contraste preto/cinza
     const qreal cx = frameRect.center().x();
