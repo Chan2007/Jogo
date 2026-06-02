@@ -33,9 +33,8 @@ bool Jogo::carregarRecursos()
 {
     const sf::Vector2u tamanhoJanela = m_window.getSize();
 
-    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/");
+    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/menu");
     diretorio_Audio = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
-    diretorio_Fonte = Encontrar_Diretorio::acharDiretorio_Arquivo("SFML-2.6.0/examples/island/resources/tuffy.ttf");
 
     bgAnimation.setTargetSize(tamanhoJanela);
     if (tamanhoJanela.x == 0 || tamanhoJanela.y == 0) {
@@ -61,15 +60,6 @@ bool Jogo::carregarRecursos()
         }
     }
 
-    if (diretorio_Fonte.empty()) {
-        std::cerr << "Falha ao localizar a fonte do menu." << std::endl;
-        return false;
-    }
-
-    if (!menuFont.loadFromFile(diretorio_Fonte)) {
-        std::cerr << "Falha ao carregar a fonte do menu." << std::endl;
-        return false;
-    }
     Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
     if (chao) {
         Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(chao);

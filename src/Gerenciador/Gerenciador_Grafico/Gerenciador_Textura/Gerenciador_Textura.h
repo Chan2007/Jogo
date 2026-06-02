@@ -14,9 +14,9 @@ class Gerenciador_Textura {
         Gerenciador_Textura();
         ~Gerenciador_Textura();
 
-        bool carregar_textura(const std::string& caminho);
-        void limpar_textura();
-        sf::Texture* buscar_textura(const std::string& caminho) const;
+        bool carregarTextura(const std::string& caminho);
+        void limparTextura();
+        sf::Texture* buscarTextura(const std::string& caminho) const;
 };
 
 #endif //JOGO_GERENCIADOR_TEXTURA_H

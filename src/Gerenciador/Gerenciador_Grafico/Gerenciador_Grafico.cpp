@@ -5,24 +5,24 @@
 #include "Gerenciador_Grafico.h"
 
 namespace Gerenciadores {
-        gerenciador_grafico::gerenciador_grafico() {
+        Gerenciador_Grafico::Gerenciador_Grafico() {
             const sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
             RenderWindow window(desktopMode, "Jogo LoL", sf::Style::Default);
             window.setFramerateLimit(60);
             sprite.setPosition(0, 0);
         }
-        gerenciador_grafico& gerenciador_grafico::get_grafico() {
-            static gerenciador_grafico instancia;
+        Gerenciador_Grafico& Gerenciador_Grafico::get_grafico() {
+            static Gerenciador_Grafico instancia;
             return instancia;
         }
 
-        gerenciador_grafico::~gerenciador_grafico() {window.close();}
-        RenderWindow& gerenciador_grafico::get_window() {return window;}
-        bool gerenciador_grafico::isOpen() const {return window.isOpen();}
-        void gerenciador_grafico::draw(const RectangleShape& retangulo) {window.draw(retangulo);}
-        void gerenciador_grafico::draw() {window.draw(sprite);}
-        void gerenciador_grafico::show() {window.display();}
-        void gerenciador_grafico::clear() {window.clear();}
-        void gerenciador_grafico::close() {window.close();}
+        Gerenciador_Grafico::~Gerenciador_Grafico() {window.close();}
+        RenderWindow& Gerenciador_Grafico::get_window() {return window;}
+        bool Gerenciador_Grafico::isOpen() const {return window.isOpen();}
+        void Gerenciador_Grafico::draw(const RectangleShape& retangulo) {window.draw(retangulo);}
+        void Gerenciador_Grafico::draw() {window.draw(sprite);}
+        void Gerenciador_Grafico::show() {window.display();}
+        void Gerenciador_Grafico::clear() {window.clear();}
+        void Gerenciador_Grafico::close() {window.close();}
 
 } // Gerenciador

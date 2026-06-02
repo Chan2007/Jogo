@@ -7,17 +7,17 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 namespace Gerenciadores {
-    class gerenciador_grafico {
+    class Gerenciador_Grafico {
     private:
         Sprite sprite;
         RenderWindow window;
-        gerenciador_grafico();
+        Gerenciador_Grafico();
         // Proibir o uso de construtora de cópia e atribuição à cópias
-        gerenciador_grafico(const gerenciador_grafico&);
-        gerenciador_grafico& operator=(const gerenciador_grafico&);
+        Gerenciador_Grafico(const Gerenciador_Grafico&);
+        Gerenciador_Grafico& operator=(const Gerenciador_Grafico&);
     public:
-        ~gerenciador_grafico();
-        gerenciador_grafico& get_grafico();
+        ~Gerenciador_Grafico();
+        static Gerenciador_Grafico& get_grafico();
         RenderWindow& get_window();
         bool isOpen() const;
         void clear();

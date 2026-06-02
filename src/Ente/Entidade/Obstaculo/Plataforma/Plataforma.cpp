@@ -15,7 +15,7 @@ namespace Obstaculos {
 		setTipo(Entidades::ENTIDADE_OBSTACULO);
 		perigoso = false;
 
-		std::string arquivoSprite = "primeiro jogo/assets/Tiles_pack/Tileset_12.png";
+		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
 		Encontrar_Diretorio diretorio;
 		arquivoSprite = diretorio.acharDiretorio_Arquivo(arquivoSprite);
 		if (arquivoSprite.empty()) {
@@ -60,7 +60,7 @@ namespace Obstaculos {
 			case CHAO:
 
 				Encontrar_Diretorio diretorio;
-				std::string arquivoSprite = "primeiro jogo/assets/Tiles_pack/Tileset_12.png";
+				std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
 				arquivoSprite = diretorio.acharDiretorio_Arquivo(arquivoSprite);
 				if (arquivoSprite.empty()) {
 					std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << arquivoSprite << std::endl;
