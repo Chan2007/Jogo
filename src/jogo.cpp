@@ -79,17 +79,36 @@ bool Jogo::carregarRecursos()
 
     Obstaculos::Plataforma* novaPlat;
     sementear();
-    for (int i = 0; i < 3; i++) {
-        if (!i) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1); }
-        else if (i==1) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2); }
+    for (int i = 0; i < (rand()%8)+3; i++) {
+        if ((rand()%10)<5) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1); }
+        else if ((rand()%10)<4) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2); }
         else { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3); }
 
-        Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(novaPlat);
+        bool posicaoValida = false;
+        int tentativas = 0;
+
         if (novaPlat) {
-            int sizex = ((m_window.getSize().x) - novaPlat->getTamanho().width);
-            int sizey = ((m_window.getSize().y) - novaPlat->getTamanho().height - (chao->getAltura())/2);
-            novaPlat->getCorpo().setPosition((rand() % sizex) + (novaPlat->getTamanho().width)/2, (rand() % sizey) + (novaPlat->getTamanho().height)/2);
-            listaPlataformas.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
+            while (!posicaoValida && tentativas < 100) {
+                int sizex = ((m_window.getSize().x) - novaPlat->getTamanho().width);
+                int sizey = ((m_window.getSize().y) - novaPlat->getTamanho().height - (chao->getAltura()) / 2);
+                novaPlat->getCorpo().setPosition((rand() % sizex) + (novaPlat->getTamanho().width) / 2, (rand() % sizey) + (novaPlat->getTamanho().height) / 2);
+
+                sf::FloatRect hitboxExpandida = novaPlat->getCorpo().getGlobalBounds();
+                hitboxExpandida.left -= 20.f;
+                hitboxExpandida.top -= 20.f;
+                hitboxExpandida.width += 40.f;
+                hitboxExpandida.height += 40.f;
+                if (Gerenciadores::Gerenciador_Colisao::getInstancia().verificarPosicaoLivre(hitboxExpandida)) {
+                    posicaoValida = true;
+                }
+
+                tentativas++;
+            }
+            if (posicaoValida) {
+                listaPlataformas.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
+                Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(novaPlat);
+            }
+            else { delete novaPlat; }
         }
     }
     novaPlat = NULL;

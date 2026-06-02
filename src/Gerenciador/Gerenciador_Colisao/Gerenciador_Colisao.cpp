@@ -60,6 +60,19 @@ namespace Gerenciadores {
         else if (projetil) removerDaLista(Lprojetil, projetil);
     }
 
+    bool Gerenciador_Colisao::verificarPosicaoLivre(const sf::FloatRect& hitboxProvisoria) {
+
+        for (auto it = Lobstaculos.begin(); it != Lobstaculos.end(); ++it) {
+            Entidades::Entidade* obstaculo = *it;
+            if (obstaculo) {
+                if (hitboxProvisoria.intersects(obstaculo->getTamanho())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     bool Gerenciador_Colisao::colidiu(const Entidades::Entidade* entidade, const Entidades::Entidade* movel) {
         if (!entidade || !movel) return false;
 

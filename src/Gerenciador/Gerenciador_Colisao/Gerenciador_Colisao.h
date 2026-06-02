@@ -69,6 +69,7 @@ namespace Gerenciadores {
             ~Gerenciador_Colisao();
             void incluirEntidade(Entidades::Entidade* entidade);
             void removerEntidade(Entidades::Entidade* entidade);
+            bool verificarPosicaoLivre(const sf::FloatRect& hitboxProvisoria);
             static void verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel);
             virtual void aoColidir(Entidades::Entidade* E1, Entidades::Entidade* E2){};
             void verificarObstaculo(Entidades::Entidade* entidade);
