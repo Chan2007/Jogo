@@ -4,9 +4,9 @@
 
 #include "Gerenciador_Gravidade.h"
 #include <cmath>
-#include "Entidade/Entidade.h"
-#include "Entidade/Personagem/Personagem.h"
-#include "Entidade/Projetil/Projetil.h"
+#include "Ente/Entidade/Entidade.h"
+#include "Ente/Entidade/Personagem/Personagem.h"
+#include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
     Gerenciador_Gravidade::Gerenciador_Gravidade():

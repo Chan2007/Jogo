@@ -63,7 +63,7 @@ namespace Gerenciadores {
             void limpar();
             static bool colidiu(const Entidades::Entidade *entidade, const Entidades::Entidade *movel);
             static void calculaColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
-            bool verificarLimitesJanela(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade, const sf::Vector2u& tamanhoJanela);;
+            bool verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciadores::Gerenciador_Gravidade* pGravidade = NULL);;
         public:
             static Gerenciador_Colisao& getInstancia();
             ~Gerenciador_Colisao();
@@ -75,7 +75,7 @@ namespace Gerenciadores {
             void verificarProjetil(Entidades::Entidade* entidade);
             void verificarInimigo(Entidades::Entidade* entidade);
             void verificarJogador(Entidades::Entidade* entidade);
-            void executar(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade, const sf::Vector2u& tamanhoJanela);
+            void executar(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciadores::Gerenciador_Gravidade* pGravidade = NULL);
     };
 } // Gerenciador
 

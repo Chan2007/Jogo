@@ -11,6 +11,7 @@ Jogo::Jogo() :
     bgAnimation(&gerenciadorTextura),
     jogador(NULL),
     gerenciadorGravidade(NULL),
+    listaPlataformas(),
     m_window(),
     menuFont(),
     tituloText(),
@@ -41,8 +42,6 @@ bool Jogo::carregarRecursos()
         std::cerr << "Erro: Tamanho da janela é inválido para configurar o fundo animado." << std::endl;
         return false;
     }
-    if (jogador != NULL)
-        jogador->setPosicao(sf::Vector2f(40.0f, 40.0f));
 
     if (!diretorio_Frame.empty()) {
         if (bgAnimation.loadFrames(diretorio_Frame, totalFrames, intercalarFrames, 4, 3))
@@ -71,13 +70,36 @@ bool Jogo::carregarRecursos()
         std::cerr << "Falha ao carregar a fonte do menu." << std::endl;
         return false;
     }
+    Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
+    if (chao) {
+        Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(chao);
+        chao->getCorpo().setPosition(sf::Vector2f(600.0f, 730.0f));
+        listaPlataformas.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
+    }
+
+    Obstaculos::Plataforma* novaPlat;
+    sementear();
+    for (int i = 0; i < 3; i++) {
+        if (!i) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1); }
+        else if (i==1) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2); }
+        else { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3); }
+
+        Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(novaPlat);
+        if (novaPlat) {
+            int sizex = ((m_window.getSize().x) - novaPlat->getTamanho().width);
+            int sizey = ((m_window.getSize().y) - novaPlat->getTamanho().height - (chao->getAltura())/2);
+            novaPlat->getCorpo().setPosition((rand() % sizex) + (novaPlat->getTamanho().width)/2, (rand() % sizey) + (novaPlat->getTamanho().height)/2);
+            listaPlataformas.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
+        }
+    }
+    novaPlat = NULL;
     if (!jogador) {
         jogador = new Personagens::Jogador();
 
         Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(jogador);
 
         jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
-        jogador->setPosicao(sf::Vector2f(640.0f, 400.0f));
+        jogador->setPosicao(sf::Vector2f(100.f, 800.f));
         std::cout << "Jogador criado: " << jogador->getNome() << std::endl;
 
         gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
@@ -225,10 +247,7 @@ void Jogo::processarEventos()
 
         if (event.type == sf::Event::Resized) {
 
-            sf::FloatRect areaVisivel(0.f, 0.f, static_cast<float>(event.size.width), static_cast<float>(event.size.height));
-            m_window.setView(sf::View(areaVisivel));
-
-            bgAnimation.setTargetSize(m_window.getSize());
+            bgAnimation.setTargetSize(sf::Vector2u(1280, 720));
 
             if (menuPronto) {
                 configurarMenu();
@@ -304,9 +323,13 @@ void Jogo::desenharGameplay()
     m_window.clear(sf::Color::Black);
     bgAnimation.draw(m_window);
 
+    listaPlataformas.desenharTodas(m_window);
     if (jogador) {
         gerenciadorGravidade->executar(dt);
-        Gerenciadores::Gerenciador_Colisao::getInstancia().executar(jogador, gerenciadorGravidade, m_window.getSize());
+
+        sf::Vector2u tamanhoMundo(1280, 720);
+
+        Gerenciadores::Gerenciador_Colisao::getInstancia().executar(jogador, tamanhoMundo, gerenciadorGravidade);
         jogador->atualizar();
         jogador->desenhar(m_window);
     }
@@ -352,5 +375,6 @@ void Jogo::fechar()
         delete gerenciadorGravidade;
         gerenciadorGravidade = NULL;
     }
+
     inicializado = false;
 }

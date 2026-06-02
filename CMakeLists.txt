@@ -25,6 +25,7 @@ set(SFML_BINARY_DIR "${SFML_ROOT}/bin")
 set(QT_BINARY_DIR "C:/Qt/5.15.2/msvc2019_64/bin")
 set(QT_PLATFORMS_DIR "C:/Qt/5.15.2/msvc2019_64/plugins/platforms")
 
+# Procura os arquivos do jogo recursivamente, mas exclui a pasta duplicada 'src/Entidade'
 # Procura os arquivos do jogo recursivamente
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
 file(GLOB MATERIAL_WIDGETS_SRC

@@ -18,6 +18,7 @@ class Lista {
         bool incluirElemento(Elemento<tipo>* E);
         bool incluirInfo(tipo* i);
         void limpar();
+        Elemento<tipo>* getPrimeiro() const;
         Elemento <tipo>* localizarElemento(Elemento <tipo>* E);
         tipo* localizarInfo(tipo* i);
         tipo* localizarNome(std::string nome);
@@ -36,7 +37,7 @@ template<class tipo>
 bool Lista <tipo>::incluirElemento(Elemento <tipo>* E) {
     if (!E) return false;
     if (pPrimeiro == NULL) {
-        pPrimeiro = E;
+        pPrimeiro = E;  
         pAtual = E;
         E->setAnterior(NULL);
     }
@@ -67,6 +68,10 @@ void Lista <tipo>::limpar() {
     }
     pPrimeiro = NULL;
     pAtual = NULL;
+}
+template <class tipo>
+Elemento<tipo>* Lista<tipo>::getPrimeiro() const {
+    return pPrimeiro;
 }
 template<class tipo>
 Elemento <tipo>* Lista <tipo>::localizarElemento(Elemento <tipo>* E){

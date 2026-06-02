@@ -3,11 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <windows.h>
 #include "Animador_Fundo/animador_fundo.h"
 #include "Audio/Audio.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
-#include "Entidade/Personagem/Jogador/Jogador.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
+
 
 namespace Gerenciadores {
     class Gerenciador_Gravidade;
@@ -37,8 +40,11 @@ class Jogo{
 
         sf::Event event{};
         sf::Clock relogio_fisica;
+
         Personagens::Jogador* jogador{};
         Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade{};
+        Listas::ListaEntidades listaPlataformas;
+
         sf::RenderWindow m_window;
         sf::Font menuFont;
         sf::Text tituloText;
@@ -74,6 +80,11 @@ class Jogo{
         void atualizar();
         bool estaAberto() const;
         void fechar();
+        
+        void sementear() {
+            rand(); Sleep(100); time_t t;
+            srand((unsigned) time(&t)); rand();
+        }
 };
 
 #endif // JOGO_H

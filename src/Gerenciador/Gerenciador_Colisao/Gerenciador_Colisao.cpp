@@ -4,11 +4,11 @@
 
 #include "Gerenciador_Colisao.h"
 
-#include "Entidade/Entidade.h"
-#include "Entidade/Obstaculo/Obstaculo.h"
-#include "Entidade/Personagem/Jogador/Jogador.h"
-#include "Entidade/Personagem/Inimigo/Inimigo.h"
-#include "Entidade/Projetil/Projetil.h"
+#include "Ente/Entidade/Entidade.h"
+#include "Ente/Entidade/Obstaculo/Obstaculo.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
+#include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
     class Mediador_Colisao;
@@ -62,46 +62,47 @@ namespace Gerenciadores {
 
     bool Gerenciador_Colisao::colidiu(const Entidades::Entidade* entidade, const Entidades::Entidade* movel) {
         if (!entidade || !movel) return false;
-        const sf::Vector2f posE = entidade->getPosicao();
-        const sf::FloatRect tamE = entidade->getTamanho();
-        const sf::Vector2f posM = movel->getPosicao();
-        const sf::FloatRect tamM = movel->getTamanho();
 
-        return (posE.x < posM.x + tamM.width && posE.x + tamE.width > posM.x && posE.y < posM.y + tamM.height && posE.y + tamE.height > posM.y);
+        // A SFML tem uma função nativa maravilhosa e super otimizada para detectar colisão de caixas!
+        return entidade->getTamanho().intersects(movel->getTamanho());
     }
+
     void Gerenciador_Colisao::calculaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
         if (!entidade || !movel) return;
-        const sf::Vector2f posM = movel->getPosicao();
-        const sf::FloatRect tamM = movel->getTamanho();
-        const sf::Vector2f posE = entidade->getPosicao();
+
         const sf::FloatRect tamE = entidade->getTamanho();
+        const sf::FloatRect tamM = movel->getTamanho();
 
-        const float centroP_x = posM.x + (tamM.width / 2.0f);
-        const float centroP_y = posM.y + (tamM.height / 2.0f);
-        const float centroE_x = posE.x + (tamE.width / 2.0f);
-        const float centroE_y = posE.y + (tamE.height / 2.0f);
+        // Calcula o centro EXATO das hitboxes virtuais (ignorando a posição do desenho)
+        float centroEx = tamE.left + tamE.width / 2.0f;
+        float centroEy = tamE.top + tamE.height / 2.0f;
 
-        const float dx = centroP_x - centroE_x;
-        const float dy = centroP_y - centroE_y;
+        float centroMx = tamM.left + tamM.width / 2.0f;
+        float centroMy = tamM.top + tamM.height / 2.0f;
+
+        const float dx = centroMx - centroEx;
+        const float dy = centroMy - centroEy;
 
         const float intersecX = (tamM.width / 2.0f + tamE.width / 2.0f) - std::fabs(dx);
         const float intersecY = (tamM.height / 2.0f + tamE.height / 2.0f) - std::fabs(dy);
 
         if (intersecX < intersecY) {
+            sf::Vector2f posAtual = movel->getPosicao();
             if (dx > 0.0f)
-                movel->setPosicao(sf::Vector2f(posM.x + intersecX, posM.y));
+                movel->setPosicao(sf::Vector2f(posAtual.x + intersecX, posAtual.y));
             else
-                movel->setPosicao(sf::Vector2f(posM.x - intersecX, posM.y));
+                movel->setPosicao(sf::Vector2f(posAtual.x - intersecX, posAtual.y));
         }
         else {
+            sf::Vector2f posAtual = movel->getPosicao();
             if (dy > 0.0f)
-                movel->setPosicao(sf::Vector2f(posM.x, posM.y + intersecY));
+                movel->setPosicao(sf::Vector2f(posAtual.x, posAtual.y + intersecY));
             else
-                movel->setPosicao(sf::Vector2f(posM.x, posM.y - intersecY));
+                movel->setPosicao(sf::Vector2f(posAtual.x, posAtual.y - intersecY));
         }
     }
 
-    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade, const sf::Vector2u& tamanhoJanela) {
+    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciadores::Gerenciador_Gravidade* pGravidade) {
         if (!entidade) return false;
 
         const sf::Vector2f posicaoAtual = entidade->getPosicao();
@@ -174,13 +175,13 @@ namespace Gerenciadores {
     void Gerenciador_Colisao::verificarJogador(Entidades::Entidade* entidade) {
         colisao_Entidade_Classe(Ljogadores, entidade);
     }
-    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade, Gerenciadores::Gerenciador_Gravidade* pGravidade, const sf::Vector2u& tamanhoJanela) {
+    void Gerenciador_Colisao::executar(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciadores::Gerenciador_Gravidade* pGravidade) {
         if (!entidade) return;
         entidade->setColisao(false);
         verificarObstaculo(entidade);
         verificarProjetil(entidade);
         verificarInimigo(entidade);
         verificarJogador(entidade);
-        verificarLimitesJanela(entidade, pGravidade, tamanhoJanela);
+        verificarLimitesJanela(entidade, tamanhoJanela, pGravidade);
     }
 } // Gerenciador
