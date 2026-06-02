@@ -23,11 +23,6 @@ class Jogo{
             TelaGameplay
         };
 
-        int totalFrames;
-        int max_intercalarFrames;
-        int intercalarFrames;
-        int Frames;
-
         Gerenciador_Textura gerenciadorTextura;
         Animador_Fundo bgAnimation;
         std::string diretorio;
@@ -36,14 +31,13 @@ class Jogo{
         Audio bgMusic;
         std::string diretorio_Audio;
         std::string diretorio_Musica;
-        std::string diretorio_Fonte;
 
         sf::Event event{};
         sf::Clock relogio_fisica;
 
         Personagens::Jogador* jogador{};
         Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade{};
-        Listas::ListaEntidades listaPlataformas;
+        Listas::ListaEntidades listaEntidades;
 
         sf::RenderWindow m_window;
         sf::Font menuFont;

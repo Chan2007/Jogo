@@ -18,16 +18,12 @@ Animador_Fundo::Animador_Fundo(Gerenciador_Textura* gerenciadorTextura):
     gerenciadorTextura(gerenciadorTextura),
     FrameIndexAtual(0),
     frameAccumulator(0.0f),
-    frameTime(1.0f / 30.0f),
+    frameTime(1.0f / 60.0f),
     frameSize(),
     targetSize(),
     posicaoBase(0.f, 0.f),
     loaded(false)
-{
-    const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    targetSize.x = desktop.width;
-    targetSize.y = desktop.height;
-}
+{}
 
 Animador_Fundo::~Animador_Fundo() {
     if (thread) {
@@ -140,7 +136,8 @@ void Animador_Fundo::updateBlend() {
     ProxSprite .setColor(sf::Color(255, 255, 255,   0));
 }
 
-bool Animador_Fundo::loadFrames(const std::string &pathPrefix, const int numFrames,
+bool Animador_Fundo::loadFrames(const std::string &pathPrefix, 
+                                const std::string& name,const int numFrames,
                                 const int frameStep, unsigned int colunas, unsigned int linhas) {
     frames_data.clear();
     if (!gerenciadorTextura) return false;
@@ -160,7 +157,7 @@ bool Animador_Fundo::loadFrames(const std::string &pathPrefix, const int numFram
     // Lê dimensões do primeiro sheet para calcular frameWidth e frameHeight
     // O ponteiro fica no cache do vetor em frames_data[0].textura depois
     std::ostringstream bufferIn;
-    bufferIn << "bg_menu" << 1 << ".png";
+    bufferIn << name << 1 << ".png";
     const std::string primeiroSheet = Encontrar_Diretorio::concatenarEnderecos(path, bufferIn.str());
 
     sf::Texture* texturaTemplate = findTexture(primeiroSheet);
@@ -184,7 +181,7 @@ bool Animador_Fundo::loadFrames(const std::string &pathPrefix, const int numFram
 
         FrameData frame;
         std::ostringstream buffer;
-        buffer << "bg_menu" << spSheetIndex << ".png";
+        buffer << nome << spSheetIndex << ".png";
         frame.caminho_spSheet = Encontrar_Diretorio::concatenarEnderecos(path, buffer.str());
         frame.RectTextura = sf::IntRect(coluna * frameWidth, linha * frameHeight, frameWidth, frameHeight);
 
@@ -255,7 +252,7 @@ void Animador_Fundo::update() {
     allowLoad = temp;
 }
 
-void Animador_Fundo::draw(sf::RenderWindow& target) const {
+void Animador_Fundo::draw(sf::RenderTarget& target) const {
     if (!loaded) return;
     target.draw(SpriteAtual);
     target.draw(ProxSprite);

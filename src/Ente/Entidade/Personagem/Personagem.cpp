@@ -23,17 +23,11 @@ namespace Personagens {
 
         vida(100),
         vidaMaxima(100),
-        mana(100),
-        manaMaxima(100),
         forca(12),
-        armadura(10),
-        resistenciaMagica(10),
         alcanceAtaque(125),
         velocidadeMovimento(0.01f),
         chanceCritica(0),
-        vampirismo(0.0f),
         regeneracaoVida(2.0f),
-        regeneracaoMana(3.0f),
         estado(static_cast<int>(ESTADO_OCIOSO))
     {
         setTipo(Entidades::ENTIDADE_GENERICA);
@@ -83,14 +77,6 @@ namespace Personagens {
             vida = vidaMaxima;
     }
 
-    void Personagem::setManaMaxima(int valor) {
-        if (valor <= 0)
-            return;
-        manaMaxima = valor;
-        if (mana > manaMaxima)
-            mana = manaMaxima;
-    }
-
     void Personagem::setVida(int valor) {
         if (valor < 0)
             vida = 0;
@@ -102,38 +88,16 @@ namespace Personagens {
             estado = static_cast<int>(ESTADO_MORTO);
     }
 
-    void Personagem::setMana(int valor) {
-        if (valor < 0)
-            mana = 0;
-        else if (valor > manaMaxima)
-            mana = manaMaxima;
-        else
-            mana = valor;
-    }
-
-    int Personagem::receberDanoFisico(int dano) {
+    int Personagem::receberDanoint dano) {
         if (dano <= 0 || !estaVivo())
             return 0;
-        int danoFinal = dano - armadura;
-        if (danoFinal < 1)
-            danoFinal = 1;
         setVida(vida - danoFinal);
-        return danoFinal;
+        return dano;
     }
 
-    int Personagem::receberDanoMagico(int dano) {
-        if (dano <= 0 || !estaVivo())
-            return 0;
-        int danoFinal = dano - resistenciaMagica;
-        if (danoFinal < 1)
-            danoFinal = 1;
-        setVida(vida - danoFinal);
-        return danoFinal;
-    }
 
     int Personagem::causarDanoBasico() const {
-        int bonusCritico = (chanceCritica >= 100) ? forca : 0;
-        return forca + bonusCritico;
+        return = ((rand()%101)) >= chanceCritica) ? forca * (1 + chanceCritica) : forca;
     }
 
     void Personagem::curar(int valor) {
@@ -141,26 +105,10 @@ namespace Personagens {
             setVida(vida + valor);
     }
 
-    bool Personagem::gastarMana(int custo) {
-        if (custo < 0)
-            return false;
-        if (mana < custo)
-            return false;
-        mana -= custo;
-        return true;
-    }
-
-    void Personagem::restaurarMana(int valor) {
-        if (valor > 0)
-            setMana(mana + valor);
-    }
-
-    void Personagem::regenerarAtributos(float deltaTempo) {
+    void Personagem::regenerarVida(float deltaTempo) {
         if (deltaTempo <= 0.0f || !estaVivo())
             return;
-        curar(static_cast<int>(regeneracaoVida * deltaTempo));
-        restaurarMana(static_cast<int>(regeneracaoMana * deltaTempo));
-    }
+        curar(static_cast<int>(regeneracaoVida * deltaTempo));    }
 
     void Personagem::moverHorizontal(float direcao) {
         velocidade.x = direcao * static_cast<float>(velocidadeMovimento);

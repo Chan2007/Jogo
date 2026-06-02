@@ -13,7 +13,6 @@ namespace Personagens {
     Jogador::Jogador():
         Personagem(),
         pGravidade(NULL),
-
         observer_jogador(0),
         sorte(0.0f),
         pontos(0.0f),
@@ -178,8 +177,8 @@ namespace Personagens {
         setPosicao(posicao);
     }
 
-    Gerenciadores::Observador_Input* Jogador::get_observer_jogador() {
-        return observer_jogador;
+    Gerenciadores::Observador_Input* Jogador::getObserver() {
+        return observerJogador;
     }
 
     void Jogador::adicionarPontos(float valor) {

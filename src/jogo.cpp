@@ -3,15 +3,11 @@
 #include "Diretorio/Encontrar_Diretorio.h"
 
 Jogo::Jogo() :
-    totalFrames(376),
-    max_intercalarFrames(5),
-    intercalarFrames(4),
-    Frames(0),
     gerenciadorTextura(),
     bgAnimation(&gerenciadorTextura),
     jogador(NULL),
     gerenciadorGravidade(NULL),
-    listaPlataformas(),
+    listaEntidades(),
     m_window(),
     menuFont(),
     tituloText(),
@@ -33,17 +29,17 @@ bool Jogo::carregarRecursos()
 {
     const sf::Vector2u tamanhoJanela = m_window.getSize();
 
-    diretorio_Frame = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/menu");
+    diretorio_Fase1 = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/fase1");
     diretorio_Audio = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
 
     bgAnimation.setTargetSize(tamanhoJanela);
     if (tamanhoJanela.x == 0 || tamanhoJanela.y == 0) {
-        std::cerr << "Erro: Tamanho da janela é inválido para configurar o fundo animado." << std::endl;
+        std::cerr << "Erro: Tamanho da janela é inválido para configurar o fundo." << std::endl;
         return false;
     }
 
-    if (!diretorio_Frame.empty()) {
-        if (bgAnimation.loadFrames(diretorio_Frame, totalFrames, intercalarFrames, 4, 3))
+    if (!diretorio_Fase1.empty()) {
+        if (bgAnimation.loadFrames(diretorio_Fase1, "bg_menu", 376, 2, 4, 3))
             std::cout << "Frames de background carregados com sucesso!" << std::endl;
         else
             std::cerr << "Falha ao carregar os frames de background." << std::endl;
@@ -64,7 +60,7 @@ bool Jogo::carregarRecursos()
     if (chao) {
         Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(chao);
         chao->getCorpo().setPosition(sf::Vector2f(600.0f, 730.0f));
-        listaPlataformas.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
+        listaEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
     }
 
     Obstaculos::Plataforma* novaPlat;
@@ -95,7 +91,7 @@ bool Jogo::carregarRecursos()
                 tentativas++;
             }
             if (posicaoValida) {
-                listaPlataformas.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
+                listaEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
                 Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(novaPlat);
             }
             else { delete novaPlat; }
@@ -134,7 +130,7 @@ bool Jogo::configurarMenu()
     );
 
     tituloText.setFont(menuFont);
-    tituloText.setString("Jogo LoL");
+    tituloText.setString("Jogo");
     tituloText.setCharacterSize(42);
     tituloText.setFillColor(sf::Color::White);
     tituloText.setPosition(menuPanel.getPosition().x + 32.f, menuPanel.getPosition().y + 28.f);
@@ -332,7 +328,7 @@ void Jogo::desenharGameplay()
     m_window.clear(sf::Color::Black);
     bgAnimation.draw(m_window);
 
-    listaPlataformas.desenharTodas(m_window);
+    listaEntidades.desenharTodas(m_window);
     if (jogador) {
         gerenciadorGravidade->executar(dt);
 

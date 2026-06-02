@@ -61,7 +61,10 @@ class Animador_Fundo {
 
         ~Animador_Fundo();
 
-        bool loadFrames(const std::string &pathPrefix, int numFrames, int frameStep, unsigned int colunas, unsigned int linhas);
+        bool loadFrames(const std::string& pathPrefix, 
+                        const std::string& name,
+                        int numFrames, int frameStep, 
+                        unsigned int colunas, unsigned int linhas);
         void update();
         void draw(sf::RenderWindow& target) const;
         void setPosicao(const sf::Vector2f& pos);
