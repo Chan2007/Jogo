@@ -9,7 +9,7 @@
 #include <vector>
 #include <cmath>
 
-#include "Sistema/Fisica/Mediador_Colisao.h"
+#include "Sistema/Fisica/Observer_Colisao.h"
 
 namespace Entidades {
     class Entidade;
@@ -30,7 +30,7 @@ namespace Gerenciadores {
 
     class Gerenciador_Gravidade;
 
-    class Gerenciador_Colisao: public Mediador_Colisao {
+    class Gerenciador_Colisao: public Observer_Colisao {
         private:
             std::vector <Obstaculos::Obstaculo*> Lobstaculos;
             std::vector <Personagens::Inimigo*> Linimigos;
@@ -38,6 +38,7 @@ namespace Gerenciadores {
             std::vector <Personagens::Jogador*> Ljogadores;
 
             Gerenciador_Colisao();
+            ~Gerenciador_Colisao();
             static Gerenciador_Colisao* gerenciador_colisao;
 
             // Proibir o uso de construtora de cópia e atribuição à cópias
@@ -63,20 +64,19 @@ namespace Gerenciadores {
             void limpar();
             static bool colidiu(const Entidades::Entidade *entidade, const Entidades::Entidade *movel);
             static void calculaColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
-            bool verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciadores::Gerenciador_Gravidade* pGravidade = NULL);;
+            bool verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciador_Gravidade* pGravidade = NULL);;
         public:
             static Gerenciador_Colisao& getInstancia();
-            ~Gerenciador_Colisao();
+
             void incluirEntidade(Entidades::Entidade* entidade);
             void removerEntidade(Entidades::Entidade* entidade);
             bool verificarPosicaoLivre(const sf::FloatRect& hitboxProvisoria);
             static void verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel);
-            virtual void aoColidir(Entidades::Entidade* E1, Entidades::Entidade* E2){};
             void verificarObstaculo(Entidades::Entidade* entidade);
             void verificarProjetil(Entidades::Entidade* entidade);
             void verificarInimigo(Entidades::Entidade* entidade);
             void verificarJogador(Entidades::Entidade* entidade);
-            void executar(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciadores::Gerenciador_Gravidade* pGravidade = NULL);
+            void executar(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciador_Gravidade* pGravidade = NULL);
     };
 } // Gerenciador
 

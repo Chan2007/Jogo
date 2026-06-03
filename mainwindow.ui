@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
+    <width>1080</width>
     <height>720</height>
    </rect>
   </property>
@@ -272,14 +272,14 @@
              <item>
               <widget class="QLabel" name="settingsTitleLabel">
                <property name="text">
-                <string>Configuracoes</string>
+                <string>Configurações</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="settingsSubtitleLabel">
                <property name="text">
-                <string>Ajuste aqui as configuracoes</string>
+                <string>Ajuste aqui as configurações</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>
@@ -289,7 +289,7 @@
              <item>
               <widget class="QLabel" name="sectionTitleLabel">
                <property name="text">
-                <string>AUDIO</string>
+                <string>Áudio</string>
                </property>
               </widget>
              </item>
@@ -314,7 +314,7 @@
                 <item>
                  <widget class="QLabel" name="settingLabelMusic">
                   <property name="text">
-                   <string>Musica ambiente</string>
+                   <string>Música ambiente</string>
                   </property>
                  </widget>
                 </item>
@@ -459,7 +459,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>1080</width>
      <height>21</height>
     </rect>
    </property>

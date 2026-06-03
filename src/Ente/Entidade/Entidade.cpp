@@ -6,9 +6,9 @@
 
 namespace Entidades {
     Listas::ListaEntidades* Entidade::listaEntidades = 0;
-    Gerenciadores::Mediador_Colisao* Entidade::mediador_colisao = 0;
+    Gerenciadores::Observer_Colisao* Entidade::mediador_colisao = 0;
 
-    Entidade::Entidade(std::string nam, Gerenciadores::Mediador_Colisao* mediador) :
+    Entidade::Entidade(std::string nam, Gerenciadores::Observer_Colisao* mediador) :
         corpo(),
         textura(),
         colisao(false),

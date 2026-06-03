@@ -8,7 +8,7 @@
 #include <iostream>
 #include "Sistema/Input/Observador_Input.h"
 #include "Ente/Entidade/Personagem/Personagem.h"
-#include "Diretorio/Encontrar_Diretorio.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Gerenciadores {
     class Observador_Input;

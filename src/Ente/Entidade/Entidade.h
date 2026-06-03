@@ -20,7 +20,7 @@ namespace Personagens {
 }
 
 namespace Gerenciadores {
-    class Mediador_Colisao;
+    class Observer_Colisao;
 }
 
 namespace Entidades {
@@ -48,10 +48,10 @@ namespace Entidades {
             float escalaColisao;
         protected:
             virtual void salvarDataBuffer();
-            static Gerenciadores::Mediador_Colisao* mediador_colisao;
+            static Gerenciadores::Observer_Colisao* mediador_colisao;
 
         public:
-            Entidade(std::string nam, Gerenciadores::Mediador_Colisao* mediador);
+            Entidade(std::string nam, Gerenciadores::Observer_Colisao* mediador);
             virtual ~Entidade();
 
             virtual void atualizar() = 0;

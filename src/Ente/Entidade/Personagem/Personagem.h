@@ -76,7 +76,6 @@ namespace Personagens {
             void setVida(int valor);
             void setForca(int valor) {if (valor >= 0) forca = valor;}
             void setAlcanceAtaque(int valor) {if (valor >= 0) alcanceAtaque = valor;}
-            void setVelocidadeMovimento(int valor) {if (valor >= 0) velocidadeMovimento = valor;}
             void setChanceCritica(int valor) {chanceCritica = (valor < 0) ? 0 : ((valor > 100) ? 100 : valor);}
             void setRegeneracaoVida(float valor) {regeneracaoVida = (valor < 0.0f) ? 0.0f : valor;}
             void setEstado(EstadoCombate novoEstado) {estado = static_cast<int>(novoEstado);}

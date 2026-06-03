@@ -49,13 +49,11 @@ MenuButton::MenuButton(const QString& text, QWidget *parent)
     m_borderAnimation->setEasingCurve(QEasingCurve::Linear);
 }
 
-QSize MenuButton::sizeHint() const
-{
+QSize MenuButton::sizeHint() const {
     return QSize(220, 400);
 }
 
-void MenuButton::iniciarAnimacaoEntrada(int atrasoMs)
-{
+void MenuButton::iniciarAnimacaoEntrada(int atrasoMs) {
     if (atrasoMs < 0)
         atrasoMs = 0;
 
@@ -73,48 +71,40 @@ void MenuButton::iniciarAnimacaoEntrada(int atrasoMs)
     QTimer::singleShot(atrasoMs, m_offsetAnimation, SLOT(start()));
 }
 
-void MenuButton::setTextAlignment(Qt::Alignment alignment)
-{
-    m_textAlignment = alignment;
+void MenuButton::setAlinhamento(Qt::Alignment alignment) {
+    textAlignment = alignment;
     update();
 }
-qreal MenuButton::hoverProgress() const
-{
+qreal MenuButton::hoverProgress() const {
     return m_hoverProgress;
 }
 
-void MenuButton::setHoverProgress(qreal value)
-{
+void MenuButton::setHoverProgress(qreal value) {
     m_hoverProgress = value;
     update();
 }
 
-qreal MenuButton::pressProgress() const
-{
+qreal MenuButton::pressProgress() const {
     return m_pressProgress;
 }
 
-void MenuButton::setPressProgress(qreal value)
-{
+void MenuButton::setPressProgress(qreal value) {
     m_pressProgress = value;
     update();
 }
 
-QPoint MenuButton::contentOffset() const
-{
+QPoint MenuButton::contentOffset() const {
     return m_contentOffset;
 }
 
-void MenuButton::setContentOffset(const QPoint& value)
-{
+void MenuButton::setContentOffset(const QPoint& value) {
     m_contentOffset = value;
     update();
 }
 
 qreal MenuButton::borderAngle() const { return m_borderAngle; }
 
-void MenuButton::setBorderAngle(qreal angle)
-{
+void MenuButton::setBorderAngle(qreal angle) {
     m_borderAngle = angle;
     update();
 }
@@ -124,22 +114,19 @@ qreal MenuButton::opacityValue() const
     return m_opacityValue;
 }
 
-void MenuButton::setOpacityValue(qreal value)
-{
+void MenuButton::setOpacityValue(qreal value) {
     m_opacityValue = value;
     update();
 }
 
-void MenuButton::enterEvent(QEvent *event)
-{
+void MenuButton::enterEvent(QEvent *event) {
     hovered = true;
     animarHover(1.0);
     m_borderAnimation->start();
     QPushButton::enterEvent(event);
 }
 
-void MenuButton::leaveEvent(QEvent *event)
-{
+void MenuButton::leaveEvent(QEvent *event) {
     hovered = false;
     animarHover(0.0);
     connect(m_hoverAnimation, &QPropertyAnimation::finished, this, [this]() {
@@ -149,20 +136,17 @@ void MenuButton::leaveEvent(QEvent *event)
     QPushButton::leaveEvent(event);
 }
 
-void MenuButton::mousePressEvent(QMouseEvent *event)
-{
+void MenuButton::mousePressEvent(QMouseEvent *event) {
     animarPress(1.0, 80);
     QPushButton::mousePressEvent(event);
 }
 
-void MenuButton::mouseReleaseEvent(QMouseEvent *event)
-{
+void MenuButton::mouseReleaseEvent(QMouseEvent *event) {
     animarPress(0.0, 130);
     QPushButton::mouseReleaseEvent(event);
 }
 
-void MenuButton::desenharPincelada(QPainter& painter, const QRect& area) const
-{
+void MenuButton::desenharPincelada(QPainter& painter, const QRect& area) const {
     const QRect strokeRect = area.adjusted(4, 4, -4, -4);
 
     painter.save();
@@ -175,7 +159,7 @@ void MenuButton::desenharPincelada(QPainter& painter, const QRect& area) const
     fundoGradiente.setColorAt(0.75, QColor(235, 235, 235, 255));
     fundoGradiente.setColorAt(0.50, QColor(215, 215, 215, 255));
     fundoGradiente.setColorAt(0.25, QColor(195, 195, 195, 255));
-    fundoGradiente.setColorAt(0.00, QColor(175, 175, 175, 255)); // Borda Direita: Preto
+    fundoGradiente.setColorAt(0.00, QColor(175, 175, 175, 255)); // Borda Direita: Cinza claro
 
     // Aplica o gradiente como preenchimento do botão
     painter.setBrush(QBrush(fundoGradiente));
@@ -187,9 +171,7 @@ void MenuButton::desenharPincelada(QPainter& painter, const QRect& area) const
     int alphaBorda = static_cast<int>(220.0 * (1.0 - m_hoverProgress));
 
     // Se o botão for clicado (isDown), forçamos o desaparecimento imediato da borda
-    if (isDown()) {
-        alphaBorda = 0;
-    }
+    if (isDown()) alphaBorda = 0;
 
     if (alphaBorda > 0) {
         QPen bordaPretaPen(QColor(0, 0, 0, alphaBorda), 2);
@@ -204,7 +186,7 @@ void MenuButton::desenharPincelada(QPainter& painter, const QRect& area) const
                          QPoint(strokeRect.right(), strokeRect.bottom()));
     }
 
-    // 3. Feedback visual do Hover (Luz interna branca que aparece com o mouse)
+    // 3. Feedback visual do Hover
     if (m_hoverProgress > 0.01 || isDown()) {
         painter.setPen(Qt::NoPen);
         int hoverAlpha = static_cast<int>(40.0 * m_hoverProgress);
@@ -212,7 +194,7 @@ void MenuButton::desenharPincelada(QPainter& painter, const QRect& area) const
         painter.drawRoundedRect(strokeRect, 8, 8);
     }
 
-    // Marcador decorativo à esquerda (Triângulo)
+    // Marcador decorativo à esquerda (triângulo)
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(0, 0, 0, 255));
     QPoint marcadorPontos[] = {
@@ -267,8 +249,7 @@ void MenuButton::paintEvent(QPaintEvent *event)
 
     const bool desenharHover = (m_hoverProgress > 0.01) || isDown() || (m_pressProgress > 0.01);
 
-    if (desenharHover)
-        desenharPincelada(painter, area);
+    if (desenharHover) desenharPincelada(painter, area);
 
     const QColor sombraNormal(0, 0, 0, 255);
     const QColor textoNormal(200, 200, 200);
@@ -285,12 +266,12 @@ void MenuButton::paintEvent(QPaintEvent *event)
     const QPoint offset = m_contentOffset + QPoint(0, pressShift);
 
     painter.setPen(sombraAtual);
-    painter.drawText(area.adjusted(26 + offset.x(), 0, -25, 2), m_textAlignment, text());
+    painter.drawText(area.adjusted(26 + offset.x(), 0, -25, 2), textAlignment, text());
 
     painter.setPen(textoAtual);
-    painter.drawText(area.adjusted(25 + offset.x(), 0, -25, -2), m_textAlignment, text());
+    painter.drawText(area.adjusted(25 + offset.x(), 0, -25, -2), textAlignment, text());
 
-    if (m_hoverProgress < 0.01) {  // Desvanece enquanto progresso < 1%
+    if (m_hoverProgress < 0.01) {
         const int alpha = static_cast<int>(255.0 * (1.0 - (m_hoverProgress / 0.3)));
         painter.setPen(QPen(QColor(0, 0, 0, alpha), 2));
         painter.drawLine(area.left(), area.top(), area.right(), area.top());        // borda superior

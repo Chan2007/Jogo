@@ -7,11 +7,16 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "Sistema/Fisica/Mediador_Gravidade.h"
+
+
+
+namespace Entidades {
+    class Entidade;
+}
 
 
 namespace Gerenciadores {
-    class Gerenciador_Gravidade: public Mediador_Gravidade {
+    class Gerenciador_Gravidade {
         private:
             float gravidade;
             float vyTerminal;
@@ -20,14 +25,20 @@ namespace Gerenciadores {
             float restituicao;
             std::vector<Entidades::Entidade*> entidadesAfetadas;
             std::vector<Entidades::Entidade*> entidadesNoChao;
+            Gerenciador_Gravidade();
+
+            static Gerenciador_Gravidade* gerenciador_gravidade;
+            Gerenciador_Gravidade(const Gerenciador_Gravidade&);
+            Gerenciador_Gravidade& operator=(const Gerenciador_Gravidade&);
 
         public:
-            Gerenciador_Gravidade();
+            static Gerenciador_Gravidade& getInstancia();
             ~Gerenciador_Gravidade();
-            virtual void atualizarGravidade(Entidades::Entidade* entidade, float dt);
-            virtual void aplicarGravidade(Entidades::Entidade* entidade, bool afetada);
-            virtual float getGravidade() const {return gravidade;}
-            virtual void setGravidade(float g) {gravidade = g;}
+
+            void atualizarGravidade(Entidades::Entidade* entidade, float dt);
+            void aplicarGravidade(Entidades::Entidade* entidade, bool afetada);
+            float getGravidade() const {return gravidade;}
+            void setGravidade(float g) {gravidade = g;}
             virtual void aoTocarChao(Entidades::Entidade* entidade, const sf::Vector2f& normal);
             bool pular(Entidades::Entidade* entidade, float f = 0.0f);
             bool estaNoChao(const Entidades::Entidade* entidade) const;

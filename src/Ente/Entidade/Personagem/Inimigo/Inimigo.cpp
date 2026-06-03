@@ -23,12 +23,7 @@ namespace Personagens {
         setTipo(Entidades::ENTIDADE_INIMIGO);
         setVidaMaxima(450);
         setVida(450);
-        setManaMaxima(1);
-        setMana(0);
         setForca(45);
-        setArmadura(18);
-        setResistenciaMagica(18);
-        setVelocidadeMovimento(325);
         setAlcanceAtaque(175);
     }
 
@@ -61,14 +56,12 @@ namespace Personagens {
             dano = -restanteEscudo;
             escudo = 0;
         }
-        return receberDanoFisico(dano);
+        return receberDano(dano);
     }
 
     void Inimigo::concederRecompensa(Jogador* J) {
         if (!J)
             return;
-        J->ganharOuro(ouroConcedido);
-        J->ganharExperiencia(experienciaConcedida);
         J->adicionarPontos(static_cast<float>(ouroConcedido + experienciaConcedida));
     }
 

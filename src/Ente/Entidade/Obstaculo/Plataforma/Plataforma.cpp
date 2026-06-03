@@ -16,7 +16,7 @@ namespace Obstaculos {
 		perigoso = false;
 
 		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
-		Encontrar_Diretorio diretorio;
+		Encontrar_Caminho diretorio;
 		arquivoSprite = diretorio.acharDiretorio_Arquivo(arquivoSprite);
 		if (arquivoSprite.empty()) {
 			std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << arquivoSprite << std::endl;
@@ -59,7 +59,7 @@ namespace Obstaculos {
 
 			case CHAO:
 
-				Encontrar_Diretorio diretorio;
+				Encontrar_Caminho diretorio;
 				std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
 				arquivoSprite = diretorio.acharDiretorio_Arquivo(arquivoSprite);
 				if (arquivoSprite.empty()) {

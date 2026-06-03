@@ -9,6 +9,7 @@
 #include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
+    Gerenciador_Gravidade* Gerenciador_Gravidade::gerenciador_gravidade = NULL;
     Gerenciador_Gravidade::Gerenciador_Gravidade():
         gravidade(500.0f),
         vyTerminal(800.0f),
@@ -19,6 +20,10 @@ namespace Gerenciadores {
 
     Gerenciador_Gravidade::~Gerenciador_Gravidade() {
         limpar();
+    }
+    Gerenciador_Gravidade& Gerenciador_Gravidade::getInstancia() {
+        if (!gerenciador_gravidade) gerenciador_gravidade = new Gerenciador_Gravidade();
+        return *gerenciador_gravidade;
     }
     void Gerenciador_Gravidade::limpar() {
         entidadesAfetadas.clear();
@@ -63,7 +68,7 @@ namespace Gerenciadores {
     void Gerenciador_Gravidade::aoTocarChao(Entidades::Entidade* entidade, const sf::Vector2f& normal) {
         if (!entidade) return;
 
-        // -0,5 é o limite da inclinação, menor disso significa que a entidade tocou em um "chão"
+        // - 0,5 é o limite da inclinação, menor disso significa que a entidade tocou em um "chão"
         if (normal.y < -0.5f && getVy(entidade) >= 0.0f) {
             if (find(entidadesNoChao.begin(), entidadesNoChao.end(), entidade) == entidadesNoChao.end())
                 entidadesNoChao.push_back(entidade);

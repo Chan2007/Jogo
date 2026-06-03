@@ -1,13 +1,8 @@
-//
-// Created by Henrique on 09/05/2026.
-//
-
-#ifndef JOGO_MENU_H
-#define JOGO_MENU_H
+#ifndef MENU_JOGO_H
+#define MENU_JOGO_H
 
 
-class menu {
+class Menu {
 };
 
-
-#endif //JOGO_MENU_H
+#endif

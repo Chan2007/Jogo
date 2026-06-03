@@ -1,12 +1,8 @@
 #include "mainwindow.h"
-
-#include <QGraphicsDropShadowEffect>
-
 #include "ui_mainwindow.h"
-#include <QPushButton>
+
 #include <QString>
 #include <QSizePolicy>
-#include <QVariantAnimation>
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
@@ -21,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     , jogo()
     , jogoInicializado(false)
     , telas()
-    , m_particulas(0)
+    , particulas(0)
 
 {
     ui->setupUi(this);
@@ -41,48 +37,35 @@ MainWindow::MainWindow(QWidget *parent)
     telas.setContainer(ui->stackedWidget);
     telas.setInitialScreen(ui->mainPage);
 
-    aplicarEfeitosVisuais();
-
-
     ui->stackedWidget->raise();
     ui->centralwidget->raise();
 
-    m_particulas = new ParticleWidget(ui->mainPage);
-    m_particulas->lower();
-    m_particulas->show();
-    reposicionarParticleWidget();
-    atualizarVisibilidadeParticleWidget();
+    particulas = new ParticleWidget(ui->mainPage);
+    particulas->lower();
+    particulas->show();
+    atualizarParticula();
+    atualizarPilhaParticula();
 
     connect(&gameTimer, SIGNAL(timeout()), this, SLOT(atualizarJogo()));
 
     ui->musicCheckBox->setChecked(true);
     ui->volumeSlider->setRange(0, 100);
     ui->volumeSlider->setValue(50);
-    atualizarLabelVolume(ui->volumeSlider->value());
+    atualizarTextoVolume(ui->volumeSlider->value());
     ui->startButton->iniciarAnimacaoEntrada(0);
     ui->settingsButton->iniciarAnimacaoEntrada(80);
     ui->exitButton->iniciarAnimacaoEntrada(160);
     ui->backButton->iniciarAnimacaoEntrada(0);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
+MainWindow::~MainWindow(){ delete ui;}
 
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
+void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
-
-    reposicionarParticleWidget();
-}
-void MainWindow::aplicarEfeitosVisuais()
-{
-
+    atualizarParticula();
 }
 
-void MainWindow::configurarTelaPrincipal()
-{
+void MainWindow::configurarTelaPrincipal() {
     ui->menuPanelLayout->setAlignment(Qt::AlignTop);
     ui->heroTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->heroSubtitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -95,8 +78,7 @@ void MainWindow::configurarTelaPrincipal()
     ui->exitButton->setMaximumHeight(100);
 }
 
-void MainWindow::configurarTelaConfiguracao()
-{
+void MainWindow::configurarTelaConfiguracao() {
     ui->settingsPageLayout->setAlignment(ui->settingsPanel, Qt::AlignHCenter);
     ui->settingsTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     ui->settingsSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -105,31 +87,27 @@ void MainWindow::configurarTelaConfiguracao()
     ui->settingsPage->setGeometry(ui->centralwidget->rect());
     ui->settingsPanel->setAttribute(Qt::WA_TranslucentBackground);
     ui->settingsPanel->setAutoFillBackground(false);
-    ui->backButton->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+    ui->backButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
 
 }
 
-void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar)
-{
-    if (!origem || !destino || origem == destino)
-        return;
+void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar) {
+    if (!origem || !destino || origem == destino) return;
 
-    if (empilhar)
-        telas.pushScreen(destino);
-    else
-        telas.popScreen();
+    if (empilhar) telas.pushScreen(destino);
+    else telas.popScreen();
 
     destino->setGeometry(ui->centralwidget->rect());
     destino->show();
     destino->raise();
 
-    QGraphicsOpacityEffect *efeitoOrigem = qobject_cast<QGraphicsOpacityEffect *>(origem->graphicsEffect());
+    QGraphicsOpacityEffect *efeitoOrigem = qobject_cast<QGraphicsOpacityEffect*>(origem->graphicsEffect());
     if (!efeitoOrigem) {
         efeitoOrigem = new QGraphicsOpacityEffect(origem);
         origem->setGraphicsEffect(efeitoOrigem);
     }
 
-    QGraphicsOpacityEffect *efeitoDestino = qobject_cast<QGraphicsOpacityEffect *>(destino->graphicsEffect());
+    QGraphicsOpacityEffect *efeitoDestino = qobject_cast<QGraphicsOpacityEffect*>(destino->graphicsEffect());
     if (!efeitoDestino) {
         efeitoDestino = new QGraphicsOpacityEffect(destino);
         destino->setGraphicsEffect(efeitoDestino);
@@ -152,7 +130,7 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
         ui->stackedWidget->setCurrentWidget(destino);
         efeitoOrigem->setOpacity(1.0);
         efeitoDestino->setOpacity(1.0);
-        atualizarVisibilidadeParticleWidget();
+        atualizarPilhaParticula();
     });
 
     fadeOut->start(QAbstractAnimation::DeleteWhenStopped);
@@ -163,55 +141,44 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
 }
 
 
-void MainWindow::reposicionarParticleWidget()
-{
-    if (!m_particulas || !ui || !ui->centralwidget)
-        return;
+void MainWindow::atualizarParticula() {
+    if (!particulas || !ui || !ui->centralwidget) return;
 
     const int larguraBase = ui->mainPage->width();
     const int alturaBase = ui->mainPage->height();
-    if (larguraBase <= 0 || alturaBase <= 0)
-        return;
+    if (larguraBase <= 0 || alturaBase <= 0) return;
 
     int largura = static_cast<int>((larguraBase * 2.0f) / 5.0f);
-    int altura = static_cast<int>(alturaBase * 1.0f);
-    if (largura < 1)
-        largura = 1;
-    if (altura < 1)
-        altura = 1;
+    int altura = static_cast<int>(alturaBase * 1.5f);
+    if (largura < 1) largura = 1;
+    if (altura < 1) altura = 1;
 
+    // Se for deslocar as partículas fora da posição original
     const int margemDireita = 0;
     const int margemInferior = 0;
     int x = larguraBase - largura - margemDireita;
     int y = alturaBase - altura - margemInferior;
-    if (x < 0)
-        x = 0;
-    if (y < 0)
-        y = 0;
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
 
-    m_particulas->setGeometry(x, y, largura, altura);
-    m_particulas->lower();
+    particulas->setGeometry(x, y, largura, altura);
+    particulas->lower();
 }
 
-void MainWindow::atualizarVisibilidadeParticleWidget()
-{
-    if (!m_particulas || !ui || !ui->stackedWidget)
-        return;
+void MainWindow::atualizarPilhaParticula() {
+    if (!particulas || !ui || !ui->stackedWidget) return;
 
-    const bool mostrar = (ui->stackedWidget->currentWidget() == ui->mainPage);
-    m_particulas->setVisible(mostrar);
-    if (mostrar)
-        m_particulas->lower();
+    const bool visivel = (ui->stackedWidget->currentWidget() == ui->mainPage);
+    particulas->setVisible(visivel);
+    if (visivel) particulas->lower();
 }
 
-void MainWindow::atualizarLabelVolume(int value)
-{
+void MainWindow::atualizarTextoVolume(float value) {
     if (ui && ui->volumeValueLabel)
         ui->volumeValueLabel->setText(QString::number(value) + "%");
 }
 
-void MainWindow::atualizarJogo()
-{
+void MainWindow::atualizarJogo() {
     if (!jogo.estaAberto()) {
         gameTimer.stop();
         jogoInicializado = false;
@@ -225,8 +192,9 @@ void MainWindow::atualizarJogo()
     jogo.atualizar();
 }
 
-void MainWindow::on_startButton_clicked()
-{
+void MainWindow::on_startButton_clicked() {
+    if (gameTimer.isActive()) return;
+
     if (!jogoInicializado) {
         if (!jogo.inicializar()) {
             ui->statusLabel->setText("Falha ao inicializar o jogo.");
@@ -234,46 +202,41 @@ void MainWindow::on_startButton_clicked()
         }
 
         jogoInicializado = true;
-        jogo.setVolumeMusica(static_cast<float>(ui->volumeSlider->value()));
-        jogo.setMusicaLigada(ui->musicCheckBox->isChecked());
+        jogo.setVolume(static_cast<float>(ui->volumeSlider->value()));
+        jogo.setMusica(ui->musicCheckBox->isChecked());
     }
 
-    jogo.iniciarGameplay();
+    jogo.iniciarFase();
     ui->statusLabel->setText("Jogo em execução");
     hide();
     gameTimer.start(16);
 }
 
-void MainWindow::on_settingsButton_clicked()
-{
+void MainWindow::on_settingsButton_clicked() {
     animarTransicaoTela(ui->mainPage, ui->settingsPage, true);
+
+    // Na prática, isso não impacta no jogo, já que o widget do menu thodo é enviado para trás...
     ui->statusLabel->setText("Configurações abertas.");
 }
 
-void MainWindow::on_backButton_clicked()
-{
+void MainWindow::on_backButton_clicked() {
     animarTransicaoTela(ui->settingsPage, ui->mainPage, false);
     ui->statusLabel->setText("Menu principal");
 }
 
-void MainWindow::on_musicCheckBox_toggled(bool checked)
-{
+void MainWindow::on_musicCheckBox_toggled(bool checked) {
     ui->musicCheckBox->setText(checked ? "Ativada" : "Desativada");
 
-    if (jogoInicializado)
-        jogo.setMusicaLigada(checked);
+    if (jogoInicializado) jogo.setMusica(checked);
 }
 
-void MainWindow::on_volumeSlider_valueChanged(int value)
-{
-    atualizarLabelVolume(value);
+void MainWindow::on_volumeSlider_valueChanged(int value) {
+    atualizarTextoVolume(value);
 
-    if (jogoInicializado)
-        jogo.setVolumeMusica(static_cast<float>(value));
+    if (jogoInicializado) jogo.setVolume(static_cast<float>(value));
 }
 
-void MainWindow::on_exitButton_clicked()
-{
+void MainWindow::on_exitButton_clicked() {
     jogo.fechar();
     close();
 }

@@ -13,17 +13,9 @@ namespace Personagens {
     Jogador::Jogador():
         Personagem(),
         pGravidade(NULL),
-        observer_jogador(0),
-        sorte(0.0f),
+        ObserverJogador(0),
         pontos(0.0f),
-        escudo(0.0f),
-        ouro(500),
-        experiencia(0),
-        nivelInvocador(1),
-        abates(0),
-        mortes(0),
-        assistencias(0),
-        cargasUltimate(0)
+        abates(0)
     {
         setTipo(Entidades::ENTIDADE_JOGADOR);
     }
@@ -45,7 +37,6 @@ namespace Personagens {
             setVidaMaxima(620);
             setVida(620);
             setForca(65);
-            setVelocidadeMovimento(340);
 
             totalFramesAnimacao = 8;
             colunasSpritesheet = 4;
@@ -68,7 +59,7 @@ namespace Personagens {
         }
         if (!caminhoArquivoSprite.empty()) {
 
-            Encontrar_Diretorio buscador;
+            Encontrar_Caminho buscador;
 
             std::string caminhoReal = buscador.acharDiretorio_Arquivo(caminhoArquivoSprite);
 
@@ -85,7 +76,7 @@ namespace Personagens {
             }
         }
         if (!caminhoArquivoSpritePulo.empty()) {
-            Encontrar_Diretorio buscador;
+            Encontrar_Caminho buscador;
             std::string caminhoRealPulo = buscador.acharDiretorio_Arquivo(caminhoArquivoSpritePulo);
             if (!caminhoRealPulo.empty()) {
                 texturaPulo.loadFromFile(caminhoRealPulo);
@@ -106,7 +97,7 @@ namespace Personagens {
     }
 
     void Jogador::atualizar() {
-        regenerarAtributos(1.0f);
+        regenerarVida(1.0f);
         mover();
 
         if (estado == static_cast<int>(ESTADO_MOVIMENTO)) {
@@ -178,7 +169,7 @@ namespace Personagens {
     }
 
     Gerenciadores::Observador_Input* Jogador::getObserver() {
-        return observerJogador;
+        return ObserverJogador;
     }
 
     void Jogador::adicionarPontos(float valor) {
@@ -186,75 +177,15 @@ namespace Personagens {
             pontos += valor;
     }
 
-    void Jogador::ganharOuro(int valor) {
-        if (valor > 0)
-            ouro += valor;
-    }
-
-    void Jogador::ganharExperiencia(int valor) {
-        if (valor <= 0)
-            return;
-        experiencia += valor;
-        while (experiencia >= 1000) {
-            experiencia -= 1000;
-            ++nivelInvocador;
-            subirNivel();
-            setVidaMaxima(getVidaMaxima() + 90);
-            setManaMaxima(getManaMaxima() + 40);
-            setForca(getForca() + 5);
-            setVida(getVidaMaxima());
-            setMana(getManaMaxima());
-        }
-    }
-
     void Jogador::registrarAbate() {
         ++abates;
-        ganharOuro(300);
         adicionarPontos(150.0f);
-        adicionarCargaUltimate();
-    }
-
-    void Jogador::registrarMorte() {
-        ++mortes;
-        setEstado(ESTADO_MORTO);
-    }
-
-    void Jogador::registrarAssistencia() {
-        ++assistencias;
-        ganharOuro(150);
-        adicionarPontos(75.0f);
-    }
-
-    void Jogador::adicionarCargaUltimate() {
-        if (cargasUltimate < 3)
-            ++cargasUltimate;
-    }
-
-    bool Jogador::podeUsarUltimate() const {
-        return cargasUltimate > 0 && getNivelInvocador() >= 6 && getMana() >= 100;
-    }
-
-    bool Jogador::consumirCargaUltimate() {
-        if (!podeUsarUltimate())
-            return false;
-        --cargasUltimate;
-        return gastarMana(100);
     }
 
     int Jogador::absorverDano(int dano) {
         if (dano <= 0)
             return 0;
-        int mitigado = dano;
-        if (escudo > 0.0f) {
-            float restanteEscudo = escudo - static_cast<float>(dano);
-            if (restanteEscudo >= 0.0f) {
-                escudo = restanteEscudo;
-                return 0;
-            }
-            mitigado = static_cast<int>(-restanteEscudo);
-            escudo = 0.0f;
-        }
-        return receberDanoFisico(mitigado);
+        return receberDano(dano);
     }
 
     void Jogador::interagir_Colisao(Inimigo* I) {

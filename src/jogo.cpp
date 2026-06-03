@@ -1,306 +1,271 @@
 #include "jogo.h"
 #include <iostream>
-#include "Diretorio/Encontrar_Diretorio.h"
+
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 Jogo::Jogo() :
     gerenciadorTextura(),
-    bgAnimation(&gerenciadorTextura),
+    animador(&gerenciadorTextura),
     jogador(NULL),
     gerenciadorGravidade(NULL),
     listaEntidades(),
-    m_window(),
-    menuFont(),
-    tituloText(),
-    menuOptions(),
-    menuPanel(),
+    janela(),
+    fonte(),
+    titulo(),
+    opcoesMenu(),
+    painelMenu(),
     inicializado(false),
     menuPronto(false),
     musicaLigada(true),
     estadoTela(TelaMenu),
     opcaoSelecionada(0)
 {
+    janela.create(desktop, "Jogo LoL", sf::Style::Fullscreen);
 }
 
 Jogo::~Jogo(){
     fechar();
 }
 
-bool Jogo::carregarRecursos()
-{
-    const sf::Vector2u tamanhoJanela = m_window.getSize();
+bool Jogo::carregarMultimidia() {
+    const sf::Vector2u tamanhoJanela = janela.getSize();
 
-    diretorio_Fase1 = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_frames/fase1");
-    diretorio_Audio = Encontrar_Diretorio::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
+    diretorio_Frames_Fase1 = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/fase1");
+    diretorio_Frames_Fase2 = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/fase2");
 
-    bgAnimation.setTargetSize(tamanhoJanela);
+    diretorio_Audio = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
+
+    animador.setTargetSize(tamanhoJanela);
     if (tamanhoJanela.x == 0 || tamanhoJanela.y == 0) {
         std::cerr << "Erro: Tamanho da janela é inválido para configurar o fundo." << std::endl;
         return false;
     }
 
-    if (!diretorio_Fase1.empty()) {
-        if (bgAnimation.loadFrames(diretorio_Fase1, "bg_menu", 376, 2, 4, 3))
-            std::cout << "Frames de background carregados com sucesso!" << std::endl;
+    if (!diretorio_Frames_Fase1.empty()) {
+        if (animador.loadFrames(diretorio_Frames_Fase1, "bg_fase1_", 376, 2, 4, 3))
+            std::cout << "Background da fase 1 carregado com sucesso!" << std::endl;
         else
-            std::cerr << "Falha ao carregar os frames de background." << std::endl;
+            {std::cerr << "Falha ao carregar o Background da fase 1." << std::endl; return false;}
+    }
+    if (!diretorio_Frames_Fase2.empty()) {
+        if (animador.loadFrames(diretorio_Frames_Fase2, "bg_fase2_", 451, 2, 4, 7))
+            std::cout << "Background da fase 2 carregado com sucesso!" << std::endl;
+        else
+            {std::cerr << "Falha ao carregar o Background da fase 2." << std::endl; return false;}
     }
 
     if (!diretorio_Audio.empty()) {
         const std::string caminho_completo_musica =
-            Encontrar_Diretorio::concatenarEnderecos(diretorio_Audio, "Aurora_s-Theme.ogg");
-        if (bgMusic.loadMusic(caminho_completo_musica)) {
-            bgMusic.setVolume(50.0f);
-            bgMusic.setLoop(true);
+            Encontrar_Caminho::concatenarEnderecos(diretorio_Audio, "Aurora_s-Theme.ogg");
+        if (musica.loadMusic(caminho_completo_musica)) {
+            musica.setVolume(50.0f);
+            musica.setLoop(true);
             if (musicaLigada)
-                bgMusic.play();
+                musica.play();
         }
+        else {std::cerr << "Falha ao carregar a música da fase 1." << std::endl; return false;}
+    }
+    if (!diretorio_Audio.empty()) {
+        const std::string caminho_completo_musica =
+            Encontrar_Caminho::concatenarEnderecos(diretorio_Audio, "Down-to-a-Dusty-Plain.ogg");
+        if (musica.loadMusic(caminho_completo_musica)) {
+            musica.setVolume(50.0f);
+            musica.setLoop(true);
+            //if (musicaLigada)
+            //    bgMusic.play();
+        }
+        {std::cerr << "Falha ao carregar a música da fase 2." << std::endl; return false;}
+    }
+    return true;
+}
+bool Jogo::trocarMusica(int fase) {
+    if (diretorio_Audio.empty()) {
+        std::cerr << "Sem música disponível! " << std::endl;
+        return false;
     }
 
+    // 1. Para a música atual antes de trocar o arquivo
+    musica.stop();
+
+    std::string nomeArquivo = "";
+    if (fase == 1) {
+        nomeArquivo = "Aurora_s-Theme.ogg";
+    } else if (fase == 2) {
+        nomeArquivo = "Down-to-a-Dusty-Plain.ogg";
+    }
+
+    const std::string caminho_musica = Encontrar_Caminho::concatenarEnderecos(
+                                        diretorio_Audio, nomeArquivo);
+
+    // 2. Carrega a nova música na mesma variável
+    if (musica.loadMusic(caminho_musica)) {
+        musica.setVolume(50.0f);
+        musica.setLoop(true);
+
+        if (musicaLigada) {
+            musica.play();
+        }
+    }
+    else {std::cerr << "Falha ao carregar a música da fase " << fase << std::endl; return false;}
+
+}
+
+bool Jogo::carregarObstaculos() {
     Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
     if (chao) {
         Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(chao);
         chao->getCorpo().setPosition(sf::Vector2f(600.0f, 730.0f));
         listaEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
     }
+    else {std::cerr << "Falha ao criar plataforma" << std::endl; return false;}
 
     Obstaculos::Plataforma* novaPlat;
     sementear();
     for (int i = 0; i < (rand()%8)+3; i++) {
-        if ((rand()%10)<5) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1); }
-        else if ((rand()%10)<4) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2); }
-        else { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3); }
+        if ((rand()%10)<5)
+            novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1);
+        else if ((rand()%10)<4)
+            novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2);
+        else
+            novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3);
+
+        if (!novaPlat) {std::cerr << "Falha ao criar nova plataforma." << std::endl; return false;}
 
         bool posicaoValida = false;
         int tentativas = 0;
 
-        if (novaPlat) {
-            while (!posicaoValida && tentativas < 100) {
-                int sizex = ((m_window.getSize().x) - novaPlat->getTamanho().width);
-                int sizey = ((m_window.getSize().y) - novaPlat->getTamanho().height - (chao->getAltura()) / 2);
-                novaPlat->getCorpo().setPosition((rand() % sizex) + (novaPlat->getTamanho().width) / 2, (rand() % sizey) + (novaPlat->getTamanho().height) / 2);
+        while (!posicaoValida && tentativas < 500) {
+            int sizex = ((janela.getSize().x) - novaPlat->getTamanho().width);
+            int sizey = ((janela.getSize().y) - novaPlat->getTamanho().height - (chao->getAltura()) / 2);
+            novaPlat->getCorpo().setPosition(
+                (rand() % sizex) + (novaPlat->getTamanho().width) / 2,
+                (rand() % sizey) + (novaPlat->getTamanho().height) / 2
+            );
 
-                sf::FloatRect hitboxExpandida = novaPlat->getCorpo().getGlobalBounds();
-                hitboxExpandida.left -= 20.f;
-                hitboxExpandida.top -= 20.f;
-                hitboxExpandida.width += 40.f;
-                hitboxExpandida.height += 40.f;
-                if (Gerenciadores::Gerenciador_Colisao::getInstancia().verificarPosicaoLivre(hitboxExpandida)) {
-                    posicaoValida = true;
-                }
+            sf::FloatRect hitboxExpandida = novaPlat->getCorpo().getGlobalBounds();
+            hitboxExpandida.left -= 20.f;
+            hitboxExpandida.top -= 20.f;
+            hitboxExpandida.width += 40.f;
+            hitboxExpandida.height += 40.f;
+            if (Gerenciadores::Gerenciador_Colisao::getInstancia().verificarPosicaoLivre(hitboxExpandida))
+                posicaoValida = true;
 
-                tentativas++;
-            }
-            if (posicaoValida) {
-                listaEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
-                Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(novaPlat);
-            }
-            else { delete novaPlat; }
+            tentativas++;
         }
+        if (posicaoValida) {
+            listaEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
+            Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(novaPlat);
+        }
+        else delete novaPlat;
     }
     novaPlat = NULL;
+    return true;
+}
+
+bool Jogo::carregarJogadores() {
     if (!jogador) {
         jogador = new Personagens::Jogador();
+        if (jogador) {
+            Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(jogador);
 
-        Gerenciadores::Gerenciador_Colisao::getInstancia().incluirEntidade(jogador);
+            // Mudar futuramente para escolha do jogador
+            jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
+            jogador->setPosicao(sf::Vector2f(100.f, 800.f));
+            std::cout << "Boneco criado: " << jogador->getNome() << std::endl;
 
-        jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
-        jogador->setPosicao(sf::Vector2f(100.f, 800.f));
-        std::cout << "Jogador criado: " << jogador->getNome() << std::endl;
-
-        gerenciadorGravidade = new Gerenciadores::Gerenciador_Gravidade();
-        gerenciadorGravidade->aplicarGravidade(jogador, true);
-        jogador->setGerenciadorGravidade(gerenciadorGravidade);
-    }
-    return configurarMenu();
-}
-
-bool Jogo::configurarMenu()
-{
-    const sf::Vector2u tamanhoJanela = m_window.getSize();
-    const float larguraPainel = 420.f;
-    const float alturaPainel = 320.f;
-
-    menuPanel.setSize(sf::Vector2f(larguraPainel, alturaPainel));
-    menuPanel.setFillColor(sf::Color(15, 15, 20, 210));
-    menuPanel.setOutlineThickness(2.f);
-    menuPanel.setOutlineColor(sf::Color(220, 220, 230, 180));
-    menuPanel.setPosition(
-        (static_cast<float>(tamanhoJanela.x) - larguraPainel) / 2.f,
-        (static_cast<float>(tamanhoJanela.y) - alturaPainel) / 2.f
-    );
-
-    tituloText.setFont(menuFont);
-    tituloText.setString("Jogo");
-    tituloText.setCharacterSize(42);
-    tituloText.setFillColor(sf::Color::White);
-    tituloText.setPosition(menuPanel.getPosition().x + 32.f, menuPanel.getPosition().y + 28.f);
-
-    const char* labels[] = { "Iniciar Jogo", "Musica: Ligada", "Sair" };
-    menuOptions.clear();
-    menuOptions.resize(3);
-
-    for (std::size_t i = 0; i < menuOptions.size(); ++i) {
-        menuOptions[i].setFont(menuFont);
-        menuOptions[i].setCharacterSize(28);
-        menuOptions[i].setString(labels[i]);
-        menuOptions[i].setPosition(
-            menuPanel.getPosition().x + 36.f,
-            menuPanel.getPosition().y + 110.f + static_cast<float>(i) * 58.f
-        );
-    }
-
-    atualizarMenuVisual();
-    menuPronto = true;
-    return true;
-}
-
-bool Jogo::inicializar()
-{
-    if (inicializado && m_window.isOpen()) {
-        return true;
-    }
-
-    m_window.create(sf::VideoMode(1280, 720), "Jogo LoL", sf::Style::Default);
-    m_window.setFramerateLimit(60);
-
-    if (!carregarRecursos()) {
+            gerenciadorGravidade = &Gerenciadores::Gerenciador_Gravidade::getInstancia();
+            if (gerenciadorGravidade) {
+                gerenciadorGravidade->aplicarGravidade(jogador, true);
+                jogador->setGerenciadorGravidade(gerenciadorGravidade);
+                return true;
+            }
+            std::cerr << "Falha ao aplicar gravidade."  << std::endl;
+            return false;
+        }
+        std::cerr << "Falha ao carregar boneco."  << std::endl;
         return false;
     }
-
-    inicializado = true;
     return true;
 }
 
-void Jogo::iniciarGameplay()
-{
-    if (!inicializado) {
-        return;
+bool Jogo::inicializar() {
+    if (carregarMultimidia() && carregarObstaculos() && carregarJogadores()) {
+        estadoTela = TelaMenu;
+        return true;
     }
+    return false;
 
-    estadoTela = TelaGameplay;
 }
 
-void Jogo::setMusicaLigada(bool ligada)
-{
+
+void Jogo::executar() {
+    if (!inicializado || !janela.isOpen()) {std::cerr << "Jogo já está aberto." << std::endl; return;}
+
+    janela.create(sf::VideoMode(desktop.width, desktop.height), "Jogo", sf::Style::Fullscreen);
+    janela.setFramerateLimit(60);
+
+    if (!inicializar()) {std::cerr << "A inicialização não foi sucedida."  << std::endl; return;}
+    while (estaAberto()) atualizar();
+
+    inicializado = true;
+}
+
+void Jogo::iniciarFase() {
+    if (!inicializado) return;
+    estadoTela = TelaFase;
+}
+
+void Jogo::setMusica(bool ligada) {
     musicaLigada = ligada;
 
-    if (musicaLigada)
-        bgMusic.play();
-    else
-        bgMusic.pause();
-
-    atualizarMenuVisual();
+    if (musicaLigada) musica.play();
+    else musica.pause();
 }
 
-void Jogo::setVolumeMusica(float volume)
-{
-    bgMusic.setVolume(volume);
-}
+void Jogo::setVolume(float volume) { musica.setVolume(volume);}
 
-bool Jogo::musicaEstaLigada() const
-{
-    return musicaLigada;
-}
+bool Jogo::tocandoMusica() const { return musicaLigada;}
 
-void Jogo::executar()
-{
-    if (!inicializar()) {
-        return;
-    }
-
-    while (estaAberto()) {
-        atualizar();
-    }
-}
-
-void Jogo::processarEventoMenu(const sf::Event& evento)
-{
-    if (evento.type != sf::Event::KeyPressed) {
-        return;
-    }
-
-    if (evento.key.code == sf::Keyboard::Up) {
-        if (opcaoSelecionada == 0)
-            opcaoSelecionada = menuOptions.size() - 1;
-        else
-            --opcaoSelecionada;
-        atualizarMenuVisual();
-    } else if (evento.key.code == sf::Keyboard::Down) {
-        opcaoSelecionada = (opcaoSelecionada + 1) % menuOptions.size();
-        atualizarMenuVisual();
-    } else if (evento.key.code == sf::Keyboard::Enter || evento.key.code == sf::Keyboard::Space) {
-        executarOpcaoMenu();
-    }
-}
-
-void Jogo::processarEventoGameplay(const sf::Event& evento)
-{
+// Para tela de pausa
+void Jogo::processarEventoJogo(const sf::Event& evento) {
     if (evento.type == sf::Event::KeyPressed && evento.key.code == sf::Keyboard::Escape) {
-        estadoTela = TelaMenu;
-        atualizarMenuVisual();
+        estadoTela = TelaPausa;
     }
 }
 
-void Jogo::processarEventos()
-{
-    while (m_window.pollEvent(event)) {
+void Jogo::processarEventos() {
+    while (janela.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            m_window.close();
+            janela.close();
             inicializado = false;
             return;
         }
 
-        if (event.type == sf::Event::Resized) {
+        if (event.type == sf::Event::Resized)
+            animador.setTargetSize(sf::Vector2u(desktop.width * 0.75, desktop.height * 0.75));
 
-            bgAnimation.setTargetSize(sf::Vector2u(1280, 720));
-
-            if (menuPronto) {
-                configurarMenu();
-            }
-        }
-
-        if (estadoTela == TelaMenu)
-            processarEventoMenu(event);
+        if (estadoTela == TelaPausa)
+            processarEventoPausa(event);
         else
-            processarEventoGameplay(event);
+            processarEventoJogo(event);
     }
 }
-
-void Jogo::atualizarMenuVisual()
-{
-    if (!menuPronto) {
-        return;
-    }
-
-    menuOptions[1].setString(musicaLigada ? "Musica: Ligada" : "Musica: Desligada");
-
-    for (std::size_t i = 0; i < menuOptions.size(); ++i) {
-        if (i == opcaoSelecionada) {
-            menuOptions[i].setFillColor(sf::Color(255, 215, 80));
-            menuOptions[i].setStyle(sf::Text::Bold);
-        } else {
-            menuOptions[i].setFillColor(sf::Color(235, 235, 240));
-            menuOptions[i].setStyle(sf::Text::Regular);
-        }
-    }
-}
-
 void Jogo::executarOpcaoMenu()
 {
     switch (opcaoSelecionada) {
         case 0:
-            estadoTela = TelaGameplay;
+            estadoTela = TelaFase;
             break;
         case 1:
             musicaLigada = !musicaLigada;
             if (musicaLigada)
-                bgMusic.play();
+                musica.play();
             else
-                bgMusic.pause();
-            atualizarMenuVisual();
+                musica.pause();
             break;
         case 2:
-            m_window.close();
+            janela.close();
             break;
         default:
             break;
@@ -309,67 +274,67 @@ void Jogo::executarOpcaoMenu()
 
 void Jogo::desenharMenu()
 {
-    bgAnimation.update();
-    bgAnimation.draw(m_window);
-    m_window.draw(menuPanel);
-    m_window.draw(tituloText);
+    animador.update();
+    animador.draw(janela);
+    janela.draw(painelMenu);
+    janela.draw(titulo);
 
-    for (std::size_t i = 0; i < menuOptions.size(); ++i)
-        m_window.draw(menuOptions[i]);
+    for (std::size_t i = 0; i < opcoesMenu.size(); ++i)
+        janela.draw(opcoesMenu[i]);
 }
 
-void Jogo::desenharGameplay()
+void Jogo::desenharFase()
 {
     float dt = relogio_fisica.restart().asSeconds();
 
     if (dt > 0.1f) { dt = 0.1f; }
 
-    bgAnimation.update();
-    m_window.clear(sf::Color::Black);
-    bgAnimation.draw(m_window);
+    animador.update();
+    janela.clear(sf::Color::Black);
+    animador.draw(janela);
 
-    listaEntidades.desenharTodas(m_window);
+    listaEntidades.desenharTodas(janela);
     if (jogador) {
         gerenciadorGravidade->executar(dt);
 
-        sf::Vector2u tamanhoMundo(1280, 720);
+        sf::Vector2u tamanhoMundo(desktop.width, desktop.height);
 
         Gerenciadores::Gerenciador_Colisao::getInstancia().executar(jogador, tamanhoMundo, gerenciadorGravidade);
         jogador->atualizar();
-        jogador->desenhar(m_window);
+        jogador->desenhar(janela);
     }
 }
 
 void Jogo::atualizar()
 {
-    if (!inicializado || !m_window.isOpen()) {
+    if (!inicializado || !janela.isOpen()) {
         return;
     }
 
     processarEventos();
-    if (!m_window.isOpen()) {
+    if (!janela.isOpen()) {
         return;
     }
 
-    m_window.clear(sf::Color::Black);
+    janela.clear(sf::Color::Black);
 
     if (estadoTela == TelaMenu)
         desenharMenu();
     else
-        desenharGameplay();
+        desenharFase();
 
-    m_window.display();
+    janela.display();
 }
 
 bool Jogo::estaAberto() const
 {
-    return m_window.isOpen();
+    return janela.isOpen();
 }
 
 void Jogo::fechar()
 {
-    if (m_window.isOpen()) {
-        m_window.close();
+    if (janela.isOpen()) {
+        janela.close();
     }
     if (jogador) {
         delete jogador;

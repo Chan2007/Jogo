@@ -13,11 +13,11 @@ namespace Personagens {
 
         caminhoArquivoSprite(""),
         caminhoArquivoSpritePulo(""),
-        colunasSpritesheet(1),
         tempoPorFrame(0.12f),
         frameAcumulado(0.0f),
         indexFrameAtual(0),
         totalFramesAnimacao(8),
+        colunasSpritesheet(1),
         frameWidth(32),
         frameHeight(32),
 
@@ -25,7 +25,6 @@ namespace Personagens {
         vidaMaxima(100),
         forca(12),
         alcanceAtaque(125),
-        velocidadeMovimento(0.01f),
         chanceCritica(0),
         regeneracaoVida(2.0f),
         estado(static_cast<int>(ESTADO_OCIOSO))
@@ -88,16 +87,17 @@ namespace Personagens {
             estado = static_cast<int>(ESTADO_MORTO);
     }
 
-    int Personagem::receberDanoint dano) {
+    int Personagem::receberDano(int dano) {
         if (dano <= 0 || !estaVivo())
             return 0;
-        setVida(vida - danoFinal);
+        setVida(vida - dano);
         return dano;
     }
 
 
     int Personagem::causarDanoBasico() const {
-        return = ((rand()%101)) >= chanceCritica) ? forca * (1 + chanceCritica) : forca;
+        return (rand()%101 >= chanceCritica) ? (forca * (1 + chanceCritica)) : forca;
+
     }
 
     void Personagem::curar(int valor) {
@@ -111,7 +111,7 @@ namespace Personagens {
         curar(static_cast<int>(regeneracaoVida * deltaTempo));    }
 
     void Personagem::moverHorizontal(float direcao) {
-        velocidade.x = direcao * static_cast<float>(velocidadeMovimento);
+        velocidade.x = direcao * velocidade.x;
         estado = (direcao == 0.0f) ? static_cast<int>(ESTADO_OCIOSO) : static_cast<int>(ESTADO_MOVIMENTO);
     }
 

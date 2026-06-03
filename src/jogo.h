@@ -4,8 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <windows.h>
-#include "Animador_Fundo/animador_fundo.h"
-#include "Audio/Audio.h"
+#include "Sistema/UI/animador_fundo.h"
+#include "Sistema/Audio/Audio.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
@@ -20,30 +20,31 @@ class Jogo{
     private:
         enum EstadoTela {
             TelaMenu,
-            TelaGameplay
+            TelaFase,
+            TelaPausa
         };
 
         Gerenciador_Textura gerenciadorTextura;
-        Animador_Fundo bgAnimation;
-        std::string diretorio;
-        std::string diretorio_Frame;
+        Animador_Fundo animador;
+        Audio musica;
 
-        Audio bgMusic;
+        std::string diretorio_Frames_Fase1;
+        std::string diretorio_Frames_Fase2;
         std::string diretorio_Audio;
-        std::string diretorio_Musica;
 
         sf::Event event{};
         sf::Clock relogio_fisica;
 
-        Personagens::Jogador* jogador{};
-        Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade{};
+        Personagens::Jogador* jogador;
+        Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade;
         Listas::ListaEntidades listaEntidades;
 
-        sf::RenderWindow m_window;
-        sf::Font menuFont;
-        sf::Text tituloText;
-        std::vector<sf::Text> menuOptions;
-        sf::RectangleShape menuPanel;
+        sf::RenderWindow janela;
+        sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+        sf::Font fonte;
+        sf::Text titulo;
+        std::vector<sf::Text> opcoesMenu;
+        sf::RectangleShape painelMenu;
         sf::Clock relogio;
         bool inicializado;
         bool menuPronto;
@@ -51,33 +52,41 @@ class Jogo{
         EstadoTela estadoTela;
         std::size_t opcaoSelecionada;
 
-        bool carregarRecursos();
-        bool configurarMenu();
+        bool carregarInimigos();
+        bool carregarJogadores();
+        bool carregarObstaculos();
+        bool carregarProjeteis();
+        bool carregarMultimidia();
+
         void processarEventos();
-        void processarEventoMenu(const sf::Event& evento);
-        void processarEventoGameplay(const sf::Event& evento);
-        void atualizarMenuVisual();
+
+        void processarEventoPausa(const sf::Event& evento){}; // TODO
+        void processarEventoJogo(const sf::Event& evento);
         void executarOpcaoMenu();
         void desenharMenu();
-        void desenharGameplay();
+        void desenharFase();
 
     public:
         Jogo();
         ~Jogo();
 
         bool inicializar();
-        void iniciarGameplay();
-        void setMusicaLigada(bool ligada);
-        void setVolumeMusica(float volume);
-        bool musicaEstaLigada() const;
-        void executar();
+        void iniciarFase();
+        void setMusica(bool ligada);
+        void setVolume(float volume);
+        bool tocandoMusica() const;
+        bool trocarMusica(int fase);
         void atualizar();
         bool estaAberto() const;
         void fechar();
+
+        void executar();
         
-        void sementear() {
-            rand(); Sleep(100); time_t t;
-            srand((unsigned) time(&t)); rand();
+        static void sementear() {
+            rand();
+            Sleep(100); time_t t;
+            srand((unsigned) time(&t));
+            rand();
         }
 };
 

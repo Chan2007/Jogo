@@ -22,7 +22,7 @@ class QPushButton;
 class QVariantAnimation;
 class QGraphicsDropShadowEffect;
 
-class MainWindow : public QMainWindow{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = NULL);
@@ -42,14 +42,12 @@ private slots:
 
 
 private:
-    void aplicarEfeitosVisuais();
     void configurarTelaPrincipal();
     void configurarTelaConfiguracao();
     void animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar);
-    void animarPaginaConfiguracao(bool entrando);
-    void reposicionarParticleWidget();
-    void atualizarVisibilidadeParticleWidget();
-    void atualizarLabelVolume(int value);
+    void atualizarParticula();
+    void atualizarPilhaParticula();
+    void atualizarTextoVolume(float value);
 
 
     Ui::MainWindow *ui;
@@ -57,6 +55,6 @@ private:
     Jogo jogo;
     bool jogoInicializado;
     ScreenStack telas;
-    ParticleWidget *m_particulas;
+    ParticleWidget* particulas;
 };
 #endif // MAINWINDOW_H

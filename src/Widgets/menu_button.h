@@ -20,12 +20,13 @@ class MenuButton : public QPushButton
     Q_PROPERTY(qreal opacityValue READ opacityValue WRITE setOpacityValue)
 
 public:
-    explicit MenuButton(QWidget *parent = nullptr);
-    explicit MenuButton(const QString& text, QWidget *parent = nullptr);
+    explicit MenuButton(QWidget *parent = NULL);
+    explicit MenuButton(const QString& text, QWidget *parent = NULL);
     virtual QSize sizeHint() const;
     void iniciarAnimacaoEntrada(int atrasoMs);
-    void setTextAlignment(Qt::Alignment alignment);
-    Qt::Alignment m_textAlignment = Qt::AlignLeft | Qt::AlignVCenter;
+    void setAlinhamento(Qt::Alignment alignment);
+
+    Qt::Alignment textAlignment = Qt::AlignLeft | Qt::AlignVCenter;
 
     qreal hoverProgress() const;
     void setHoverProgress(qreal value);

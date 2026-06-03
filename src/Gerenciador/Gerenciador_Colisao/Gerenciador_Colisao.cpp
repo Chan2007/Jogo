@@ -11,12 +11,12 @@
 #include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
-    class Mediador_Colisao;
+    class Observer_Colisao;
 }
 namespace Gerenciadores {
     Gerenciador_Colisao* Gerenciador_Colisao::gerenciador_colisao = NULL;
 
-    Gerenciador_Colisao::Gerenciador_Colisao(): Mediador_Colisao() {}
+    Gerenciador_Colisao::Gerenciador_Colisao(): Observer_Colisao() {}
     Gerenciador_Colisao& Gerenciador_Colisao::getInstancia() {
         if (!gerenciador_colisao) gerenciador_colisao = new Gerenciador_Colisao();
         return *gerenciador_colisao;
