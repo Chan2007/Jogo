@@ -13,11 +13,11 @@ class QPropertyAnimation;
 class MenuButton : public QPushButton
 {
     Q_OBJECT
-    Q_PROPERTY(qreal hoverProgress READ hoverProgress WRITE setHoverProgress)
-    Q_PROPERTY(qreal pressProgress READ pressProgress WRITE setPressProgress)
-    Q_PROPERTY(QPoint contentOffset READ contentOffset WRITE setContentOffset)
-    Q_PROPERTY(qreal borderAngle READ borderAngle WRITE setBorderAngle)
-    Q_PROPERTY(qreal opacityValue READ opacityValue WRITE setOpacityValue)
+    Q_PROPERTY(qreal hoverProgress READ getHoverProgress WRITE setHoverProgress)
+    Q_PROPERTY(qreal pressProgress READ getPressProgress WRITE setPressProgress)
+    Q_PROPERTY(QPoint contentOffset READ getContentOffset WRITE setContentOffset)
+    Q_PROPERTY(qreal borderAngle READ getBorderAngle WRITE setBorderAngle)
+    Q_PROPERTY(qreal opacityValue READ getOpacityValue WRITE setOpacityValue)
 
 public:
     explicit MenuButton(QWidget *parent = NULL);
@@ -28,19 +28,19 @@ public:
 
     Qt::Alignment textAlignment = Qt::AlignLeft | Qt::AlignVCenter;
 
-    qreal hoverProgress() const;
+    qreal getHoverProgress() const;
     void setHoverProgress(qreal value);
 
-    qreal pressProgress() const;
+    qreal getPressProgress() const;
     void setPressProgress(qreal value);
 
-    QPoint contentOffset() const;
+    QPoint getContentOffset() const;
     void setContentOffset(const QPoint& value);
 
-    qreal borderAngle() const;
+    qreal getBorderAngle() const;
     void setBorderAngle(qreal angle);
 
-    qreal opacityValue() const;
+    qreal getOpacityValue() const;
     void setOpacityValue(qreal value);
 
 protected:
@@ -51,22 +51,22 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-    void desenharPincelada(QPainter& painter, const QRect& area) const;
+    void decorarBotao(QPainter& painter, const QRect& area) const;
     void animarHover(qreal destino);
     void animarPress(qreal destino, int duracaoMs);
-    QColor interpolarCor(const QColor &corA, const QColor &corB, double t) const;
+    static QColor interpolarCor(const QColor &corA, const QColor &corB, double t) ;
 
     bool hovered;
-    qreal m_hoverProgress;
-    qreal m_pressProgress;
-    qreal m_borderAngle;
-    qreal m_opacityValue;
-    QPoint m_contentOffset;
-    QPropertyAnimation *m_hoverAnimation;
-    QPropertyAnimation *m_pressAnimation;
-    QPropertyAnimation *m_offsetAnimation;
-    QPropertyAnimation *m_opacityAnimation;
-    QPropertyAnimation *m_borderAnimation;
+    qreal hoverProgress;
+    qreal pressProgress;
+    qreal borderAngle;
+    qreal opacityValue;
+    QPoint contentOffset;
+    QPropertyAnimation *hoverAnimation;
+    QPropertyAnimation *pressAnimation;
+    QPropertyAnimation *offsetAnimation;
+    QPropertyAnimation *opacityAnimation;
+    QPropertyAnimation *borderAnimation;
 };
 
 #endif // MENU_BUTTON_H
