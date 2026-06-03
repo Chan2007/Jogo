@@ -106,6 +106,7 @@ bool Jogo::trocarMusica(int fase) {
         if (musicaLigada) {
             musica.play();
         }
+        return true;
     }
     else {std::cerr << "Falha ao carregar a música da fase " << fase << std::endl; return false;}
 
@@ -138,10 +139,7 @@ bool Jogo::carregarObstaculos() {
         while (!posicaoValida && tentativas < 500) {
             int sizex = ((janela.getSize().x) - novaPlat->getTamanho().width);
             int sizey = ((janela.getSize().y) - novaPlat->getTamanho().height - (chao->getAltura()) / 2);
-            novaPlat->getCorpo().setPosition(
-                (rand() % sizex) + (novaPlat->getTamanho().width) / 2,
-                (rand() % sizey) + (novaPlat->getTamanho().height) / 2
-            );
+            novaPlat->getCorpo().setPosition((rand() % sizex) + (novaPlat->getTamanho().width) / 2, (rand() % sizey) + (novaPlat->getTamanho().height) / 2);
 
             sf::FloatRect hitboxExpandida = novaPlat->getCorpo().getGlobalBounds();
             hitboxExpandida.left -= 20.f;

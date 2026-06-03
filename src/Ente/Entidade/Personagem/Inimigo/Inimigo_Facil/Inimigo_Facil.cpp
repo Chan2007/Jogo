@@ -8,21 +8,21 @@
 Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
-    tamanho(32),
-    forca(15)
+    tamanho(32)
     {
     Ente::sementear();
+
     setVelocidade(sf::Vector2f(0.02f, 0.02f));
     nivelMaldade = 32;
+    poder = 20;
     setVida(170);
     alcancePerseguicao = 200;
     alcanceAtaque = 90;
     elite = rand() % 10 < 3;
     cooldownAtaque = 1.5f;
     tempoUltimoAtaque = 0.0f;
-    caminhoArquivoSprite = "assets/sprites/spritesheets/Inimigos/minionrangedsheet.png";
-    Encontrar_Caminho buscador;
-    caminhoArquivoSprite = buscador.acharDiretorio_Arquivo(caminhoArquivoSprite);
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet.png");
+
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
             getCorpo().setTexture(getTextura());
@@ -31,6 +31,7 @@ Inimigo_Facil::Inimigo_Facil() :
             tempoPorFrame = 0.8f;
             frameWidth = 1262;
             frameHeight = 1028;
+            getCorpo().setScale(0.05f, 0.05f);
             rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
             getCorpo().setTextureRect(rectAtual);
         }
@@ -53,6 +54,9 @@ void Inimigo_Facil::danificar(Personagens::Jogador* J) {
 }
 
 void Inimigo_Facil::atualizar(Personagens::Jogador* jogador) {
+
+    executar();
+
     float dt = 0.016f;
 
     tempoUltimoAtaque += clockAnimacao.restart().asSeconds();

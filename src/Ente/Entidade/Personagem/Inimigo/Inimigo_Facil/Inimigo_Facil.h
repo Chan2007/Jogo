@@ -15,7 +15,6 @@ class Inimigo_Facil : public Personagens::Inimigo {
     private:
         float raio;
         int tamanho;
-        short int forca;
     public:
         Inimigo_Facil();
         ~Inimigo_Facil();
@@ -24,8 +23,7 @@ class Inimigo_Facil : public Personagens::Inimigo {
         void executar();
         void salvar();
         float getRaio(){return raio;}
-        int getTamanho(){return tamanho;};
-        short int getForca(){return forca;}
+        int getTamanho(){return tamanho;}
 };
 
 

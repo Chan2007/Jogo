@@ -23,7 +23,7 @@ namespace Personagens {
 
         vida(100),
         vidaMaxima(100),
-        forca(12),
+        poder(12),
         alcanceAtaque(125),
         chanceCritica(0),
         regeneracaoVida(2.0f),
@@ -96,7 +96,7 @@ namespace Personagens {
 
 
     int Personagem::causarDanoBasico() const {
-        return (rand()%101 >= chanceCritica) ? (forca * (1 + chanceCritica)) : forca;
+        return (rand()%101 >= chanceCritica) ? (poder * (1 + chanceCritica)) : poder;
 
     }
 

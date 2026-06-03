@@ -23,7 +23,7 @@ namespace Personagens {
         setTipo(Entidades::ENTIDADE_INIMIGO);
         setVidaMaxima(450);
         setVida(450);
-        setForca(45);
+        setPoder(45);
         setAlcanceAtaque(175);
     }
 

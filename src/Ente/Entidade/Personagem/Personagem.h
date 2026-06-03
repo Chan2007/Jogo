@@ -48,7 +48,7 @@ namespace Personagens {
 
             int vida;
             int vidaMaxima;
-            int forca;
+            int poder;
             int alcanceAtaque;
             int chanceCritica;
             float regeneracaoVida;
@@ -67,14 +67,14 @@ namespace Personagens {
             float getVidaPercentual() const;
             int getVida() const {return vida;}
             int getVidaMaxima() const {return vidaMaxima;}
-            int getForca() const {return forca;}
+            int getPoder() const {return poder;}
             int getAlcanceAtaque() const {return alcanceAtaque;}
             int getChanceCritica() const {return chanceCritica;}
             int getEstado() const {return estado;}
             bool estaVivo() const {return vida > 0;}
             void setVidaMaxima(int valor);
             void setVida(int valor);
-            void setForca(int valor) {if (valor >= 0) forca = valor;}
+            void setPoder(int valor) {if (valor >= 0) poder = valor;}
             void setAlcanceAtaque(int valor) {if (valor >= 0) alcanceAtaque = valor;}
             void setChanceCritica(int valor) {chanceCritica = (valor < 0) ? 0 : ((valor > 100) ? 100 : valor);}
             void setRegeneracaoVida(float valor) {regeneracaoVida = (valor < 0.0f) ? 0.0f : valor;}
