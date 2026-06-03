@@ -18,11 +18,11 @@ class Elemento {
         Elemento();
         ~Elemento();
         void setInfo(tipo* E);
-        tipo* getInfo();
-        Elemento <tipo>* getProximo();
-        Elemento <tipo>* getAnterior();
         void setProximo(Elemento <tipo>* E);
+        Elemento <tipo>* getProximo() const;
+        tipo* getInfo();
         void setAnterior(Elemento <tipo>* E);
+        Elemento <tipo>* getAnterior();
         bool operator==(Elemento <tipo>* E);
 };
 
@@ -49,7 +49,7 @@ tipo* Elemento<tipo>::getInfo() {
     return pInfo;
 }
 template<class tipo>
-Elemento <tipo>* Elemento <tipo>::getProximo() {
+Elemento <tipo>* Elemento <tipo>::getProximo() const {
     return pProximo;
 }
 template<class tipo>

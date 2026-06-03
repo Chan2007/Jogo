@@ -7,12 +7,16 @@
 
 #include "Ente/Entidade/Personagem/Personagem.h"
 
+class Ente;
 namespace Personagens {
     class Jogador;
 
     class Inimigo: public Personagem {
     protected:
+        int nivelMaldade;
         int ataque;
+        float tempoUltimoAtaque;
+        float cooldownAtaque;
         int escudo;
         int ouroConcedido;
         int experienciaConcedida;
