@@ -1,8 +1,71 @@
 #ifndef MENU_JOGO_H
-#define MENU_JOGO_H
+#define MENU_JOGO_
+
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include <windows.h>
+#include "Sistema/UI/animador_fundo.h"
+#include "Sistema/Audio/Audio.h"
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 
 
-class Menu {
+namespace Gerenciadores {
+    class Gerenciador_Gravidade;
+}
+
+class Jogo {
+    private:
+        enum EstadoTela {
+            TelaMenu,
+            TelaFase,
+            TelaPausa
+        };
+
+        Gerenciador_Textura gerenciadorTextura;
+
+        sf::Event event{};
+
+        Animador_Fundo animadorFase1;
+        Animador_Fundo animadorFase2;
+        Audio audio;
+
+        std::vector<sf::Text> opcoesMenu;
+        bool inicializado;
+        bool menuPronto;
+        bool musicaLigada;
+        EstadoTela estadoTela;
+        std::size_t opcaoSelecionada;
+
+        bool carregarInimigos();
+        bool carregarJogadores();
+        bool carregarObstaculos();
+        bool carregarProjeteis();
+        bool carregarMultimidia();
+
+        void processarEventos();
+
+        void processarEventoPausa(const sf::Event& evento) {}; // TODO
+        void processarEventoJogo(const sf::Event& evento);
+        void executarOpcaoMenu();
+        void desenharFase();
+        void desenharPausa() {
+            // TODO
+        };
+
+    public:
+        Jogo();
+        ~Jogo();
+
+        void iniciarFase();
+        void setMusica(bool ligada);
+        void setVolume(float volume);
+        bool tocandoMusica() const;
+        bool trocarMusica(int fase);
+
+        void executar();
 };
 
-#endif
+#endif  // MENU_JOGO_

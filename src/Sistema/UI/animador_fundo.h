@@ -35,7 +35,7 @@ class Animador_Fundo {
 
         std::vector<FrameData> frames_data;
 
-        Gerenciador_Textura* gerenciadorTextura;
+        Gerenciadores::Gerenciador_Textura* gerenciadorTextura;
 
         unsigned int FrameIndexAtual;
         sf::Clock clock;
@@ -57,7 +57,7 @@ class Animador_Fundo {
 
     public:
         // Evitar declaração implícita
-        explicit Animador_Fundo(Gerenciador_Textura* gerenciadorTextura = NULL);
+        explicit Animador_Fundo(Gerenciadores::Gerenciador_Textura* gerenciadorTextura = NULL);
 
         ~Animador_Fundo();
 

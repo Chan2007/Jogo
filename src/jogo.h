@@ -24,39 +24,33 @@ class Jogo {
             TelaPausa
         };
 
-        Gerenciador_Textura gerenciadorTextura;
+        Gerenciadores::Gerenciador_Textura gerenciadorTextura;
         Animador_Fundo animadorFase1;
         Animador_Fundo animadorFase2;
-        Audio musica;
+        Audio audio;
 
         std::string diretorio_Frames_Fase1;
         std::string diretorio_Frames_Fase2;
         std::string diretorio_Audio;
 
         sf::Event event{};
-        sf::Clock relogio_fisica;
+        sf::Clock relogio;
 
-        Personagens::Jogador* jogador;
+        Personagens::Jogador jogador;
         Gerenciadores::Gerenciador_Gravidade* gerenciadorGravidade;
         Listas::ListaEntidades listaEntidades;
 
         sf::RenderWindow janela;
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-        sf::Font fonte;
-        sf::Text titulo;
         std::vector<sf::Text> opcoesMenu;
-        sf::RectangleShape painelMenu;
-        sf::Clock relogio;
         bool inicializado;
         bool menuPronto;
         bool musicaLigada;
         EstadoTela estadoTela;
         std::size_t opcaoSelecionada;
 
-        bool carregarInimigos();
-        bool carregarJogadores();
-        bool carregarObstaculos();
-        bool carregarProjeteis();
+        void criarJogadores();
+        bool criarObstaculos();
         bool carregarMultimidia();
 
         void processarEventos();

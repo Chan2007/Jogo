@@ -3,6 +3,8 @@
 //
 
 #include "Fase.h"
+#include "Listas/ListaEntidades.h"
 
 namespace Fases {
+
 } // Fases
