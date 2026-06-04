@@ -46,8 +46,6 @@ MainWindow::MainWindow(QWidget *parent)
     atualizarParticula();
     atualizarPilhaParticula();
 
-    connect(&gameTimer, SIGNAL(timeout()), this, SLOT(atualizarJogo()));
-
     ui->musicCheckBox->setChecked(true);
     ui->volumeSlider->setRange(0, 100);
     ui->volumeSlider->setValue(50);
@@ -193,22 +191,21 @@ void MainWindow::atualizarJogo() {
 }
 
 void MainWindow::on_startButton_clicked() {
-    if (gameTimer.isActive()) return;
+    if (jogo.estaAberto()) return;
 
-    if (!jogoInicializado) {
-        if (!jogo.inicializar()) {
-            ui->statusLabel->setText("Falha ao inicializar o jogo.");
-            return;
-        }
+    jogo.setVolume(static_cast<float>(ui->volumeSlider->value()));
+    jogo.setMusica(ui->musicCheckBox->isChecked());
 
-        jogoInicializado = true;
-        jogo.setVolume(static_cast<float>(ui->volumeSlider->value()));
-        jogo.setMusica(ui->musicCheckBox->isChecked());
+    if (!jogo.inicializar()) {
+        ui->statusLabel->setText("Falha ao inicializar o jogo.");
+        return;
     }
 
     jogo.iniciarFase();
     ui->statusLabel->setText("Jogo em execução");
     hide();
+
+    connect(&gameTimer, SIGNAL(timeout()), this, SLOT(atualizarJogo()));
     gameTimer.start(16);
 }
 
@@ -227,13 +224,13 @@ void MainWindow::on_backButton_clicked() {
 void MainWindow::on_musicCheckBox_toggled(bool checked) {
     ui->musicCheckBox->setText(checked ? "Ativada" : "Desativada");
 
-    if (jogoInicializado) jogo.setMusica(checked);
+    jogo.setMusica(checked);
 }
 
 void MainWindow::on_volumeSlider_valueChanged(int value) {
     atualizarTextoVolume(value);
 
-    if (jogoInicializado) jogo.setVolume(static_cast<float>(value));
+    jogo.setVolume(static_cast<float>(value));
 }
 
 void MainWindow::on_exitButton_clicked() {

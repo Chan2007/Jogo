@@ -11,8 +11,8 @@ ParticleWidget::ParticleWidget(QWidget *parent)
     , m_distanciaConexao(150.0f)
     , m_tamanhoAnterior()
 {
-    // ISSO É VITAL: Faz os cliques do mouse "atravessarem" as partículas 
-    // e atingirem os botões do seu menu que estão atrás/na frente delas!
+    // Faz os cliques do mouse "atravessarem" as partículas
+    // e atingirem os botões do seu menu que estão atrás/na frente delas
     setAttribute(Qt::WA_TransparentForMouseEvents);
     
     // Deixa o fundo desse widget transparente
@@ -25,15 +25,14 @@ ParticleWidget::ParticleWidget(QWidget *parent)
     m_timer.start(1);
 }
 
-void ParticleWidget::iniciarParticulas()
-{
+void ParticleWidget::iniciarParticulas() {
     if (width() <= 0 || height() <= 0)
         return;
 
     m_particulas.clear();
     for (int i = 0; i < m_quantidade; ++i) {
         Particle p;
-        // Iniciar partículas em uma área levemente maior para evitar bordas visíveis de cara
+        // Iniciar partículas numa área levemente maior para evitar bordas visíveis de cara
         p.x = static_cast<float>(qrand() % qMax(1, width() + 200)) - 100.0f;
         p.y = static_cast<float>(qrand() % qMax(1, height() + 200)) - 100.0f;
 
@@ -45,8 +44,7 @@ void ParticleWidget::iniciarParticulas()
     }
 }
 
-void ParticleWidget::resizeEvent(QResizeEvent *event)
-{
+void ParticleWidget::resizeEvent(QResizeEvent *event) {
     if (event) {
         const QSize tamanhoNovo = event->size();
         if (tamanhoNovo != m_tamanhoAnterior && tamanhoNovo.width() > 0 && tamanhoNovo.height() > 0) {
@@ -56,10 +54,8 @@ void ParticleWidget::resizeEvent(QResizeEvent *event)
     }
 }
 
-void ParticleWidget::atualizarParticulas()
-{
-    if (width() <= 0 || height() <= 0)
-        return;
+void ParticleWidget::atualizarParticulas() {
+    if (width() <= 0 || height() <= 0) return;
 
     for (int i = 0; i < m_particulas.size(); ++i) {
         m_particulas[i].x += m_particulas[i].vx;
@@ -69,46 +65,40 @@ void ParticleWidget::atualizarParticulas()
         // usando uma margem confortável para fora da tela, assim elas entram suavemente
         float margem = 100.0f;
 
-        if (m_particulas[i].x < -margem) {
+        if (m_particulas[i].x < -margem)
             m_particulas[i].x = width() + margem;
-        } else if (m_particulas[i].x > width() + margem) {
+        else if (m_particulas[i].x > width() + margem)
             m_particulas[i].x = -margem;
-        }
 
-        if (m_particulas[i].y < -margem) {
+
+        if (m_particulas[i].y < -margem)
             m_particulas[i].y = height() + margem;
-        } else if (m_particulas[i].y > height() + margem) {
+        else if (m_particulas[i].y > height() + margem)
             m_particulas[i].y = -margem;
-        }
     }
     update();
 }
-// 1. Implementação da antiga lambda como um méthodo da classe
-float ParticleWidget::getFade(float x, float y) const
-{
+
+float ParticleWidget::getFade(float x, float y) const {
     float marginX = 100.0f;
     float marginY = 100.0f;
     float fadeX = 1.0f;
     float fadeY = 1.0f;
 
-    if (x < marginX) {
+    if (x < marginX)
         fadeX = qMax(0.0f, x / marginX);
-    } else if (x > width() - marginX) {
+    else if (x > width() - marginX)
         fadeX = qMax(0.0f, (width() - x) / marginX);
-    }
 
-    if (y < marginY) {
+    if (y < marginY)
         fadeY = qMax(0.0f, y / marginY);
-    } else if (y > height() - marginY) {
+    else if (y > height() - marginY)
         fadeY = qMax(0.0f, (height() - y) / marginY);
-    }
 
     return fadeX * fadeY;
 }
 
-// 2. O seu paintEvent atualizado sem C++11
-void ParticleWidget::paintEvent(QPaintEvent *event)
-{
+void ParticleWidget::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
 
     QPainter painter(this);
@@ -118,7 +108,7 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
     const int corG = 0;
     const int corB = 0;
 
-    // 1. Desenha as linhas de conexão PRIMEIRO (bem finas)
+    // Desenha as linhas de conexão primeiro
     for (int i = 0; i < m_particulas.size(); ++i) {
         for (int j = i + 1; j < m_particulas.size(); ++j) {
 
@@ -127,12 +117,12 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
             float distancia = std::sqrt(dx * dx + dy * dy);
 
             if (distancia < m_distanciaConexao) {
-                // Chama o novo méthodo auxiliar no lugar da lambda
+                // Chama o méthodo auxiliar
                 float fadeI = getFade(m_particulas[i].x, m_particulas[i].y);
                 float fadeJ = getFade(m_particulas[j].x, m_particulas[j].y);
                 float baseFade = (fadeI + fadeJ) * 0.5f;
 
-                // Opacidade suave como na imagem de referência conjugada as bordas
+                // Opacidade suave
                 float opacidade = 1.0f - (distancia / m_distanciaConexao);
                 int alpha = static_cast<int>(opacidade * 120.0f * baseFade);
 
@@ -145,11 +135,11 @@ void ParticleWidget::paintEvent(QPaintEvent *event)
         }
     }
 
-    // 2. Desenha os nós (pontos PEQUENOS como na imagem, com fade out nas bordas)
+    // Desenha os nós
     painter.setPen(Qt::NoPen);
 
     for (int i = 0; i < m_particulas.size(); ++i) {
-        // Chama o novo méthodo auxiliar no lugar da lambda
+        // Chama o méthodo auxiliar
         float fade = getFade(m_particulas[i].x, m_particulas[i].y);
         int alpha = static_cast<int>(225 * fade);
         if (alpha > 0) {

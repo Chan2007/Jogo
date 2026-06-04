@@ -3,13 +3,11 @@
 
 #include <QFrame>
 
-class PaintedPanel : public QFrame
-{
+class PaintedPanel : public QFrame {
     Q_OBJECT
 
 public:
-    explicit PaintedPanel(QWidget *parent = 0);
-
+    explicit PaintedPanel(QWidget *parent = NULL);
 protected:
     virtual void paintEvent(QPaintEvent *event);
 };

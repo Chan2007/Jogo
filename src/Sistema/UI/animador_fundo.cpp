@@ -18,7 +18,7 @@ Animador_Fundo::Animador_Fundo(Gerenciador_Textura* gerenciadorTextura):
     gerenciadorTextura(gerenciadorTextura),
     FrameIndexAtual(0),
     frameAccumulator(0.0f),
-    frameTime(1.0f / 60.0f),
+    frameTime(1.0f / 30.0f),
     frameSize(),
     targetSize(),
     posicaoBase(0.f, 0.f),
@@ -72,6 +72,7 @@ void Animador_Fundo::preLoadNextFrame(unsigned int index) {
     thread = new sf::Thread(&Animador_Fundo::loadThread, this);
     thread->launch();
 }
+
 sf::Texture* Animador_Fundo::findTexture(const std::string& path) const {
     if (!gerenciadorTextura) return NULL;
 
@@ -101,9 +102,8 @@ bool Animador_Fundo::applyFrame(sf::Sprite& sprite, FrameData& frameData) {
     }
 
     // Tenta carregar se ainda não foi carregada
-    if (frameData.textura == NULL) {
+    if (frameData.textura == NULL)
         frameData.textura = findTexture(frameData.caminho_spSheet);
-    }
 
     // Se conseguiu carregar, aplica
     if (frameData.textura != NULL && frameData.textura->getSize().x > 0 && frameData.textura->getSize().y > 0) {
@@ -116,6 +116,7 @@ bool Animador_Fundo::applyFrame(sf::Sprite& sprite, FrameData& frameData) {
     // para continuar a animação com o sprite anterior
     return true;
 }
+
 
 void Animador_Fundo::updateSpriteScale() {
     if (!loaded || frameSize.x == 0 || frameSize.y == 0 || targetSize.x == 0 || targetSize.y == 0)
@@ -136,9 +137,9 @@ void Animador_Fundo::updateBlend() {
     ProxSprite .setColor(sf::Color(255, 255, 255,   0));
 }
 
-bool Animador_Fundo::loadFrames(const std::string &pathPrefix, 
-                                const std::string& name,const int numFrames,
-                                const int frameStep, unsigned int colunas, unsigned int linhas) {
+bool Animador_Fundo::loadFrames(const std::string &pathPrefix, const std::string &name,
+                                const int numFrames, const int frameStep,
+                                unsigned int colunas, unsigned int linhas) {
     frames_data.clear();
     if (!gerenciadorTextura) return false;
 
@@ -251,6 +252,7 @@ void Animador_Fundo::update() {
     // Restaura permissão de carregamento
     allowLoad = temp;
 }
+
 
 void Animador_Fundo::draw(sf::RenderTarget& target) const {
     if (!loaded) return;

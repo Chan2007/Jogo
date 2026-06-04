@@ -231,7 +231,7 @@
         <widget class="QWidget" name="settingsPage">
          <layout class="QVBoxLayout" name="settingsPageLayout">
           <property name="spacing">
-           <number>16</number>
+           <number>40</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -253,18 +253,21 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
             <layout class="QVBoxLayout" name="settingsPanelLayout">
              <property name="spacing">
-              <number>16</number>
+              <number>28</number>
              </property>
              <property name="leftMargin">
-              <number>28</number>
+              <number>84</number>
              </property>
              <property name="topMargin">
               <number>28</number>
              </property>
              <property name="rightMargin">
-              <number>28</number>
+              <number>84</number>
              </property>
              <property name="bottomMargin">
               <number>28</number>

@@ -6,16 +6,14 @@
 #include <QTimer>
 #include <QSize>
 
-// Estrutura simples em C++03 para guardar as informações da partícula
 struct Particle {
     float x;
     float y;
-    float vx; // Velocidade em X
-    float vy; // Velocidade em Y
+    float vx;
+    float vy;
 };
 
-class ParticleWidget : public QWidget
-{
+class ParticleWidget : public QWidget {
     Q_OBJECT
 public:
     explicit ParticleWidget(QWidget *parent = 0);

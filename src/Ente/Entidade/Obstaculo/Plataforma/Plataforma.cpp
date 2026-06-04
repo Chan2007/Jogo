@@ -18,15 +18,12 @@ namespace Obstaculos {
 		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
 		Encontrar_Caminho diretorio;
 		arquivoSprite = diretorio.acharDiretorio_Arquivo(arquivoSprite);
-		if (arquivoSprite.empty()) {
-			std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << arquivoSprite << std::endl;
-		}
-		else if (getTextura().loadFromFile(arquivoSprite)) {
+		if (arquivoSprite.empty())
+			std::cerr << "Erro: Arquivo não encontrado! Verifique o nome: " << arquivoSprite << std::endl;
+		else if (getTextura().loadFromFile(arquivoSprite))
 			getCorpo().setTexture(getTextura());
-		}
-		else {
+		else
 			std::cerr << "Erro: A textura falhou ao carregar: " << arquivoSprite << std::endl;
-		}
 
 		criar(tipo);
 	}

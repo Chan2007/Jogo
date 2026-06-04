@@ -42,8 +42,8 @@ add_executable(Jogo ${SOURCES}
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        src/qsfmlwidget.cpp
-        src/qsfmlwidget.h
+        src/Widgets/qsfmlwidget.cpp
+        src/Widgets/qsfmlwidget.h
         src/Widgets/particlewidget.cpp
         src/Widgets/particlewidget.h
 

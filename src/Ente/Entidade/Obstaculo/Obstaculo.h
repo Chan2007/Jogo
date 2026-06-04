@@ -29,6 +29,7 @@ namespace Obstaculos {
             virtual void setPlataforma(Personagens::Jogador* J) = 0;
             // Padrão visitor
             void aoColidir(Entidade* E) {E->interagir_Colisao(this);}
+
             void interagir_Colisao(Personagens::Inimigo* I);
             void interagir_Colisao(Obstaculo* O);
             void interagir_Colisao(Entidades::Projetil* P);
