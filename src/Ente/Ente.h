@@ -6,7 +6,7 @@ class Gerenciador_Grafico;
 class Ente {
 protected:
 	int id;
-	static Gerenciador_Grafico* pGG;
+	static Gerenciador_Grafico* pGerenciadorGrafico;
 public:
 	static void sementear() {
 		rand(); Sleep(100); time_t t;
