@@ -24,9 +24,9 @@ namespace Obstaculos{
                 Plataforma(TipoPlataforma tipo = NORMAL1);
                 ~Plataforma();
                 void criar(TipoPlataforma tipo = NORMAL1);
-                void executar(float dt){};
+                void executar(){};
                 void salvar(){};
-                void mover(const float dt){};
+                void mover(){};
                 float getAltura() const {return altura;}
                 float getLargura() const {return largura;}
                 void setPlataforma(Personagens::Jogador* J);

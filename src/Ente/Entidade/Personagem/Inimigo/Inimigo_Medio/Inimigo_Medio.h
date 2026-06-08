@@ -6,19 +6,24 @@
 #define JOGO_INIMIGO_MEDIO_H
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 
-class Inimigo_Medio:public Personagens::Inimigo{
-    private:
-        float raio;
-        int tamanho;
-        short int forca;
-    public:
-        Inimigo_Medio();
-        ~Inimigo_Medio();
-        void danificar(Personagens::Jogador* J);
-        void executar(float dt);
-        float getRaio() const {return raio;}
-        int getTamanho(){return tamanho;}
-        short int getForca() const {return forca;}
+namespace Personagens {
+    class Jogador;
+}
+
+class Inimigo_Medio :public Personagens::Inimigo {
+private:
+    float raio;
+    int tamanho;
+public:
+    Inimigo_Medio();
+    ~Inimigo_Medio();
+    void danificar(Personagens::Jogador* J);
+    void atualizar();
+    void executar();
+    void salvar();
+    void mover();
+    float getRaio() { return raio; }
+    int getTamanho() { return tamanho; };
 };
 
 

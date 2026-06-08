@@ -55,9 +55,9 @@ namespace Entidades {
             virtual ~Entidade();
 
             void desenhar(sf::RenderWindow& window);
-            virtual void executar(float dt) = 0;
+            virtual void executar() = 0;
             virtual void salvar() = 0;
-            virtual void mover(float dt) = 0;
+            virtual void mover() = 0;
 
             virtual void aoColidir(Entidade* entidade) = 0;
             virtual void interagir_Colisao(Personagens::Jogador* J) = 0;

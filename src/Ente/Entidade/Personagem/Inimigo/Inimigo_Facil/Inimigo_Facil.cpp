@@ -3,86 +3,182 @@
 //
 
 #include "Inimigo_Facil.h"
-
-#include <iostream>
-
+#include "Ente/Entidade/Entidade.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Sistema/Caminho/Encontrar_Caminho.h"
-#include "Sistema/UI/Animador.h"
+#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
-Personagens::Inimigo_Facil::Inimigo_Facil() :
+Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
-    tamanho(32)
+    tamanho(32),
+    tiro(NULL)
 {
-    sementear();
+    Ente::sementear();
 
-    setVelocidade(sf::Vector2f(0.02f, 0.02f));
-    setAtaque(20);
-    setVida(50);
-    setAlcanceAtaque(100),
-    setAlcancePerseguicao(200),
-    setElite(rand() % 10 < 3),
-    setCooldownAtaque(1.5f);
-    setTempoUltimoAtaque(0.0f);
+    velocidadeMax = 12.f;
+    nivelMaldade = 32;
+    poder = 20;
+    setVida(170);
+    alcancePerseguicao = 200;
+    alcanceAtaque = 110;
+    elite = rand() % 10 < 5;
+    cooldownAtaque = 1.5f;
+    tempoUltimoAtaque = 0.0f;
     caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet.png");
 
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
             getSprite().setTexture(getTextura());
-
-            // Novos parâmetros:
             totalFramesAnimacao = 18;
             colunasSpritesheet = 9;
-            linhasSpritesheet = 2;
-            tempoPorFrame = 0.06f;
-
-            // O motor descobre a largura e altura do frame dividindo o total pelas colunas/linhas:
-            const sf::Vector2u tamanhoTextura = getTextura().getSize();
-            const int frameW = tamanhoTextura.x / colunasSpritesheet;
-            const int frameH = tamanhoTextura.y / linhasSpritesheet;
-
-            rectAtual = sf::IntRect(0, 0, frameW, frameH);
+            tempoPorFrame = 0.8f;
+            frameWidth = 1262;
+            frameHeight = 1028;
+            getSprite().setScale(0.05f, 0.05f);
+            rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
             getSprite().setTextureRect(rectAtual);
         }
+        else {
+            std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo facil em: " << caminhoArquivoSprite << std::endl;
+        }
     }
+    getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
 }
 
-Personagens::Inimigo_Facil::~Inimigo_Facil() {
+Inimigo_Facil::~Inimigo_Facil() {
 
 }
 
-void Personagens::Inimigo_Facil::danificar(Jogador* J) {
+void Inimigo_Facil::danificar(Personagens::Jogador* J) {
     if (J) {
-        J->receberDano(causarDano());
-        std::cout << "Minion atacou o jogador! Dano causado: " << causarDano() << std::endl;
+        J->receberDano(causarDanoBasico());
+        std::cout << "Minion atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
     }
 }
 
-void Personagens::Inimigo_Facil::atualizar(const float dt) {
+void Inimigo_Facil::atualizar() {
 
-    setTempoUltimoAtaque(getTempoUltimoAtaque() + dt);
+    executar();
+}
 
-    if (jogador && jogador->estaVivo()) {
-        if (deveAtacar(jogador->getPosicao())) {
-            setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
-            if (getTempoUltimoAtaque() >= getCooldownAtaque()) {
-                danificar(jogador);
-                setTempoUltimoAtaque(0.0f);
+void Inimigo_Facil::executar() {
+
+    if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
+        frameAcumulado += clockAnimacao.restart().asSeconds();
+
+        if (frameAcumulado >= tempoPorFrame) {
+
+            indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
+
+            int coluna = indexFrameAtual % colunasSpritesheet;
+            int linha = indexFrameAtual / colunasSpritesheet;
+
+            rectAtual.left = coluna * frameWidth;
+            rectAtual.top = linha * frameHeight;
+
+            getSprite().setTextureRect(rectAtual);
+
+            frameAcumulado -= tempoPorFrame;
+        }
+    }
+    else {
+
+        indexFrameAtual = 0;
+        rectAtual.left = 0;
+        rectAtual.top = 0;
+        getSprite().setTextureRect(rectAtual);
+
+        clockAnimacao.restart();
+        frameAcumulado = 0.0f;
+    }
+
+    float dt = 0.016f;
+    tempoUltimoAtaque += clockAnimacao.restart().asSeconds();
+
+    sf::Vector2f posInimigo = getSprite().getPosition();
+
+    Personagens::Jogador* alvoMaisProximo = NULL;
+    float menorDistancia = -1.f;
+
+    for (size_t i = 0; i < listaJogadores.size(); ++i) {
+        Personagens::Jogador* j = listaJogadores[i];
+
+        if (j != NULL && j->estaVivo()) {
+            sf::Vector2f posJogador = j->getSprite().getPosition();
+
+            float dx = posJogador.x - posInimigo.x;
+            float dy = posJogador.y - posInimigo.y;
+            float distancia = std::sqrt(dx * dx + dy * dy);
+
+            if (menorDistancia < 0.0f || distancia < menorDistancia) {
+                menorDistancia = distancia;
+                alvoMaisProximo = j;
             }
         }
-        else if (devePerseguir(jogador->getPosicao())) {
-            const float dx = jogador->getPosicao().x - getPosicao().x;
-            moverHorizontal(dx > 0 ? 1.0f : -1.0f);
+    }
+    bool interagindo = false;
+
+    if (alvoMaisProximo != NULL) {
+        sf::Vector2f posAlvo = alvoMaisProximo->getSprite().getPosition();
+        float dx = posAlvo.x - posInimigo.x;
+        float dy = posAlvo.y - posInimigo.y;
+
+        // Comportamento de Atacar
+        if (menorDistancia <= getAlcanceAtaque()) {
+            setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
+            interagindo = true;
+
+            if (tempoUltimoAtaque >= cooldownAtaque) {
+
+                Entidades::Projetil* novoTiro = new Entidades::Projetil();
+                novoTiro->setPosicao(posInimigo);
+                novoTiro->setDoJogador(false);
+                novoTiro->setDano(poder);
+
+                float dirX = dx / menorDistancia;
+                float dirY = dy / menorDistancia;
+                novoTiro->setVelocidade(sf::Vector2f(dirX * getVelocidade().x, dirY * getVelocidade().y));
+
+                Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(novoTiro);
+                Gerenciadores::Gerenciador_Gravidade::getGerenciador().aplicarGravidade(novoTiro, true);
+
+                if (Entidades::Entidade::getListaEntidades() != NULL) {
+                    Entidades::Entidade::getListaEntidades()->incluirEntidade(novoTiro);
+                }
+
+                tempoUltimoAtaque = 0.0f;
+            }
         }
+
+        // Comportamento de Perseguir
+        else if (menorDistancia <= getAlcancePerseguicao()) {
+            interagindo = true;
+
+            if (dx > 0) {
+                moverHorizontal(1.0f);
+            }
+            else {
+                moverHorizontal(-1.0f);
+            }
+        }
+    }
+
+    if (!interagindo) {
+        float distanciaNesteFrame = std::abs(velocidadeMax * dt);
+        deslocamentoPatrulha += distanciaNesteFrame;
+
+        // Se atingiu o limite de passos, vira para o outro lado
+        if (deslocamentoPatrulha >= limiteDeslocamento) {
+            inverterPatrulha();
+        }
+
+        moverHorizontal(direcaoPatrulha);
     }
 }
 
-void Personagens::Inimigo_Facil::executar(const float dt) {
-    atualizar(dt);
-    Animador::atualizarSpriteEntidade(
-        getSprite(), rectAtual, totalFramesAnimacao, colunasSpritesheet,
-        linhasSpritesheet, tempoPorFrame, dt, tempoAcumulado, indexFrameAtual
-    );
-    getSprite().setTextureRect(rectAtual);
+void Inimigo_Facil::mover() {
+}
+
+void Inimigo_Facil::salvar() {
 }

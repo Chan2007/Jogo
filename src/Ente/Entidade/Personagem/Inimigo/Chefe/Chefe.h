@@ -6,19 +6,25 @@
 #define JOGO_CHEFE_H
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 
-class Chefe: public Personagens::Inimigo {
-    private:
-        float raio;
-        int tamanho;
-        short int forca;
-    public:
-        Chefe();
-        ~Chefe();
-        void danificar(Personagens::Jogador* J);
-        void executar(float dt);
-        float getRaio() const {return raio;}
-        int getTamanho() {return tamanho;}
-        short int getForca() const {return forca;}
+namespace Personagens {
+    class Jogador;
+}
+
+class Chefe : public Personagens::Inimigo {
+private:
+    float raio;
+    int tamanho;
+    short int forca;
+public:
+    Chefe();
+    ~Chefe();
+    void danificar(Personagens::Jogador* J);
+    void atualizar();
+    void executar();
+    void salvar();
+    float getRaio() { return raio; }
+    int getTamanho() { return tamanho; };
+    short int getForca() { return forca; }
 };
 
 

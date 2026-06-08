@@ -29,10 +29,10 @@ namespace Fases {
         Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
         if (chao) {
             gerenciadorColisao.incluirEntidade(chao);
-            chao->getSprite().setPosition(sf::Vector2f(0, desktop.height));
+            chao->getSprite().setPosition(sf::Vector2f((desktop.width)/2, (desktop.height)/2));
             LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
         }
-        else {std::cerr << "Falha ao criar plataforma" << std::endl;}
+        else {std::cerr << "Falha ao criar chao" << std::endl;}
 
         Obstaculos::Plataforma* novaPlat;
         Ente::sementear();

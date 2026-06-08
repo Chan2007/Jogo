@@ -10,57 +10,93 @@
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 
+std::vector<Personagens::Jogador*> Personagens::Inimigo::listaJogadores;
+
 namespace Personagens {
-    Inimigo::Inimigo():
+
+    Inimigo::Inimigo() :
         Personagem(),
-        tempoUltimoAtaque(0.0f),
-        cooldownAtaque(),
-        pontosConcedidos(),
-        alcancePerseguicao(),
-        elite(false)
+        ataque(45),
+        alcancePerseguicao(700.0f),
+        elite(false),
+        direcaoPatrulha(1.f),
+        deslocamentoPatrulha(0.f),
+        limiteDeslocamento(120.f)
     {
         setNome("Inimigo");
         setTipo(Entidades::ENTIDADE_INIMIGO);
+        setVidaMaxima(450);
+        setVida(450);
+        setPoder(45);
+        setAlcanceAtaque(175);
     }
 
     Inimigo::~Inimigo() {}
 
-    bool Inimigo::devePerseguir(const sf::Vector2f& alvo) const {
-        const sf::Vector2f origem = getPosicao();
-        const float dx = alvo.x - origem.x;
-        const float dy = alvo.y - origem.y;
-        return std::sqrt(dx * dx + dy * dy) <= getAlcancePerseguicao();
-    }
-    bool Inimigo::deveAtacar(const sf::Vector2f& alvo) const {
-        const sf::Vector2f origem = getPosicao();
-        const float dx = alvo.x - origem.x;
-        const float dy = alvo.y - origem.y;
-        return std::sqrt(dx * dx + dy * dy) <= getAlcanceAtaque();
+    void Inimigo::salvarDataBuffer() {
+        Personagem::salvarDataBuffer();
     }
 
-    int Inimigo::receberDano(const int dano) {
-        if (dano <= 0) return 0;
-        return receberDano(dano);
+    void Inimigo::desenhar(sf::RenderWindow& window) {
+        window.draw(getSprite());
     }
 
-    void Inimigo::concederRecompensa(Jogador* J) const {
-        if (!J) return;
-        J->adicionarPontos(static_cast<float>(pontosConcedidos));
+    bool Inimigo::estaEmAlcance(const sf::Vector2f& alvo) const {
+        sf::Vector2f origem = getPosicao();
+        float dx = alvo.x - origem.x;
+        float dy = alvo.y - origem.y;
+        return std::sqrt(dx * dx + dy * dy) <= alcancePerseguicao;
+    }
+
+    void Inimigo::inverterPatrulha() {
+        direcaoPatrulha *= -1.f;
+        deslocamentoPatrulha = 0.f;
     }
 
     void Inimigo::interagir_Colisao(Inimigo* I) {
-        if (I && I != this) setColisao(true);
+        if (I && I != this)
+            setColisao(true);
     }
 
     void Inimigo::interagir_Colisao(Obstaculos::Obstaculo* O) {
-        if (O) setColisao(true);
+        if (!O) return;
+        setColisao(true);
+
+        sf::FloatRect hitboxInimigo = getSprite().getGlobalBounds();
+        sf::FloatRect hitboxObs = O->getSprite().getGlobalBounds();
+
+        float centroYInimigo = hitboxInimigo.top + (hitboxInimigo.height / 2.f);
+        float centroXInimigo = hitboxInimigo.left + (hitboxInimigo.width / 2.f);
+
+        bool bateuNaParede = (centroYInimigo > hitboxObs.top) && (centroYInimigo < hitboxObs.top + hitboxObs.height);
+
+        if (bateuNaParede) {
+            inverterPatrulha();
+        }
+
+        else {
+            float margem = 5.0f;
+
+            if (direcaoPatrulha > 0.0f) {
+                //Checa se o centro passou da borda direita da plataforma
+                if (centroXInimigo >= (hitboxObs.left + hitboxObs.width) - margem) {
+                    inverterPatrulha();
+                }
+            }
+            else if (direcaoPatrulha < 0.0f) {
+                // Checa se o centro passou da borda esquerda da plataforma
+                if (centroXInimigo <= hitboxObs.left + margem) {
+                    inverterPatrulha();
+                }
+            }
+        }
     }
 
     void Inimigo::interagir_Colisao(Entidades::Projetil* P) {
-        if (P) receberDano(P->getDano());
     }
 
     void Inimigo::interagir_Colisao(Jogador* J) {
-        if (J) J->receberDano(getAtaque());
+        if (J)
+            J->receberDano(ataque);
     }
 }

@@ -4,7 +4,6 @@
 #include <time.h>
 #include <windows.h>
 
-#include "Entidade/Personagem/Inimigo/Chefe/Chefe.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
 
 class Gerenciador_Grafico;

@@ -100,7 +100,23 @@ void Jogo::executar() {
 }
 
 void Jogo::processarEventos() {
-    // Processamento de eventos do jogo
+    sf::Event evento;
+
+    sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
+
+    while (janela.pollEvent(evento)) {
+
+        if (evento.type == sf::Event::Closed) {
+            janela.close();
+        }
+
+        if (evento.type == sf::Event::Resized) {
+
+            sf::FloatRect areaVisivel(0.f, 0.f, evento.size.width, evento.size.height);
+            janela.setView(sf::View(areaVisivel));
+        }
+
+    }
 }
 
 void Jogo::executarOpcaoMenu() {

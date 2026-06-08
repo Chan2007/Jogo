@@ -5,8 +5,10 @@
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
 
+#include <iostream>
 #include "Sistema/Input/Observador_Input.h"
 #include "Ente/Entidade/Personagem/Personagem.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Gerenciadores {
     class Observador_Input;
@@ -16,12 +18,12 @@ namespace Gerenciadores {
 namespace Obstaculos {
     class Plataforma;
 }
-
+ 
 namespace Personagens {
     class Inimigo;
 
     enum EscolhaCampeao {
-        CAMPEAO_NAAFIRI,
+        CAMPEAO_NAAFIRI = 0,
         CAMPEAO_JHIN,
         CAMPEAO_LUX,
         CAMPEAO_EVELYNN,
@@ -32,35 +34,36 @@ namespace Personagens {
         CAMPEAO_VIEGO
     };
 
-    class Jogador: public Personagem {
-        private:
-            Gerenciadores::Observador_Input* ObserverInput;
-            void atualizar(float dt);
-        protected:
-            float pontos;
-            int abates;
-        public:
-            Jogador();
-            ~Jogador();
-
-            void executar(float dt);
-            void salvar();
-            void mover(float dt);
-
-            void setCampeao(EscolhaCampeao campeao);
-            Gerenciadores::Observador_Input* getObserver();
-            float getPontos() const {return pontos;}
-            int getAbates() const {return abates;}
-            void adicionarPontos(float valor);
-            void registrarAbate();
-            void aoColidir(Entidade* E) {
-                E->interagir_Colisao(this);
-            }
-            void interagir_Colisao(Inimigo* I);
-            void interagir_Colisao(Obstaculos::Obstaculo* O);
-            void interagir_Colisao(Entidades::Projetil* P);
-            void interagir_Colisao(Jogador* J);
-        };
+    class Jogador : public Personagem {
+    private:
+        Gerenciadores::Observador_Input* ObserverJogador;
+        Gerenciadores::Gerenciador_Gravidade* pGravidade;
+    protected:
+        float pontos;
+        int abates;
+    public:
+        Jogador();
+        ~Jogador();
+        void setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g);
+        Gerenciadores::Gerenciador_Gravidade* getGerenciadorGravidade();
+        bool colidir(Inimigo* I);
+        void executar();
+        void atualizar();
+        void salvar();
+        void mover();
+        void setCampeao(EscolhaCampeao campeao);
+        void desenhar(sf::RenderWindow& window);
+        Gerenciadores::Observador_Input* getObserver();
+        float getPontos() const { return pontos; }
+        int getAbates() const { return abates; }
+        void adicionarPontos(float valor);
+        void registrarAbate();
+        void aoColidir(Entidade* E) { E->interagir_Colisao(this); }
+        void interagir_Colisao(Inimigo* I);
+        void interagir_Colisao(Obstaculos::Obstaculo* O);
+        void interagir_Colisao(Entidades::Projetil* P);
+        void interagir_Colisao(Jogador* J);
+    };
 } // Personagens
 
 #endif //JOGO_JOGADOR_H

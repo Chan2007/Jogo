@@ -8,7 +8,7 @@
 #include "Ente/Entidade/Entidade.h"
 
 namespace Entidades {
-    class Projetil: public Entidade{
+    class Projetil : public Entidade {
     protected:
         int dano;
         sf::Vector2f velocidade;
@@ -16,33 +16,32 @@ namespace Entidades {
         float distanciaPercorrida;
         float tempoVida;
         bool perfurante;
+        bool doJogador;
     public:
         Projetil();
         ~Projetil();
-
-        void mover(float dt);
-        void executar(float dt);
+        void mover();
+        void atualizar();
         void salvar();
-
-        void setVelocidade(sf::Vector2f v) {velocidade.x = v.x; velocidade.y = v.y;}
-        void setDano(int valor) {if (valor >= 0) dano = valor;}
-        void setAlcanceMaximo(float valor) {if (valor > 0.0f) alcanceMaximo = valor;}
-        void setTempoVida(float valor) {if (valor >= 0.0f) tempoVida = valor;}
-        void setPerfurante(bool valor) {perfurante = valor;}
-
-        sf::Vector2f getVelocidade() const {return velocidade;}
-        int getDano() const {return dano;}
-        float getAlcanceMaximo() const {return alcanceMaximo;}
-        float getDistanciaPercorrida() const {return distanciaPercorrida;}
-        float getTempoVida() const {return tempoVida;}
-        bool getPerfurante() const {return perfurante;}
-
+        void executar();
+        void setVelocidade(sf::Vector2f v) { velocidade.x = v.x; velocidade.y = v.y; }
+        sf::Vector2f getVelocidade() const { return velocidade; }
+        void setVy(float vy) { velocidade.y = vy; }
+        void setVx(float vx) { velocidade.x = vx; }
+        int getDano() const { return dano; }
+        float getAlcanceMaximo() const { return alcanceMaximo; }
+        float getDistanciaPercorrida() const { return distanciaPercorrida; }
+        float getTempoVida() const { return tempoVida; }
+        bool getPerfurante() const { return perfurante; }
+        void setDano(int valor) { if (valor >= 0) dano = valor; }
+        void setAlcanceMaximo(float valor) { if (valor > 0.0f) alcanceMaximo = valor; }
+        void setTempoVida(float valor) { if (valor >= 0.0f) tempoVida = valor; }
+        void setPerfurante(bool valor) { perfurante = valor; }
         bool expirou() const;
         void registrarDeslocamento(float delta);
-
-        void aoColidir(Entidade* E) {
-            E->interagir_Colisao(this);
-        }
+        void setDoJogador(bool valor) { doJogador = valor; }
+        bool getDoJogador() const { return doJogador; }
+        void aoColidir(Entidades::Entidade* E) { E->interagir_Colisao(this); }
         void interagir_Colisao(Personagens::Inimigo* I);
         void interagir_Colisao(Obstaculos::Obstaculo* O);
         void interagir_Colisao(Projetil* P);
