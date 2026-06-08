@@ -6,15 +6,12 @@
 #include "Ente/Entidade/Entidade.h"
 namespace Obstaculos {
     Obstaculo::Obstaculo() :
-        Entidade("Obstaculo", 0),
+        Entidade("Obstaculo"),
         perigoso(false)
     {
     }
 
     Obstaculo::~Obstaculo() {
-    }
-
-    void Obstaculo::salvarDataBuffer() {
     }
 
     void Obstaculo::interagir_Colisao(Personagens::Inimigo* I) {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Menu</class>
+ <widget class="QMainWindow" name="Menu">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -50,7 +50,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="mainPage">
          <layout class="QVBoxLayout" name="mainPageLayout">
@@ -473,13 +473,13 @@
   <customwidget>
    <class>PaintedPanel</class>
    <extends>QFrame</extends>
-   <header>src/Widgets/painted_panel.h</header>
+   <header>Widgets/painted_panel.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>MenuButton</class>
    <extends>QPushButton</extends>
-   <header>src/Widgets/menu_button.h</header>
+   <header>Widgets/menu_button.h</header>
   </customwidget>
   <customwidget>
    <class>QtMaterialCheckBox</class>

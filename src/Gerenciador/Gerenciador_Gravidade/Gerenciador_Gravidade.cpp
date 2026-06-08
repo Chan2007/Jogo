@@ -9,7 +9,11 @@
 #include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Gerenciadores {
-    Gerenciador_Gravidade* Gerenciador_Gravidade::gerenciador_gravidade = NULL;
+    Gerenciador_Gravidade& Gerenciador_Gravidade::getGerenciador() {
+        static Gerenciador_Gravidade instancia;
+        return instancia;
+    }
+
     Gerenciador_Gravidade::Gerenciador_Gravidade():
         gravidade(500.0f),
         vyTerminal(800.0f),
@@ -20,10 +24,6 @@ namespace Gerenciadores {
 
     Gerenciador_Gravidade::~Gerenciador_Gravidade() {
         limpar();
-    }
-    Gerenciador_Gravidade& Gerenciador_Gravidade::getInstancia() {
-        if (!gerenciador_gravidade) gerenciador_gravidade = new Gerenciador_Gravidade();
-        return *gerenciador_gravidade;
     }
     void Gerenciador_Gravidade::limpar() {
         entidadesAfetadas.clear();
@@ -46,12 +46,14 @@ namespace Gerenciadores {
             );
         }
     }
-    void Gerenciador_Gravidade::atualizarGravidade(Entidades::Entidade* entidade, float dt) {
+    void Gerenciador_Gravidade::atualizarGravidade(Entidades::Entidade* entidade, float dt) const {
         if (!entidade) return;
-        /*/if (estaNoChao(entidade)) {
+        /*
+        if (estaNoChao(entidade)) {
             setVy(entidade, 0.0f);
             return;
-        }*/
+        }
+        */
         float vy = getVy(entidade);
         vy += gravidade * dt;
         if (vy > vyTerminal) vy = vyTerminal;
@@ -78,7 +80,7 @@ namespace Gerenciadores {
     bool Gerenciador_Gravidade::pular(Entidades::Entidade* entidade, float f) {
         if (!entidade) return false;
         if (!estaNoChao(entidade)) return false;
-        float forca = (f > 0.0f) ? f : forcaPulo;
+        float forca = f > 0.0f ? f : forcaPulo;
 
         // Negativo = Subindo
         setVy(entidade, -forca);

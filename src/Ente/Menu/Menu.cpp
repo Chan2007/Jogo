@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "Menu.h"
+#include "ui_menu.h"
 
 #include <QString>
 #include <QSizePolicy>
@@ -10,14 +10,13 @@
 #include "qtmaterialslider.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
+Menu::Menu(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , gameTimer(this)
+    , ui(new Ui::Menu)
     , jogo()
     , jogoInicializado(false)
     , telas()
-    , particulas(0)
+    , particulas(NULL)
 
 {
     ui->setupUi(this);
@@ -56,14 +55,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->backButton->iniciarAnimacaoEntrada(0);
 }
 
-MainWindow::~MainWindow(){ delete ui;}
+Menu::~Menu(){ delete ui;}
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
+void Menu::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
     atualizarParticula();
 }
 
-void MainWindow::configurarTelaPrincipal() {
+void Menu::configurarTelaPrincipal() {
     ui->menuPanelLayout->setAlignment(Qt::AlignTop);
     ui->heroTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->heroSubtitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -76,7 +75,7 @@ void MainWindow::configurarTelaPrincipal() {
     ui->exitButton->setMaximumHeight(100);
 }
 
-void MainWindow::configurarTelaConfiguracao() {
+void Menu::configurarTelaConfiguracao() {
     ui->settingsPageLayout->setAlignment(ui->settingsPanel, Qt::AlignHCenter);
     ui->settingsTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     ui->settingsSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -89,7 +88,7 @@ void MainWindow::configurarTelaConfiguracao() {
 
 }
 
-void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar) {
+void Menu::animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar) {
     if (!origem || !destino || origem == destino) return;
 
     if (empilhar) telas.pushScreen(destino);
@@ -124,12 +123,10 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
     fadeIn->setStartValue(0.0);
     fadeIn->setEndValue(1.0);
 
-    connect(fadeOut, &QPropertyAnimation::finished, this, [this, destino, efeitoOrigem, efeitoDestino, empilhar]() {
-        ui->stackedWidget->setCurrentWidget(destino);
-        efeitoOrigem->setOpacity(1.0);
-        efeitoDestino->setOpacity(1.0);
-        atualizarPilhaParticula();
-    });
+    m_destino = destino;
+    m_efeitoOrigem = efeitoOrigem;
+    m_efeitoDestino = efeitoDestino;
+    connect(fadeOut, SIGNAL(finished()), this, SLOT(onFadeOutFinished()));
 
     fadeOut->start(QAbstractAnimation::DeleteWhenStopped);
     fadeIn->start(QAbstractAnimation::DeleteWhenStopped);
@@ -139,14 +136,14 @@ void MainWindow::animarTransicaoTela(QWidget *origem, QWidget *destino, bool emp
 }
 
 
-void MainWindow::atualizarParticula() {
+void Menu::atualizarParticula() {
     if (!particulas || !ui || !ui->centralwidget) return;
 
     const int larguraBase = ui->mainPage->width();
     const int alturaBase = ui->mainPage->height();
     if (larguraBase <= 0 || alturaBase <= 0) return;
 
-    int largura = static_cast<int>((larguraBase * 2.0f) / 5.0f);
+    int largura = static_cast<int>(larguraBase * 2.0f / 5.0f);
     int altura = static_cast<int>(alturaBase * 1.5f);
     if (largura < 1) largura = 1;
     if (altura < 1) altura = 1;
@@ -163,77 +160,69 @@ void MainWindow::atualizarParticula() {
     particulas->lower();
 }
 
-void MainWindow::atualizarPilhaParticula() {
+void Menu::atualizarPilhaParticula() {
     if (!particulas || !ui || !ui->stackedWidget) return;
 
-    const bool visivel = (ui->stackedWidget->currentWidget() == ui->mainPage);
+    const bool visivel = ui->stackedWidget->currentWidget() == ui->mainPage;
     particulas->setVisible(visivel);
     if (visivel) particulas->lower();
 }
 
-void MainWindow::atualizarTextoVolume(float value) {
+void Menu::atualizarTextoVolume(float value) {
     if (ui && ui->volumeValueLabel)
         ui->volumeValueLabel->setText(QString::number(value) + "%");
 }
 
-void MainWindow::atualizarJogo() {
-    if (!jogo.estaAberto()) {
-        gameTimer.stop();
-        jogoInicializado = false;
-        showNormal();
-        raise();
-        activateWindow();
-        ui->statusLabel->setText("A janela do jogo foi fechada.");
-        return;
-    }
-
-    jogo.atualizar();
-}
-
-void MainWindow::on_startButton_clicked() {
-    if (jogo.estaAberto()) return;
+void Menu::on_startButton_clicked() {
+    if (jogo.estaAberto()) return; // Previne múltiplas instâncias da janela
 
     jogo.setVolume(static_cast<float>(ui->volumeSlider->value()));
     jogo.setMusica(ui->musicCheckBox->isChecked());
 
-    if (!jogo.inicializar()) {
-        ui->statusLabel->setText("Falha ao inicializar o jogo.");
-        return;
-    }
-
-    jogo.iniciarFase();
-    ui->statusLabel->setText("Jogo em execução");
+    // Esconde a janela do menu Qt temporariamente
     hide();
 
-    connect(&gameTimer, SIGNAL(timeout()), this, SLOT(atualizarJogo()));
-    gameTimer.start(16);
+    // Inicializa o ambiente SFML, define o estado inicial e entra no laço de gameplay
+    jogo.inicializar();
+    jogo.mudarEstado(Jogo::TelaFase1);
+    jogo.executar(); //  programa permanece aqui durante as fases
+
+    // No momento em que a janela SFML for fechada, o fluxo retorna para este ponto
+    showNormal(); // Restaura a visibilidade do menu Qt
+    raise();
+    activateWindow();
+    ui->statusLabel->setText("Menu principal");
 }
 
-void MainWindow::on_settingsButton_clicked() {
+void Menu::on_settingsButton_clicked() {
     animarTransicaoTela(ui->mainPage, ui->settingsPage, true);
 
     // Na prática, isso não impacta no jogo, já que o widget do menu thodo é enviado para trás...
     ui->statusLabel->setText("Configurações abertas.");
 }
 
-void MainWindow::on_backButton_clicked() {
+void Menu::on_backButton_clicked() {
     animarTransicaoTela(ui->settingsPage, ui->mainPage, false);
     ui->statusLabel->setText("Menu principal");
 }
 
-void MainWindow::on_musicCheckBox_toggled(bool checked) {
+void Menu::on_musicCheckBox_toggled(bool checked) {
     ui->musicCheckBox->setText(checked ? "Ativada" : "Desativada");
-
     jogo.setMusica(checked);
 }
 
-void MainWindow::on_volumeSlider_valueChanged(int value) {
-    atualizarTextoVolume(value);
-
+void Menu::on_volumeSlider_valueChanged(int value) {
+    atualizarTextoVolume(static_cast<float>(value));
     jogo.setVolume(static_cast<float>(value));
 }
 
-void MainWindow::on_exitButton_clicked() {
-    jogo.fechar();
+void Menu::on_exitButton_clicked() {
     close();
+}
+void Menu::onFadeOutFinished() {
+    ui->stackedWidget->setCurrentWidget(m_destino);
+    m_efeitoOrigem->setOpacity(1.0);
+    m_efeitoDestino->setOpacity(1.0);
+
+    atualizarPilhaParticula();
 }

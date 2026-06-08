@@ -4,16 +4,19 @@
 
 #include "Jogador.h"
 
+#include <iostream>
+
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
     Jogador::Jogador():
         Personagem(),
-        pGravidade(NULL),
-        ObserverJogador(0),
+        ObserverInput(NULL),
         pontos(0.0f),
         abates(0)
     {
@@ -22,121 +25,82 @@ namespace Personagens {
 
     Jogador::~Jogador() {}
 
-    void Jogador::setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g) {
-        pGravidade = g;
-    }
-
-    Gerenciadores::Gerenciador_Gravidade* Jogador::getGerenciadorGravidade() {
-        return pGravidade;
-    }
-
-    void Jogador::setCampeao(EscolhaCampeao campeao) {
+    void Jogador::setCampeao(const EscolhaCampeao campeao) {
         switch (campeao) {
         case CAMPEAO_NAAFIRI:
             setNome("Naafiri");
-            setVidaMaxima(620);
-            setVida(620);
-            setPoder(65);
+            setVidaMaxima(90);
+            setVida(90);
+            setAtaque(65);
+            setAlcanceAtaque(80);
+            setChanceCritica(30);
+            setRegeneracao(1.5f);
+            setVelocidadeMax(220.0f);
+            setEstado(0);
 
             totalFramesAnimacao = 8;
             colunasSpritesheet = 4;
-            frameWidth = 230;
-            frameHeight = 120;
+            linhasSpritesheet = 2;
             tempoPorFrame = 0.08f;
-            caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
-            caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
+            caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo(
+                "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png");
             break;
         default:
-            setNome("Campeao Generico");
-            setVidaMaxima(500);
-            setVida(500);
-            totalFramesAnimacao = 1;
-            colunasSpritesheet = 1;
-            frameWidth = 32;
-            frameHeight = 32;
-            tempoPorFrame = 0.1f;
             break;
         }
         if (!caminhoArquivoSprite.empty()) {
+            if (getTextura().loadFromFile(caminhoArquivoSprite)) {
+                // Aplica a textura ao Sprite do jogador
+                getSprite().setTexture(getTextura());
 
-            Encontrar_Caminho buscador;
+                // Descobre o tamanho de 1 frame dividindo o tamanho total pelas colunas/linhas
+                const sf::Vector2u tamanhoTextura = getTextura().getSize();
+                const int frameW = tamanhoTextura.x / colunasSpritesheet;
+                const int frameH = tamanhoTextura.y / linhasSpritesheet;
 
-            std::string caminhoReal = buscador.acharDiretorio_Arquivo(caminhoArquivoSprite);
+                // Inicializa o retângulo de corte apontando para o primeiro frame (0, 0)
+                rectAtual = sf::IntRect(0, 0, frameW, frameH);
+                getSprite().setTextureRect(rectAtual);
+            }
+            else
+                std::cerr << "Erro: A textura do boneco falhou ao carregar: " << caminhoArquivoSprite << std::endl;
 
-            if (caminhoReal.empty()) {
-                std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << caminhoArquivoSprite << std::endl;
-            }
-            else if (getTextura().loadFromFile(caminhoReal)) {
-                getCorpo().setTexture(getTextura());
-                rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
-                getCorpo().setTextureRect(rectAtual);
-            }
-            else {
-                std::cerr << "Erro: A textura falhou ao carregar: " << caminhoReal << std::endl;
-            }
         }
-        if (!caminhoArquivoSpritePulo.empty()) {
-            Encontrar_Caminho buscador;
-            std::string caminhoRealPulo = buscador.acharDiretorio_Arquivo(caminhoArquivoSpritePulo);
-            if (!caminhoRealPulo.empty()) {
-                texturaPulo.loadFromFile(caminhoRealPulo);
-            }
+    }
+
+    void Jogador::atualizar(const float dt) {
+        // Apenas lógica de regras do jogo
+        regenerarVida(1.0f * dt);
+        mover(dt);
+    }
+    void Jogador::executar(const float dt) {
+        atualizar(dt);
+
+        if (getEstado() == static_cast<int>(ANDANDO)) {
+            Animador::atualizarSpriteEntidade(
+                getSprite(), rectAtual, totalFramesAnimacao, colunasSpritesheet,
+                linhasSpritesheet, tempoPorFrame, dt, tempoAcumulado, indexFrameAtual
+            );
+            getSprite().setTextureRect(rectAtual);
         }
         else {
-            std::cerr << "Erro: Nao foi possivel carregar a textura de: " << getNome() << std::endl;
-        }
-        getCorpo().setOrigin(static_cast<float>(frameWidth) / 2.0f, static_cast<float>(frameHeight) / 2.0f);
-    }
-
-    void Jogador::desenhar(sf::RenderWindow& window) {
-        window.draw(getCorpo());
-    }
-
-    bool Jogador::colidir(Inimigo* I) {
-        return (I != 0);
-    }
-
-    void Jogador::atualizar() {
-        regenerarVida(1.0f);
-        mover();
-
-        if (estado == static_cast<int>(ESTADO_MOVIMENTO)) {
-            frameAcumulado += clockAnimacao.restart().asSeconds();
-
-            if (frameAcumulado >= tempoPorFrame) {
-                // Avança o frame de 0 a 7
-                indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
-
-                // Descobre em qual coluna e linha da imagem o frame atual está
-                int coluna = indexFrameAtual % colunasSpritesheet;
-                int linha = indexFrameAtual / colunasSpritesheet;
-
-                // Calcula a posição exata do corte (X e Y) na folha
-                rectAtual.left = coluna * frameWidth;
-                rectAtual.top = linha * frameHeight;
-
-                getCorpo().setTextureRect(rectAtual);
-
-                frameAcumulado -= tempoPorFrame;
-            }
-        }
-        else {
-            // Se estiver PARADO (ESTADO_OCIOSO), reseta para o frame inicial
+            // Estado parado
             indexFrameAtual = 0;
             rectAtual.left = 0;
             rectAtual.top = 0;
-            getCorpo().setTextureRect(rectAtual);
+            getSprite().setTextureRect(rectAtual);
 
-            clockAnimacao.restart();
-            frameAcumulado = 0.0f;
+            // O acumulador é zerado para garantir que, ao voltar a andar,
+            // a animação comece do frame 0 imediatamente
+            tempoAcumulado = 0.0f;
         }
     }
-
     void Jogador::salvar() {
+        // TODO
         salvarDataBuffer();
     }
 
-    void Jogador::mover() {
+    void Jogador::mover(const float dt) {
         float direcaoHorizontal = 0.0f;
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
@@ -148,28 +112,26 @@ namespace Personagens {
         moverHorizontal(direcaoHorizontal);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            if (pGravidade != NULL) {
-                pGravidade->pular(this);
-            }
+            gerenciadorGravidade.pular(this);
         }
 
         sf::Vector2f posicao = getPosicao();
-        sf::Vector2f vel = getVelocidade();
+        const sf::Vector2f vel = getVelocidade();
 
-        posicao.x += vel.x * 0.01f;
+        posicao.x += vel.x * dt;
 
-        if (vel.x > 0.0f) {
-            getCorpo().setScale(-1.f, 1.f); // Inverte para olhar para direita
-        }
-        else if (vel.x < 0.0f) {
-            getCorpo().setScale(1.f, 1.f);  // Volta para olhar para esquerda
-        }
+        if (vel.x > 0.0f)
+            getSprite().setScale(-1.f, 1.f);
+
+        else if (vel.x < 0.0f)
+            getSprite().setScale(1.f, 1.f);
+
 
         setPosicao(posicao);
     }
 
     Gerenciadores::Observador_Input* Jogador::getObserver() {
-        return ObserverJogador;
+        return ObserverInput;
     }
 
     void Jogador::adicionarPontos(float valor) {
@@ -182,15 +144,10 @@ namespace Personagens {
         adicionarPontos(150.0f);
     }
 
-    int Jogador::absorverDano(int dano) {
-        if (dano <= 0)
-            return 0;
-        return receberDano(dano);
-    }
 
     void Jogador::interagir_Colisao(Inimigo* I) {
         if (I)
-            absorverDano(I->causarDanoBasico());
+            receberDano(I->causarDano());
     }
 
     void Jogador::interagir_Colisao(Obstaculos::Obstaculo* O) {
@@ -200,7 +157,7 @@ namespace Personagens {
 
     void Jogador::interagir_Colisao(Entidades::Projetil* P) {
         if (P)
-            absorverDano(P->getDano());
+            receberDano(P->getDano());
     }
 
     void Jogador::interagir_Colisao(Jogador* J) {

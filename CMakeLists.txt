@@ -38,10 +38,10 @@ file(GLOB MATERIAL_WIDGETS_HDR
 
 # Cria o executável incluindo as classes do Qt (mainwindow) e o arquivo de design (.ui)
 add_executable(Jogo ${SOURCES}
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        src/main.cpp
+        src/Ente/Menu/Menu.cpp
+        src/Ente/Menu/Menu.h
+        src/Ente/Menu/Menu.ui
         src/Widgets/qsfmlwidget.cpp
         src/Widgets/qsfmlwidget.h
         src/Widgets/particlewidget.cpp
@@ -50,6 +50,7 @@ add_executable(Jogo ${SOURCES}
         qt-material-widgets/components/resources.qrc
         ${MATERIAL_WIDGETS_SRC}
         ${MATERIAL_WIDGETS_HDR}
+        src/Ente/Menu/Menu.cpp
 )
 
 target_include_directories(Jogo PRIVATE src

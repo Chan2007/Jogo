@@ -6,8 +6,8 @@
 #define JOGO_OBSTACULO_DIFICIL_H
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 
-class Obstaculo;
 namespace Obstaculos {
+    class Obstaculo;
     class Obstaculo_Dificil:public Obstaculo {
     private:
         float altura;
@@ -17,7 +17,7 @@ namespace Obstaculos {
     public:
         Obstaculo_Dificil();
         ~Obstaculo_Dificil();
-        void atualizar();
+        void executar(float dt);
         float getAltura();
         float getLargura();
         float getDano();

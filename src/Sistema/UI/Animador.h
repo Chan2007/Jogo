@@ -1,12 +1,12 @@
-#ifndef ANIMADOR_FUNDO_H
-#define ANIMADOR_FUNDO_H
+#ifndef ANIMADOR_H
+#define ANIMADOR_H
 
 #include <SFML/Graphics.hpp>
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
 #include <string>
 #include <vector>
 
-class Animador_Fundo {
+class Animador {
     private:
         struct FrameData {
             std::string caminho_spSheet;
@@ -43,23 +43,19 @@ class Animador_Fundo {
         float frameTime;
         sf::Vector2u frameSize;
         sf::Vector2u targetSize;
-        sf::Vector2f posicaoBase;
+        sf::Vector2f position;
         bool loaded;
 
         void updateSpriteScale();
         void updateBlend();
         sf::Texture* findTexture(const std::string& path) const;
-        bool applyFrame(sf::Sprite& sprite, FrameData& frameData);
+        void applyFrame(sf::Sprite& sprite, FrameData& frameData);
 
-        // Singleton
-        Animador_Fundo(const Animador_Fundo&);
-        Animador_Fundo& operator=(const Animador_Fundo&);
 
     public:
         // Evitar declaração implícita
-        explicit Animador_Fundo(Gerenciadores::Gerenciador_Textura* gerenciadorTextura = NULL);
-
-        ~Animador_Fundo();
+        explicit Animador(Gerenciadores::Gerenciador_Textura* gerenciadorTextura = NULL);
+        ~Animador();
 
         bool loadFrames(const std::string& pathPrefix, 
                         const std::string& name,
@@ -67,8 +63,11 @@ class Animador_Fundo {
                         unsigned int colunas, unsigned int linhas);
         void update();
         void draw(sf::RenderTarget &target) const;
-        void setPosicao(const sf::Vector2f& pos);
-        void setTargetSize(const sf::Vector2u& size);
+        void setSheetPosition(const sf::Vector2f& pos);
+        void setSheetTargetSize(const sf::Vector2u& size);
+
+        static void atualizarSpriteEntidade(sf::Sprite &sprite, sf::IntRect &rectAtual, int numFrames,
+                                     unsigned int cols, unsigned int rows, float tempoPorFrame, float dt, float &tempoAcumulado, int &indexFrameAtual);
 };
 
 #endif

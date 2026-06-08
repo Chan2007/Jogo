@@ -6,14 +6,12 @@
 #define JOGO_PLATAFORMA_H
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
-#include "Sistema/Input/Observador_Input.h"
 
 namespace Obstaculos{
         class Plataforma:public Obstaculo {
             public:
                 enum TipoPlataforma {
-                    NORMAL1 = 0,
+                    NORMAL1,
                     NORMAL2,
                     NORMAL3,
                     CHAO
@@ -26,12 +24,11 @@ namespace Obstaculos{
                 Plataforma(TipoPlataforma tipo = NORMAL1);
                 ~Plataforma();
                 void criar(TipoPlataforma tipo = NORMAL1);
-                void desenhar(sf::RenderWindow& window);
-                void atualizar();
-                void salvar();
-                void mover();
-                float getAltura();
-                float getLargura();
+                void executar(float dt){};
+                void salvar(){};
+                void mover(const float dt){};
+                float getAltura() const {return altura;}
+                float getLargura() const {return largura;}
                 void setPlataforma(Personagens::Jogador* J);
         };
 } // Obstaculo

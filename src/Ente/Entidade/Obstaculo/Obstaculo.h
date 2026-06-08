@@ -21,11 +21,9 @@ namespace Obstaculos {
         public:
             Obstaculo();
             virtual ~Obstaculo();
-            void salvarDataBuffer();
-            virtual void desenhar(sf::RenderWindow& window) = 0;
-            virtual void atualizar() = 0;
+            virtual void executar(float dt) = 0;
             virtual void salvar() = 0;
-            virtual void mover() = 0;
+            virtual void mover(float dt) = 0;
             virtual void setPlataforma(Personagens::Jogador* J) = 0;
             // Padrão visitor
             void aoColidir(Entidade* E) {E->interagir_Colisao(this);}

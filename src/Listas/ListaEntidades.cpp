@@ -13,27 +13,25 @@ namespace Listas {
 
     ListaEntidades::~ListaEntidades() {
         LEntidade->limpar();
-        if (LEntidade) {
-            delete LEntidade;
-        }
+        if (LEntidade) delete LEntidade;
         LEntidade = NULL;
     }
 
-    bool ListaEntidades::incluirEntidade(Entidades::Entidade *E)  {
+    bool ListaEntidades::incluirEntidade(Entidades::Entidade *E) const {
         if (LEntidade) {
             return LEntidade->incluirInfo(E);
         }
         return false;
     }
 
-    void ListaEntidades::limparLista() {
+    void ListaEntidades::limparLista() const {
 
         if (LEntidade) {
             LEntidade->limpar();
         }
     }
 
-    void ListaEntidades::desenharTodas(sf::RenderWindow& janela) {
+    void ListaEntidades::desenharTodas(sf::RenderWindow& janela) const {
 
         if (!LEntidade) return;
 
@@ -48,17 +46,17 @@ namespace Listas {
         }
     }
 
-    Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) {
+    Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) const {
         if (!LEntidade) return NULL;
         return LEntidade->localizarElemento(E);
     }
 
-    Entidades::Entidade* ListaEntidades::localizarInfo(Entidades::Entidade* E) {
+    Entidades::Entidade* ListaEntidades::localizarInfo(Entidades::Entidade* E) const {
         if (!LEntidade) return NULL;
         return LEntidade->localizarInfo(E);
     }
 
-    Entidades::Entidade* ListaEntidades::localizarNome(const std::string& nome) {
+    Entidades::Entidade* ListaEntidades::localizarNome(const std::string& nome) const {
         if (!LEntidade) return NULL;
         return LEntidade->localizarNome(nome);
     }

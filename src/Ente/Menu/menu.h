@@ -1,71 +1,64 @@
-#ifndef MENU_JOGO_H
-#define MENU_JOGO_
+#ifndef MENU_H
+#define MENU_H
 
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include <windows.h>
-#include "Sistema/UI/animador_fundo.h"
-#include "Sistema/Audio/Audio.h"
-#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
-#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
+#include <cstddef>
+#include <QMainWindow>
+#include <QResizeEvent>
+#include <QVariant>
 
+#include "Widgets/particlewidget.h"
+#include "jogo.h"
+#include "Widgets/screen_stack.h"
+#include "Widgets/menu_button.h"
 
-namespace Gerenciadores {
-    class Gerenciador_Gravidade;
+QT_BEGIN_NAMESPACE
+namespace Ui {
+    class Menu;
 }
+QT_END_NAMESPACE
 
-class Jogo {
-    private:
-        enum EstadoTela {
-            TelaMenu,
-            TelaFase,
-            TelaPausa
-        };
+class QGraphicsOpacityEffect;
+class QPushButton;
+class QVariantAnimation;
+class QGraphicsDropShadowEffect;
 
-        Gerenciador_Textura gerenciadorTextura;
-
-        sf::Event event{};
-
-        Animador_Fundo animadorFase1;
-        Animador_Fundo animadorFase2;
-        Audio audio;
-
-        std::vector<sf::Text> opcoesMenu;
-        bool inicializado;
-        bool menuPronto;
-        bool musicaLigada;
-        EstadoTela estadoTela;
-        std::size_t opcaoSelecionada;
-
-        bool carregarInimigos();
-        bool carregarJogadores();
-        bool carregarObstaculos();
-        bool carregarProjeteis();
-        bool carregarMultimidia();
-
-        void processarEventos();
-
-        void processarEventoPausa(const sf::Event& evento) {}; // TODO
-        void processarEventoJogo(const sf::Event& evento);
-        void executarOpcaoMenu();
-        void desenharFase();
-        void desenharPausa() {
-            // TODO
-        };
-
+class Menu: public QMainWindow, public Ente {
+    Q_OBJECT
     public:
-        Jogo();
-        ~Jogo();
+        explicit Menu(QWidget *parent = NULL);
+        ~Menu();
 
-        void iniciarFase();
-        void setMusica(bool ligada);
-        void setVolume(float volume);
-        bool tocandoMusica() const;
-        bool trocarMusica(int fase);
+    protected:
+        virtual void resizeEvent(QResizeEvent *event);
 
-        void executar();
+    private slots:
+        void on_startButton_clicked();
+        void on_backButton_clicked();
+        void on_musicCheckBox_toggled(bool checked);
+        void on_volumeSlider_valueChanged(int value);
+        void on_exitButton_clicked();
+        void on_settingsButton_clicked();
+
+        void onFadeOutFinished();
+
+    private:
+        void configurarTelaPrincipal();
+        void configurarTelaConfiguracao();
+        void animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar);
+        void atualizarParticula();
+        void atualizarPilhaParticula();
+        void atualizarTextoVolume(float value);
+
+
+        Ui::Menu *ui;
+        QTimer gameTimer;
+        Jogo jogo;
+        bool jogoInicializado;
+        ScreenStack telas;
+        ParticleWidget* particulas;
+
+        QWidget *m_destino;
+        QGraphicsOpacityEffect *m_efeitoOrigem;
+        QGraphicsOpacityEffect *m_efeitoDestino;
 };
-
-#endif  // MENU_JOGO_
+#endif // MENU_H

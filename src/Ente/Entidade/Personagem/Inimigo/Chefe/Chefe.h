@@ -15,10 +15,10 @@ class Chefe: public Personagens::Inimigo {
         Chefe();
         ~Chefe();
         void danificar(Personagens::Jogador* J);
-        void atualizar();
-        float getRaio(){return raio;}
-        int getTamanho(){return tamanho;};
-        short int getForca(){return forca;}
+        void executar(float dt);
+        float getRaio() const {return raio;}
+        int getTamanho() {return tamanho;}
+        short int getForca() const {return forca;}
 };
 
 

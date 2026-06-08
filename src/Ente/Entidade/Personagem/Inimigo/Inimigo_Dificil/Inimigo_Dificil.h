@@ -15,10 +15,10 @@ class Inimigo_Dificil:public Personagens::Inimigo {
         Inimigo_Dificil();
         ~Inimigo_Dificil();
         void danificar(Personagens::Jogador* J);
-        void atualizar();
-        float getRaio(){return raio;}
-        int getTamanho(){return tamanho;};
-        short int getForca(){return forca;}
+        void executar(float dt);
+        float getRaio() const {return raio;}
+        int getTamanho(){return tamanho;}
+        short int getForca() const {return forca;}
 };
 
 

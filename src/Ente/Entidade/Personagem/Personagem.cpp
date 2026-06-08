@@ -7,68 +7,51 @@
 namespace Personagens {
 
     Personagem::Personagem():
-        Entidades::Entidade("Personagem", 0),
+        Entidade("Personagem"),
         velocidade(0.0f, 0.0f),
         aceleracao(0.0f, 0.0f),
 
         caminhoArquivoSprite(""),
-        caminhoArquivoSpritePulo(""),
-        tempoPorFrame(0.12f),
-        frameAcumulado(0.0f),
+        tempoPorFrame(0.06f),
+        tempoAcumulado(0),
         indexFrameAtual(0),
-        totalFramesAnimacao(8),
+        totalFramesAnimacao(1),
         colunasSpritesheet(1),
-        frameWidth(32),
-        frameHeight(32),
-
+        linhasSpritesheet(1),
+        tamanhoHitbox(sf::Vector2f(0,0)),
+        deslocamentoHitbox(sf::Vector2f(0,0)),
         vida(100),
         vidaMaxima(100),
-        poder(12),
-        alcanceAtaque(125),
+        ataque(25),
+        alcanceAtaque(100),
         chanceCritica(0),
-        regeneracaoVida(2.0f),
-        estado(static_cast<int>(ESTADO_OCIOSO))
-    {
-        setTipo(Entidades::ENTIDADE_GENERICA);
-    }
+        regeneracaoVida(1.0f),
+        estado(0),
+        velocidadeMax(200.0f),
+        ObserverColisao(NULL)
+    {}
 
     Personagem::~Personagem() {}
 
-    sf::FloatRect Personagem::getTamanho() const {
-
-        sf::FloatRect caixaImagem = getCorpo().getGlobalBounds();
-
-        float larguraHitbox = 70.f;
-        float alturaHitbox = 90.f;
-
-        float deslocamentoX = 12.0f;
-        float deslocamentoY = -17.5f;
+    sf::FloatRect Personagem::getSize() const {
+        const sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
 
         return sf::FloatRect(
-            caixaImagem.left + (caixaImagem.width / 2.0f) - (larguraHitbox / 2.0f) + deslocamentoX,
-            caixaImagem.top + caixaImagem.height - alturaHitbox + deslocamentoY,
-            larguraHitbox,
-            alturaHitbox
+            caixaImagem.left + (caixaImagem.width / 2.0f) - (tamanhoHitbox.x / 2.0f) + deslocamentoHitbox.x,
+            caixaImagem.top + caixaImagem.height - tamanhoHitbox.y + deslocamentoHitbox.y,
+            tamanhoHitbox.x,
+            tamanhoHitbox.y
         );
     }
 
 
-    void Personagem::desenhar(sf::RenderWindow& window) {
-        getCorpo().setPosition(getPosicao());
-        window.draw(getCorpo());
-    }
-
-    void Personagem::salvarDataBuffer() {
-        Entidades::Entidade::salvarDataBuffer();
-    }
-
     float Personagem::getVidaPercentual() const {
         if (vidaMaxima <= 0)
             return 0.0f;
-        return (static_cast<float>(vida) / static_cast<float>(vidaMaxima)) * 100.0f;
+        return static_cast<float>(vida) / static_cast<float>(vidaMaxima) * 100.0f;
     }
 
-    void Personagem::setVidaMaxima(int valor) {
+    void Personagem::setVidaMaxima(const int valor) {
         if (valor <= 0)
             return;
         vidaMaxima = valor;
@@ -76,18 +59,16 @@ namespace Personagens {
             vida = vidaMaxima;
     }
 
-    void Personagem::setVida(int valor) {
+    void Personagem::setVida(const int valor) {
         if (valor < 0)
             vida = 0;
         else if (valor > vidaMaxima)
             vida = vidaMaxima;
         else
             vida = valor;
-        if (vida <= 0)
-            estado = static_cast<int>(ESTADO_MORTO);
     }
 
-    int Personagem::receberDano(int dano) {
+    int Personagem::receberDano(const int dano) {
         if (dano <= 0 || !estaVivo())
             return 0;
         setVida(vida - dano);
@@ -95,29 +76,28 @@ namespace Personagens {
     }
 
 
-    int Personagem::causarDanoBasico() const {
-        return (rand()%101 >= chanceCritica) ? (poder * (1 + chanceCritica)) : poder;
+    int Personagem::causarDano() const {
+        return rand() % 101 >= chanceCritica ? ataque * (1 + chanceCritica) : ataque;
 
     }
 
-    void Personagem::curar(int valor) {
+    void Personagem::curar(const int valor) {
         if (valor > 0)
             setVida(vida + valor);
     }
 
-    void Personagem::regenerarVida(float deltaTempo) {
-        if (deltaTempo <= 0.0f || !estaVivo())
+    void Personagem::regenerarVida(const float dt) {
+        if (dt <= 0.0f || !estaVivo())
             return;
-        curar(static_cast<int>(regeneracaoVida * deltaTempo));    }
+        curar(static_cast<int>(regeneracaoVida * dt));    }
 
-    void Personagem::moverHorizontal(float direcao) {
-        velocidade.x = direcao * velocidade.x;
-        estado = (direcao == 0.0f) ? static_cast<int>(ESTADO_OCIOSO) : static_cast<int>(ESTADO_MOVIMENTO);
+    void Personagem::moverHorizontal(const float direcao) {
+        velocidade.x = direcao * velocidadeMax;
+        estado = (direcao == 0.0f) ? static_cast<int>(PARADO) : static_cast<int>(ANDANDO);
     }
 
-    void Personagem::resetarCombate() {
+    void Personagem::parar() {
         velocidade = sf::Vector2f(0.0f, 0.0f);
         aceleracao = sf::Vector2f(0.0f, 0.0f);
-        estado = estaVivo() ? static_cast<int>(ESTADO_OCIOSO) : static_cast<int>(ESTADO_MORTO);
     }
 }

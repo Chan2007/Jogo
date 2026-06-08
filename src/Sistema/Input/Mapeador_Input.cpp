@@ -53,7 +53,7 @@ namespace Gerenciadores {
 
         mapeamento_eixos[sf::Joystick::X] = "mover_horizontal";
     }
-    std::string Mapeador_Input::getNomeTecla(sf::Keyboard::Key tecla) {
+    std::string Mapeador_Input::getNomeTecla(const sf::Keyboard::Key tecla) {
         switch (tecla) {
             case sf::Keyboard::A: return "A";
             case sf::Keyboard::B: return "B";
@@ -141,7 +141,7 @@ namespace Gerenciadores {
             default: return "Unknown";
         }
     }
-    std::string Mapeador_Input::getNomeBotao_Mouse(sf::Mouse::Button botao) {
+    std::string Mapeador_Input::getNomeBotao_Mouse(const sf::Mouse::Button botao) {
         switch (botao) {
             case sf::Mouse::Left:   return "Left";
             case sf::Mouse::Right:  return "Right";
@@ -151,7 +151,7 @@ namespace Gerenciadores {
             default: return "Unknown";
         }
     }
-    std::string Mapeador_Input::getNomeBotao_Joystick(unsigned int botao) {
+    std::string Mapeador_Input::getNomeBotao_Joystick(const unsigned int botao) {
         switch (botao) {
             case 0: return "Button0";
             case 1: return "Button1";
@@ -172,7 +172,7 @@ namespace Gerenciadores {
             default: return "Unknown";
         }
     }
-    std::string Mapeador_Input::getNomeEixo_Joystick(sf::Joystick::Axis eixo) {
+    std::string Mapeador_Input::getNomeEixo_Joystick(const sf::Joystick::Axis eixo) {
         switch (eixo) {
             case sf::Joystick::X: return "X";
             case sf::Joystick::Y: return "Y";

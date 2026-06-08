@@ -17,12 +17,12 @@ namespace Listas {
     public:
         ListaEntidades();
         ~ListaEntidades();
-        bool incluirEntidade(Entidades::Entidade *E);
-        void limparLista();
-        void desenharTodas(sf::RenderWindow& janela);
-        Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E);
-        Entidades::Entidade* localizarInfo(Entidades::Entidade* E);
-        Entidades::Entidade* localizarNome(const std::string &nome);
+        bool incluirEntidade(Entidades::Entidade *E) const;
+        void limparLista() const;
+        void desenharTodas(sf::RenderWindow& janela) const;
+        Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E) const;
+        Entidades::Entidade* localizarInfo(Entidades::Entidade* E) const;
+        Entidades::Entidade* localizarNome(const std::string &nome) const;
     };
 }
 

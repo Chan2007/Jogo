@@ -3,109 +3,86 @@
 //
 
 #include "Inimigo_Facil.h"
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 
-Inimigo_Facil::Inimigo_Facil() :
+#include <iostream>
+
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
+#include "Sistema/UI/Animador.h"
+
+Personagens::Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
     tamanho(32)
-    {
-    Ente::sementear();
+{
+    sementear();
 
     setVelocidade(sf::Vector2f(0.02f, 0.02f));
-    nivelMaldade = 32;
-    poder = 20;
-    setVida(170);
-    alcancePerseguicao = 200;
-    alcanceAtaque = 90;
-    elite = rand() % 10 < 3;
-    cooldownAtaque = 1.5f;
-    tempoUltimoAtaque = 0.0f;
+    setAtaque(20);
+    setVida(50);
+    setAlcanceAtaque(100),
+    setAlcancePerseguicao(200),
+    setElite(rand() % 10 < 3),
+    setCooldownAtaque(1.5f);
+    setTempoUltimoAtaque(0.0f);
     caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet.png");
 
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
-            getCorpo().setTexture(getTextura());
+            getSprite().setTexture(getTextura());
+
+            // Novos parâmetros:
             totalFramesAnimacao = 18;
             colunasSpritesheet = 9;
-            tempoPorFrame = 0.8f;
-            frameWidth = 1262;
-            frameHeight = 1028;
-            getCorpo().setScale(0.05f, 0.05f);
-            rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
-            getCorpo().setTextureRect(rectAtual);
-        }
-        else {
-            std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo facil em: " << caminhoArquivoSprite << std::endl;
+            linhasSpritesheet = 2;
+            tempoPorFrame = 0.06f;
+
+            // O motor descobre a largura e altura do frame dividindo o total pelas colunas/linhas:
+            const sf::Vector2u tamanhoTextura = getTextura().getSize();
+            const int frameW = tamanhoTextura.x / colunasSpritesheet;
+            const int frameH = tamanhoTextura.y / linhasSpritesheet;
+
+            rectAtual = sf::IntRect(0, 0, frameW, frameH);
+            getSprite().setTextureRect(rectAtual);
         }
     }
-    getCorpo().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
 }
 
-Inimigo_Facil::~Inimigo_Facil() {
+Personagens::Inimigo_Facil::~Inimigo_Facil() {
 
 }
 
-void Inimigo_Facil::danificar(Personagens::Jogador* J) {
+void Personagens::Inimigo_Facil::danificar(Jogador* J) {
     if (J) {
-        J->receberDano(causarDanoBasico());
-        std::cout << "Minion atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
+        J->receberDano(causarDano());
+        std::cout << "Minion atacou o jogador! Dano causado: " << causarDano() << std::endl;
     }
 }
 
-void Inimigo_Facil::atualizar(Personagens::Jogador* jogador) {
+void Personagens::Inimigo_Facil::atualizar(const float dt) {
 
-    executar();
-
-    float dt = 0.016f;
-
-    tempoUltimoAtaque += clockAnimacao.restart().asSeconds();
+    setTempoUltimoAtaque(getTempoUltimoAtaque() + dt);
 
     if (jogador && jogador->estaVivo()) {
-
-        sf::Vector2f posInimigo = getCorpo().getPosition();
-        sf::Vector2f posJogador = (jogador->getCorpo()).getPosition();
-
-        float dx = posJogador.x - posInimigo.x;
-        float dy = posJogador.y - posInimigo.y;
-        float distancia = std::sqrt(dx * dx + dy * dy);
-
-        if (distancia <= getAlcanceAtaque()) {
-
+        if (deveAtacar(jogador->getPosicao())) {
             setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
-
-            if (tempoUltimoAtaque >= cooldownAtaque) {
+            if (getTempoUltimoAtaque() >= getCooldownAtaque()) {
                 danificar(jogador);
-                tempoUltimoAtaque = 0.0f;
-
+                setTempoUltimoAtaque(0.0f);
             }
         }
-        else if (distancia <= alcancePerseguicao) {
-
-            if (dx > 0) {
-                moverHorizontal(1.0f);
-            }
-            else {
-                moverHorizontal(-1.0f);
-            }
+        else if (devePerseguir(jogador->getPosicao())) {
+            const float dx = jogador->getPosicao().x - getPosicao().x;
+            moverHorizontal(dx > 0 ? 1.0f : -1.0f);
         }
     }
 }
 
-void Inimigo_Facil::executar() {
-
-    frameAcumulado += clockAnimacao.restart().asSeconds();
-
-    if (frameAcumulado >= tempoPorFrame) {
-        frameAcumulado = 0.0f;
-        indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
-
-        int coluna = indexFrameAtual % colunasSpritesheet;
-        int linha = indexFrameAtual / colunasSpritesheet;
-
-        getCorpo().setTextureRect(sf::IntRect(coluna * frameWidth, linha * frameHeight, frameWidth, frameHeight));
-    }
-}
-
-void Inimigo_Facil::salvar() {
+void Personagens::Inimigo_Facil::executar(const float dt) {
+    atualizar(dt);
+    Animador::atualizarSpriteEntidade(
+        getSprite(), rectAtual, totalFramesAnimacao, colunasSpritesheet,
+        linhasSpritesheet, tempoPorFrame, dt, tempoAcumulado, indexFrameAtual
+    );
+    getSprite().setTextureRect(rectAtual);
 }

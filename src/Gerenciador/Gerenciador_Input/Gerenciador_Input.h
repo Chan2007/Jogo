@@ -24,7 +24,10 @@ namespace Gerenciadores {
 
             // Padrão observer
             void inscrever(Observador_Input* obs){if (obs) observadores.push_back(obs); }
-            void desinscrever(Observador_Input* obs){if (obs) observadores.push_back(obs);}
+            void desinscrever(Observador_Input* obs) {
+                if (obs)
+                    observadores.erase(std::remove(observadores.begin(), observadores.end(), obs), observadores.end());
+            }
             void notificarObservadores(const sf::Event& evento) const;
 
             Mapeador_Input* getMapeador() {return &mapeador;}

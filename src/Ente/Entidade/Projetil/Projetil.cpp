@@ -10,7 +10,7 @@
 
 namespace Entidades {
     Projetil::Projetil():
-        Entidade("Projetil", 0),
+        Entidade("Projetil"),
         dano(80),
         velocidade(0.0f, 0.0f),
         alcanceMaximo(900.0f),
@@ -22,7 +22,7 @@ namespace Entidades {
 
     Projetil::~Projetil() {}
 
-    void Projetil::mover() {
+    void Projetil::mover(const float dt) {
         sf::Vector2f posicao = getPosicao();
         posicao.x += velocidade.x;
         posicao.y += velocidade.y;
@@ -31,8 +31,8 @@ namespace Entidades {
                               (velocidade.y < 0.0f ? -velocidade.y : velocidade.y));
     }
 
-    void Projetil::atualizar() {
-        mover();
+    void Projetil::executar(float dt) {
+        mover(dt);
         if (tempoVida > 0.0f)
             tempoVida -= 1.0f / 60.0f;
         if (expirou())
@@ -41,10 +41,6 @@ namespace Entidades {
 
     void Projetil::salvar() {
         salvarDataBuffer();
-    }
-
-    void Projetil::desenhar(sf::RenderWindow& window) {
-        window.draw(getCorpo());
     }
 
     bool Projetil::expirou() const {
@@ -59,7 +55,7 @@ namespace Entidades {
     void Projetil::interagir_Colisao(Personagens::Inimigo* I) {
         if (!I)
             return;
-        I->absorverDano(dano);
+        I->receberDano(dano);
         if (!perfurante)
             setAtivo(false);
     }
@@ -79,7 +75,7 @@ namespace Entidades {
     void Projetil::interagir_Colisao(Personagens::Jogador* J) {
         if (!J)
             return;
-        J->absorverDano(dano);
+        J->receberDano(dano);
         if (!perfurante)
             setAtivo(false);
     }

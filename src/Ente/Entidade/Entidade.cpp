@@ -5,27 +5,23 @@
 #include "Entidade.h"
 
 namespace Entidades {
-    Listas::ListaEntidades* Entidade::listaEntidades = 0;
-    Gerenciadores::Observer_Colisao* Entidade::mediador_colisao = 0;
 
-    Entidade::Entidade(std::string nam, Gerenciadores::Observer_Colisao* mediador) :
-        corpo(),
-        textura(),
-        colisao(false),
-        nome(nam),
-        ativo(true),
-        tipo(ENTIDADE_GENERICA),
-        nivel(1),
-        prioridadeRenderizacao(0),
-        escalaColisao(1.0f) {
-        if (!nam.empty())
-            nome = nam;
-        if (mediador) {
-            mediador_colisao = mediador;
-        }
+    void Entidade::salvarDataBuffer() {}
+    void Entidade::desenhar(sf::RenderWindow& window) {
+        getSprite().setPosition(getPosicao());
+        window.draw(getSprite());
+    }
+
+    Listas::ListaEntidades* Entidade::listaEntidades = NULL;
+    Entidade::Entidade(const std::string &n) : Ente(), sprite(), textura(), colisao(false),
+                                               nome(n), ativo(true), tipo(),
+                                               gerenciadorColisao(Gerenciadores::Gerenciador_Colisao::getGerenciador()),
+                                               gerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade::getGerenciador())
+    {
+        if (!n.empty())
+            nome = n;
+
     }
 
     Entidade::~Entidade() {}
-
-    void Entidade::salvarDataBuffer() {}
 }

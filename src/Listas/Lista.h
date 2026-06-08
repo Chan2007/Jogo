@@ -62,7 +62,7 @@ template<class tipo>
 void Lista <tipo>::limpar() {
     Elemento <tipo>* pAux = pPrimeiro;
     while (pAux) {
-        Elemento <tipo>* temp = pAux;
+        const Elemento <tipo>* temp = pAux;
         pAux = pAux->getProximo();
         delete temp;
     }

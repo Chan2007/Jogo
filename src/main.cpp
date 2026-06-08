@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "mainwindow.h"
+#include "Ente/Menu/Menu.h"
 #include <QApplication>
 #include <QFile>
 #include <QLocale>
@@ -11,17 +11,17 @@
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 int main(int argc, char *argv[]) {
-    QApplication a(argc, argv);
-    a.setStyle("Fusion");
+    QApplication qtWindow(argc, argv);
+    qtWindow.setStyle("Fusion");
 
     // Tradução de língua
     QTranslator translator;
-    QStringList uiLanguages = QLocale::system().uiLanguages();
+    const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (int i = 0; i < uiLanguages.size(); ++i) {
         QString locale = uiLanguages.at(i);
         QString baseName = "Jogo_" + QLocale(locale).name();
         if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
+            qtWindow.installTranslator(&translator);
             break;
         }
     }
@@ -32,11 +32,11 @@ int main(int argc, char *argv[]) {
         QFile styleFile(QString::fromStdString(qssPath));
         if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QTextStream stream(&styleFile);
-            QString stylesheet = stream.readAll();
+            const QString stylesheet = stream.readAll();
             styleFile.close();
 
             // Aplica stylesheet à aplicação inteira
-            a.setStyleSheet(stylesheet);
+            qtWindow.setStyleSheet(stylesheet);
             std::cout << "Stylesheet carregado com sucesso!" << std::endl;
         }
         else
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     else
         std::cerr << "Arquivo de estilização não encontrado." << std::endl;
 
-    MainWindow w;
+    Menu w;
     w.showMaximized(); // Abre a interface do Qt em tela cheia
-    return a.exec();
+    return qtWindow.exec();
 }

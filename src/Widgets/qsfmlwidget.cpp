@@ -34,7 +34,7 @@ void QSFMLWidget::showEvent(QShowEvent* event)
         m_window.create((sf::WindowHandle)winId());
 
         // Ativa contexto temporariamente apenas para OnInit
-        bool contextAtivado = m_window.setActive(true);
+        const bool contextAtivado = m_window.setActive(true);
         if (contextAtivado) {
             OnInit();
             const QSize tamanhoAtual = size();

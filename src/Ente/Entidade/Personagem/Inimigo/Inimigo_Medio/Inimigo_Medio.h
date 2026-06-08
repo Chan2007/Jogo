@@ -15,10 +15,10 @@ class Inimigo_Medio:public Personagens::Inimigo{
         Inimigo_Medio();
         ~Inimigo_Medio();
         void danificar(Personagens::Jogador* J);
-        void atualizar();
-        float getRaio(){return raio;}
-        int getTamanho(){return tamanho;};
-        short int getForca(){return forca;};
+        void executar(float dt);
+        float getRaio() const {return raio;}
+        int getTamanho(){return tamanho;}
+        short int getForca() const {return forca;}
 };
 
 

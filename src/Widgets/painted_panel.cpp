@@ -33,7 +33,7 @@ void PaintedPanel::paintEvent(QPaintEvent *event) {
     painter.setBrush(QColorConstants::Svg::white);
     painter.drawRoundedRect(frameRect, radius, radius);
 
-    QPixmap backgroundImage("../assets/bg_frames/bg_derived.jpg");
+    const QPixmap backgroundImage("../assets/bg_frames/bg_derived.jpg");
 
     if (!backgroundImage.isNull()) {
         painter.save();
@@ -49,7 +49,7 @@ void PaintedPanel::paintEvent(QPaintEvent *event) {
         targetSize.scale(innerRect.size().toSize(), Qt::KeepAspectRatioByExpanding);
 
         // Centraliza o retângulo (as sobras vão ficar para fora do clip e sumir)
-        QRect targetRect(
+        const QRect targetRect(
             innerRect.left() + (innerRect.width() - targetSize.width()) / 2,
             innerRect.top() + (innerRect.height() - targetSize.height()) / 2,
             targetSize.width(),

@@ -59,30 +59,30 @@ namespace Gerenciadores {
 
         public:
             Mapeador_Input();
-            ~Mapeador_Input();
+            ~Mapeador_Input(){};
 
             void padrao();
             void padraoJoystick();
 
-            std::string getAcao(sf::Keyboard::Key tecla) const {return template_getAcao(mapeamento_teclas, tecla);}
-            std::string getAcao(sf::Mouse::Button botao) const {return template_getAcao(mapeamento_mouse, botao);}
-            std::string getAcao(unsigned int botao) const {return template_getAcao(mapeamento_joystick, botao);}
-            std::string getAcao(sf::Joystick::Axis eixo) const {return template_getAcao(mapeamento_eixos, eixo);}
+            std::string getAcao(const sf::Keyboard::Key tecla) const {return template_getAcao(mapeamento_teclas, tecla);}
+            std::string getAcao(const sf::Mouse::Button botao) const {return template_getAcao(mapeamento_mouse, botao);}
+            std::string getAcao(const unsigned int botao) const {return template_getAcao(mapeamento_joystick, botao);}
+            std::string getAcao(const sf::Joystick::Axis eixo) const {return template_getAcao(mapeamento_eixos, eixo);}
 
-            bool estaMapeado(sf::Keyboard::Key tecla) const {return template_estaMapeado(mapeamento_teclas, tecla);}
-            bool estaMapeado(sf::Mouse::Button botao) const {return template_estaMapeado(mapeamento_mouse, botao);}
-            bool estaMapeado(unsigned int botao) const {return template_estaMapeado(mapeamento_joystick, botao);}
-            bool estaMapeado(sf::Joystick::Axis eixo) const {return template_estaMapeado(mapeamento_eixos, eixo);}
+            bool estaMapeado(const sf::Keyboard::Key tecla) const {return template_estaMapeado(mapeamento_teclas, tecla);}
+            bool estaMapeado(const sf::Mouse::Button botao) const {return template_estaMapeado(mapeamento_mouse, botao);}
+            bool estaMapeado(const unsigned int botao) const {return template_estaMapeado(mapeamento_joystick, botao);}
+            bool estaMapeado(const sf::Joystick::Axis eixo) const {return template_estaMapeado(mapeamento_eixos, eixo);}
 
-            void remapear(sf::Keyboard::Key tecla, const std::string& acao) {template_remapear(mapeamento_teclas, tecla, acao);}
-            void remapear(sf::Mouse::Button botao, const std::string& acao) {template_remapear(mapeamento_mouse, botao, acao);}
-            void remapear(unsigned int botao, const std::string& acao) {template_remapear(mapeamento_joystick, botao, acao);}
-            void remapear(sf::Joystick::Axis eixo, const std::string& acao) {template_remapear(mapeamento_eixos, eixo, acao);}
+            void remapear(const sf::Keyboard::Key tecla, const std::string& acao) {template_remapear(mapeamento_teclas, tecla, acao);}
+            void remapear(const sf::Mouse::Button botao, const std::string& acao) {template_remapear(mapeamento_mouse, botao, acao);}
+            void remapear(const unsigned int botao, const std::string& acao) {template_remapear(mapeamento_joystick, botao, acao);}
+            void remapear(const sf::Joystick::Axis eixo, const std::string& acao) {template_remapear(mapeamento_eixos, eixo, acao);}
 
-            void desmapear(sf::Keyboard::Key tecla) {template_desmapear(mapeamento_teclas, tecla);}
-            void desmapear(sf::Mouse::Button botao) {template_desmapear(mapeamento_mouse, botao);}
-            void desmapear(unsigned int botao) {template_desmapear(mapeamento_joystick, botao);}
-            void desmapear(sf::Joystick::Axis eixo) {template_desmapear(mapeamento_eixos, eixo);}
+            void desmapear(const sf::Keyboard::Key tecla) {template_desmapear(mapeamento_teclas, tecla);}
+            void desmapear(const sf::Mouse::Button botao) {template_desmapear(mapeamento_mouse, botao);}
+            void desmapear(const unsigned int botao) {template_desmapear(mapeamento_joystick, botao);}
+            void desmapear(const sf::Joystick::Axis eixo) {template_desmapear(mapeamento_eixos, eixo);}
 
             sf::Keyboard::Key getTecla(const std::string& acao) const {return template_getObj<sf::Keyboard::Key>(mapeamento_teclas, acao);}
             sf::Mouse::Button getBotao_Mouse(const std::string& acao) const {return template_getObj<sf::Mouse::Button>(mapeamento_mouse, acao);}

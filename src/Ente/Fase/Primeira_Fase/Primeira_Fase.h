@@ -4,27 +4,44 @@
 
 #ifndef JOGO_PRIMEIRA_FASE_H
 #define JOGO_PRIMEIRA_FASE_H
+
+#include "jogo.h"
 #include "Ente/Fase/Fase.h"
+#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
+
+class Encontrar_Caminho;
 
 namespace Fases {
     class Primeira_Fase: public Fase {
         private:
-            sf::Clock relogio;
-            sf::RenderWindow janela;
-            sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
             const int maxInimigos;
+
+            void processarEventos(const sf::Event &evento);
+            void atualizar(float dt);
+            void renderizar(sf::RenderWindow &janela);
+
+            Gerenciadores::Gerenciador_Textura gerenciadorTextura;
+            Jogo jogo;
+
+            std::string diretorio_Frames_Fase;
         protected:
-            void criarPlataformas();
-            void criarObstaculos();
-            void criarInimigos();
-            void criarProjetil();
+
+            void criarObstaculos() {
+                criarObstMedios();
+            }
+            void criarInimigos() {
+                criarInimMedios();
+            }
+            void criarProjeteis(){}
             void criarCenario();
 
-            void criarObstFaceis();
-            void criarInimMedios();
+            void criarInimMedios(){}
+            void criarObstMedios(){}
+            void criarJogadores();
         public:
             Primeira_Fase();
-            ~Primeira_Fase();
+            ~Primeira_Fase(){};
+            void executar(){}
         };
 } // Fases
 

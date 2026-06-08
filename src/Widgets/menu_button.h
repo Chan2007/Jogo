@@ -23,7 +23,7 @@ public:
     explicit MenuButton(QWidget *parent = NULL);
     explicit MenuButton(const QString& text, QWidget *parent = NULL);
     virtual QSize sizeHint() const;
-    void iniciarAnimacaoEntrada(int atrasoMs);
+    void iniciarAnimacaoEntrada(int atrasoMs) const;
     void setAlinhamento(Qt::Alignment alignment);
 
     Qt::Alignment textAlignment = Qt::AlignLeft | Qt::AlignVCenter;
@@ -50,10 +50,12 @@ protected:
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
+private slots:
+    void onHoverAnimationFinished();
 private:
     void decorarBotao(QPainter& painter, const QRect& area) const;
-    void animarHover(qreal destino);
-    void animarPress(qreal destino, int duracaoMs);
+    void animarHover(qreal destino) const;
+    void animarPress(qreal destino, int duracaoMs) const;
     static QColor interpolarCor(const QColor &corA, const QColor &corB, double t) ;
 
     bool hovered;

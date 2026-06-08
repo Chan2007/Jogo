@@ -13,83 +13,85 @@ namespace Entidades {
 }
 
 namespace Personagens {
-    enum EstadoCombate {
-        ESTADO_OCIOSO = 0,
-        ESTADO_MOVIMENTO = 1,
-        ESTADO_COMBATE = 2,
-        ESTADO_MORTO = 3
-    };
-
     enum EstadoAnimacao {
         PARADO = 0,
         ANDANDO = 1,
         PULANDO = 2,
         CAINDO = 3,
-        ATACANDO = 4
+        ATACANDO = 4,
+        MORTO = 5
     };
 
     class Personagem : public Entidades::Entidade {
         private:
             sf::Vector2f velocidade;
             sf::Vector2f aceleracao;
+
+            sf::Vector2f tamanhoHitbox;
+            sf::Vector2f deslocamentoHitbox;
+
+            float vida;
+            float vidaMaxima;
+            float ataque;
+            float alcanceAtaque;
+            float chanceCritica;
+            float regeneracaoVida;
+            int estado;
+            float velocidadeMax;
         protected:
             std::string caminhoArquivoSprite;
-            std::string caminhoArquivoSpritePulo;
             sf::Texture texturaPulo;
             sf::IntRect rectAtual;
             sf::Clock clockAnimacao;
             float tempoPorFrame;
-            float frameAcumulado;
+            float tempoAcumulado;
             int indexFrameAtual;
             int totalFramesAnimacao;
             int colunasSpritesheet;
-            int frameWidth;
-            int frameHeight;
+            int linhasSpritesheet;
 
-            int vida;
-            int vidaMaxima;
-            int poder;
-            int alcanceAtaque;
-            int chanceCritica;
-            float regeneracaoVida;
-            int estado;
+            Observer_Colisao* ObserverColisao;
         public:
             Personagem();
             virtual ~Personagem();
 
-            sf::FloatRect getTamanho() const;
-            sf::Vector2f getVelocidade() const {return velocidade;}
-            sf::Vector2f getAceleracao() const {return aceleracao;}
-            void setVelocidade(sf::Vector2f v) {velocidade.x = v.x; velocidade.y = v.y;}
-            void setAceleracao(sf::Vector2f a) {aceleracao.x = a.x; aceleracao.y = a.y;}
-            // void setVy(float vy) {velocidade.y = vy;}
-            // void setVx(float vx) {velocidade.x = vx;}
+            // Getters e Setters
+            sf::Vector2f getVelocidade() const { return velocidade; }
+            void setVelocidade(const sf::Vector2f vel) { velocidade = vel; }
+            sf::Vector2f getAceleracao() const { return aceleracao; }
+            void setAceleracao(const sf::Vector2f ace) { aceleracao = ace; }
+
+            float getVida() const { return vida; }
+            float getVidaMaxima() const { return vidaMaxima; }
             float getVidaPercentual() const;
-            int getVida() const {return vida;}
-            int getVidaMaxima() const {return vidaMaxima;}
-            int getPoder() const {return poder;}
-            int getAlcanceAtaque() const {return alcanceAtaque;}
-            int getChanceCritica() const {return chanceCritica;}
-            int getEstado() const {return estado;}
-            bool estaVivo() const {return vida > 0;}
+            float getAtaque() const { return ataque; }
+            float getAlcanceAtaque() const { return alcanceAtaque; }
+            bool estaVivo() const { return vida > 0; }
+            float getChanceCritica() const { return chanceCritica; }
+            float getRegeneracao() const { return regeneracaoVida; }
+            EstadoAnimacao getEstado() const { return static_cast<EstadoAnimacao>(estado); }
+
             void setVidaMaxima(int valor);
             void setVida(int valor);
-            void setPoder(int valor) {if (valor >= 0) poder = valor;}
-            void setAlcanceAtaque(int valor) {if (valor >= 0) alcanceAtaque = valor;}
-            void setChanceCritica(int valor) {chanceCritica = (valor < 0) ? 0 : ((valor > 100) ? 100 : valor);}
-            void setRegeneracaoVida(float valor) {regeneracaoVida = (valor < 0.0f) ? 0.0f : valor;}
-            void setEstado(EstadoCombate novoEstado) {estado = static_cast<int>(novoEstado);}
-            int receberDano(int dano);
-            int causarDanoBasico() const;
-            void curar(int valor);
-            void regenerarVida(float deltaTempo);
+            void setAtaque(const float valor) { if (valor >= 0) ataque = valor; }
+            void setAlcanceAtaque(const float valor) { if (valor >= 0) alcanceAtaque = valor; }
+            void setVelocidadeMax(const float vMax) { velocidadeMax = vMax; }
+            sf::FloatRect getSize() const;
+            void setChanceCritica(const float crit) { chanceCritica = crit; }
+            void setRegeneracao(const float reg) { regeneracaoVida = reg; }
+            void setEstado(const int e) { estado = e; }
+
+            // Lógica de combate
+            virtual int receberDano(int dano);
+            virtual int causarDano() const;
+            virtual void curar(int valor);
+            virtual void regenerarVida(float dt);
             void moverHorizontal(float direcao);
-            void resetarCombate();
-            virtual void desenhar(sf::RenderWindow& window);
-            virtual void salvarDataBuffer();
-            virtual void atualizar() = 0;
+            void parar();
+
+            virtual void executar(float dt) = 0;
             virtual void salvar() = 0;
-            virtual void mover() = 0;
+            virtual void mover(float dt) = 0;
     };
 } // Personagens
 

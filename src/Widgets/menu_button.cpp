@@ -48,19 +48,14 @@ MenuButton::MenuButton(const QString& text, QWidget *parent)
     borderAnimation->setLoopCount(-1);
     borderAnimation->setEasingCurve(QEasingCurve::Linear);
 
-    connect(hoverAnimation, &QPropertyAnimation::finished, this, [this]() {
-        // Se a animação terminou e o mouse não está mais em cima, desliga a rotação da borda
-        if (!hovered && getHoverProgress() < 0.01) {
-            borderAnimation->stop();
-        }
-    });
+    connect(hoverAnimation, SIGNAL(finished()), this, SLOT(onHoverAnimationFinished()));
 }
 
 QSize MenuButton::sizeHint() const {
     return QSize(220, 400);
 }
 
-void MenuButton::iniciarAnimacaoEntrada(int atrasoMs) {
+void MenuButton::iniciarAnimacaoEntrada(int atrasoMs) const {
     if (atrasoMs < 0)
         atrasoMs = 0;
 
@@ -78,7 +73,7 @@ void MenuButton::iniciarAnimacaoEntrada(int atrasoMs) {
     QTimer::singleShot(atrasoMs, offsetAnimation, SLOT(start()));
 }
 
-void MenuButton::setAlinhamento(Qt::Alignment alignment) {
+void MenuButton::setAlinhamento(const Qt::Alignment alignment) {
     textAlignment = alignment;
     update();
 }
@@ -86,7 +81,7 @@ qreal MenuButton::getHoverProgress() const {
     return hoverProgress;
 }
 
-void MenuButton::setHoverProgress(qreal value) {
+void MenuButton::setHoverProgress(const qreal value) {
     hoverProgress = value;
     update();
 }
@@ -95,7 +90,7 @@ qreal MenuButton::getPressProgress() const {
     return pressProgress;
 }
 
-void MenuButton::setPressProgress(qreal value) {
+void MenuButton::setPressProgress(const qreal value) {
     pressProgress = value;
     update();
 }
@@ -111,7 +106,7 @@ void MenuButton::setContentOffset(const QPoint& value) {
 
 qreal MenuButton::getBorderAngle() const { return borderAngle; }
 
-void MenuButton::setBorderAngle(qreal angle) {
+void MenuButton::setBorderAngle(const qreal angle) {
     borderAngle = angle;
     update();
 }
@@ -121,7 +116,7 @@ qreal MenuButton::getOpacityValue() const
     return opacityValue;
 }
 
-void MenuButton::setOpacityValue(qreal value) {
+void MenuButton::setOpacityValue(const qreal value) {
     opacityValue = value;
     update();
 }
@@ -175,7 +170,7 @@ void MenuButton::decorarBotao(QPainter& painter, const QRect& area) const {
     if (isDown()) alphaBorda = 0;
 
     if (alphaBorda > 0) {
-        QPen bordaPretaPen(QColor(0, 0, 0, alphaBorda), 2);
+        const QPen bordaPretaPen(QColor(0, 0, 0, alphaBorda), 2);
         painter.setPen(bordaPretaPen);
 
         // Linha Superior
@@ -190,7 +185,7 @@ void MenuButton::decorarBotao(QPainter& painter, const QRect& area) const {
     // 3. Feedback visual do Hover
     if (hoverProgress > 0.01 || isDown()) {
         painter.setPen(Qt::NoPen);
-        int hoverAlpha = static_cast<int>(40.0 * hoverProgress);
+        const int hoverAlpha = static_cast<int>(40.0 * hoverProgress);
         painter.setBrush(QColor(255, 255, 255, hoverAlpha));
         painter.drawRoundedRect(strokeRect, 8, 8);
     }
@@ -198,7 +193,7 @@ void MenuButton::decorarBotao(QPainter& painter, const QRect& area) const {
     // Marcador decorativo à esquerda (triângulo)
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(0, 0, 0, 255));
-    QPoint marcadorPontos[] = {
+    const QPoint marcadorPontos[] = {
         QPoint(strokeRect.left() + 8, strokeRect.center().y() - 6),
         QPoint(strokeRect.left() + 2, strokeRect.center().y()),
         QPoint(strokeRect.left() + 8, strokeRect.center().y() + 6)
@@ -207,16 +202,14 @@ void MenuButton::decorarBotao(QPainter& painter, const QRect& area) const {
 
     painter.restore();
 }
-void MenuButton::animarHover(qreal destino)
-{
+void MenuButton::animarHover(const qreal destino) const {
     hoverAnimation->stop();
     hoverAnimation->setStartValue(hoverProgress);
     hoverAnimation->setEndValue(destino);
     hoverAnimation->start();
 }
 
-void MenuButton::animarPress(qreal destino, int duracaoMs)
-{
+void MenuButton::animarPress(const qreal destino, const int duracaoMs) const {
     pressAnimation->stop();
     pressAnimation->setDuration(duracaoMs);
     pressAnimation->setStartValue(pressProgress);
@@ -224,21 +217,19 @@ void MenuButton::animarPress(qreal destino, int duracaoMs)
     pressAnimation->start();
 }
 
-QColor MenuButton::interpolarCor(const QColor &corA, const QColor &corB, double t)
-{
+QColor MenuButton::interpolarCor(const QColor &corA, const QColor &corB, double t) {
     if (t < 0.0) t = 0.0;
     if (t > 1.0) t = 1.0;
 
-    int r = static_cast<int>(corA.red()   + (corB.red()   - corA.red())   * t);
-    int g = static_cast<int>(corA.green() + (corB.green() - corA.green()) * t);
-    int b = static_cast<int>(corA.blue()  + (corB.blue()  - corA.blue())  * t);
-    int a = static_cast<int>(corA.alpha() + (corB.alpha() - corA.alpha()) * t);
+    const int r = static_cast<int>(corA.red()   + (corB.red()   - corA.red())   * t);
+    const int g = static_cast<int>(corA.green() + (corB.green() - corA.green()) * t);
+    const int b = static_cast<int>(corA.blue()  + (corB.blue()  - corA.blue())  * t);
+    const int a = static_cast<int>(corA.alpha() + (corB.alpha() - corA.alpha()) * t);
 
     return QColor(r, g, b, a);
 }
 
-void MenuButton::paintEvent(QPaintEvent *event)
-{
+void MenuButton::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -248,7 +239,7 @@ void MenuButton::paintEvent(QPaintEvent *event)
 
     const QRect area = rect().adjusted(0, 0, -1, -1);
 
-    const bool desenharHover = (hoverProgress > 0.01) || isDown() || (pressProgress > 0.01);
+    const bool desenharHover = hoverProgress > 0.01 || isDown() || pressProgress > 0.01;
 
     if (desenharHover) decorarBotao(painter, area);
 
@@ -303,4 +294,9 @@ void MenuButton::paintEvent(QPaintEvent *event)
         painter.setBrush(Qt::NoBrush);
         painter.drawRoundedRect(r, 8, 8);
     }
+}
+void MenuButton::onHoverAnimationFinished() {
+    // Se a animação terminou e o mouse não está mais em cima, desliga a rotação
+    if (!hovered && getHoverProgress() < 0.01)
+        borderAnimation->stop();
 }

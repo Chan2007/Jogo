@@ -14,7 +14,7 @@ namespace Obstaculos {
         public:
             Obstaculo_Facil();
             ~Obstaculo_Facil();
-            void atualizar();
+            void executar(float dt);
             float getAltura();
             float getDano();
             void setPlataforma(Personagens::Jogador* J);
