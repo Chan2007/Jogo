@@ -20,18 +20,18 @@ namespace Fases {
       gerenciadorColisao(Gerenciadores::Gerenciador_Colisao::getGerenciador()),
       audio(Gerenciadores::Gerenciador_Audio::getGerenciador())
     {
+        desktop = sf::VideoMode::getDesktopMode();
         criarInimFaceis();
         criarPlataformas();
-        desktop = sf::VideoMode::getDesktopMode();
     }
 
     void Fase::criarPlataformas() {
         Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
         if (chao) {
-            gerenciadorColisao.incluirEntidade(chao);
-            chao->setPosicao(sf::Vector2f(static_cast<float>(desktop.width), static_cast<float>(desktop.height) - chao->getTamanho().height));
+            chao->setPosicao(sf::Vector2f(static_cast<float>(desktop.width)/2.f, static_cast<float>(desktop.height) - (chao->getTamanho().height)/2.f));
 
             LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
+            gerenciadorColisao.incluirEntidade(chao);
         }
         else {std::cerr << "Falha ao criar chão" << std::endl;}
 
@@ -105,5 +105,18 @@ namespace Fases {
         return true;
     }
     void Fase::criarInimFaceis(){
+        Inimigo_Facil* minion = NULL;
+        Ente::sementear();
+        const int fator = rand() % 8 + 3;
+        sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
+        for (int i = 0; i < fator; i++) {
+            minion = new Inimigo_Facil();
+            if (minion) {
+                minion->setPosicao(sf::Vector2f(720.f, 560.f));
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));
+                gerenciadorColisao.incluirEntidade(minion);
+            }
+        }
+        minion = NULL;
     }
 } // Fases

@@ -87,7 +87,7 @@ namespace Personagens {
 
 
     int Personagem::causarDanoBasico() const {
-        return (rand() % 101 >= chanceCritica) ? (poder * (1 + chanceCritica)) : poder;
+        return (rand() % 101 < chanceCritica) ? (poder * (1 + chanceCritica)) : poder;
 
     }
 

@@ -18,7 +18,7 @@ namespace Personagens {
         abates(0)
     {
         setTipo(Entidades::ENTIDADE_JOGADOR);
-        velocidadeMax = 25.f;
+        velocidadeMax = 300.f;
     }
 
     Jogador::~Jogador() {}
@@ -130,6 +130,9 @@ namespace Personagens {
 
     void Jogador::mover() {
         float direcaoHorizontal = 0.0f;
+        sf::Vector2f posicao = getPosicao();
+        sf::Vector2f vel = getVelocidade();
+
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             direcaoHorizontal = 1.0f;
@@ -145,10 +148,7 @@ namespace Personagens {
             }
         }
 
-        sf::Vector2f posicao = getPosicao();
-        sf::Vector2f vel = getVelocidade();
-
-        posicao.x += vel.x * clockAnimacao.restart().asSeconds();
+        posicao.x += vel.x * 0.016f;
 
         if (vel.x > 0.0f) {
             getSprite().setScale(-1.f, 1.f); // Inverte para olhar para direita
@@ -180,8 +180,23 @@ namespace Personagens {
     }
 
     void Jogador::interagir_Colisao(Obstaculos::Obstaculo* O) {
-        if (O)
-            setColisao(true);
+        if (!O) return;
+
+        // Pega as caixas de colisão
+        sf::FloatRect hitboxJogador = getSprite().getGlobalBounds();
+        sf::FloatRect hitboxObs = O->getSprite().getGlobalBounds();
+
+        // Calcula a altura do pé do jogador e do meio da plataforma
+        float peDoJogador = hitboxJogador.top + hitboxJogador.height;
+        float centroDaPlataforma = hitboxObs.top + (hitboxObs.height / 2.0f);
+
+        // Se o pé do jogador estiver na metade de CIMA da plataforma, ele aterrou!
+        if (peDoJogador <= centroDaPlataforma) {
+            if (pGravidade != NULL) {
+                // Avisa a gravidade que o jogador está no chão e pode pular de novo
+                pGravidade->aoTocarChao(this, sf::Vector2f(0.f, -1.f));
+            }
+        }
     }
 
     void Jogador::interagir_Colisao(Entidades::Projetil* P) {

@@ -104,13 +104,17 @@ namespace Gerenciadores {
                 movel->setPosicao(sf::Vector2f(posAtual.x + intersecX, posAtual.y));
             else
                 movel->setPosicao(sf::Vector2f(posAtual.x - intersecX, posAtual.y));
+
         }
         else {
             sf::Vector2f posAtual = movel->getPosicao();
             if (dy > 0.0f)
                 movel->setPosicao(sf::Vector2f(posAtual.x, posAtual.y + intersecY));
-            else
+            else {
                 movel->setPosicao(sf::Vector2f(posAtual.x, posAtual.y - intersecY));
+                Gerenciadores::Gerenciador_Gravidade::getGerenciador().aoTocarChao(movel, sf::Vector2f(0.f, -1.f));
+            }
+            Gerenciadores::Gerenciador_Gravidade::getGerenciador().setVy(movel, 0.0f);
         }
     }
 

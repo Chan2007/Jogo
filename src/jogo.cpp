@@ -27,7 +27,8 @@ void Jogo::inicializar() {
     sf::VideoMode videoMode = sf::VideoMode::getDesktopMode();
 
     gerenciadorGrafico.setSize(videoMode);
-    gerenciadorGrafico.getJanela().create(videoMode, "Jogo do Simao", sf::Style::Default);
+
+    gerenciadorGrafico.getJanela().create(videoMode, "Jogo cHAN E Huang", sf::Style::Default);
     gerenciadorGrafico.getJanela().setFramerateLimit(60);
 
     inicializado = true;
@@ -112,7 +113,7 @@ void Jogo::processarEventos() {
 
         if (evento.type == sf::Event::Resized) {
 
-            sf::FloatRect areaVisivel(0.f, 0.f, evento.size.width, evento.size.height);
+            sf::FloatRect areaVisivel(0.f, 0.f, sf::VideoMode().getDesktopMode().width, sf::VideoMode().getDesktopMode().height);
             janela.setView(sf::View(areaVisivel));
         }
 

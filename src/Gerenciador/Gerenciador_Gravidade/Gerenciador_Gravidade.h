@@ -36,7 +36,7 @@ namespace Gerenciadores {
             void aplicarGravidade(Entidades::Entidade* entidade, bool afetada);
             float getGravidade() const {return gravidade;}
             void setGravidade(const float g) {gravidade = g;}
-        void aoTocarChao(Entidades::Entidade* entidade, const sf::Vector2f& normal);
+            void aoTocarChao(Entidades::Entidade* entidade, const sf::Vector2f& normal);
             bool pular(Entidades::Entidade* entidade, float f = 0.0f);
             bool estaNoChao(const Entidades::Entidade* entidade) const;
             void aplicarAtrito(Entidades::Entidade* entidade, float dt) const;

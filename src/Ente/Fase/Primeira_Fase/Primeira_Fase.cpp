@@ -23,8 +23,6 @@ namespace Fases {
         diretorio_Frames_Fase = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/fase1");
         diretorio_Audio = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
 
-        gerenciadorGrafico->setSize(tamanhoJanela);
-
         if (!diretorio_Frames_Fase.empty())
             Gerenciadores::Gerenciador_Grafico::getGerenciador().loadAnimation(diretorio_Frames_Fase,"bg_fase1_",376,2,4,3);
 
@@ -47,8 +45,12 @@ namespace Fases {
         const float dt = 0.016f;
         jogador.executar();
         gerenciadorGrafico->updateAnimation();
-        gerenciadorColisao.executar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela().getSize(), &gerenciadorGravidade);
+
+        sf::Vector2u tamanhoAtual(desktop.width, desktop.height);
+
         gerenciadorGravidade.executar(dt);
+        gerenciadorColisao.executar(tamanhoAtual, &gerenciadorGravidade);
+
         renderizar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela());
     }
 
@@ -59,12 +61,13 @@ namespace Fases {
     }
 
     void Primeira_Fase::criarJogadores() {
-        gerenciadorColisao.incluirEntidade(&jogador);
 
         jogador.setCampeao(Personagens::CAMPEAO_NAAFIRI);
         jogador.setPosicao(sf::Vector2f(100.f, 800.f));
         std::cout << "Jogador criado: " << jogador.getNome() << std::endl;
 
+        jogador.setGerenciadorGravidade(&gerenciadorGravidade);
+        gerenciadorColisao.incluirEntidade(&jogador);
         gerenciadorGravidade.aplicarGravidade(&jogador, true);
         LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(&jogador));
     }
