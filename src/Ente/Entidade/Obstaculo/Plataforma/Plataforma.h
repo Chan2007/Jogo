@@ -17,8 +17,6 @@ namespace Obstaculos{
                     CHAO
                 };
             private:
-                float altura;
-                float largura;
                 TipoPlataforma tipoPlataforma;
             public:
                 Plataforma(TipoPlataforma tipo = NORMAL1);
@@ -27,8 +25,6 @@ namespace Obstaculos{
                 void executar(){};
                 void salvar(){};
                 void mover(){};
-                float getAltura() const {return altura;}
-                float getLargura() const {return largura;}
                 void setPlataforma(Personagens::Jogador* J);
         };
 } // Obstaculo

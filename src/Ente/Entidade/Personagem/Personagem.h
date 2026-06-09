@@ -86,10 +86,7 @@ namespace Personagens {
         void regenerarVida(float deltaTempo);
         void moverHorizontal(float direcao);
         void resetarCombate();
-        virtual void desenhar(sf::RenderWindow& window);
-        virtual void salvarDataBuffer();
         virtual void executar() = 0;
-        virtual void atualizar() = 0;
         virtual void salvar() = 0;
         virtual void mover() = 0;
     };

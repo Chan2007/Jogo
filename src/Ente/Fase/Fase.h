@@ -38,14 +38,13 @@ namespace Fases {
         public:
             explicit Fase();
             virtual ~Fase();
-            virtual void executar(){};
             void setMusica(const bool ligada) const { audio.ativarMusica(ligada);}
             void setVolume(const float volume) const { audio.setVolume(volume);}
             bool tocandoMusica() const { return audio.isPlaying();}
 
             bool trocarMusica(int fase) const;
             virtual void processarEventos(const sf::Event &evento) = 0;
-            virtual void atualizar(float dt) = 0;
+            virtual void executar() = 0;
             virtual void renderizar(sf::RenderWindow &janela) = 0;
 
     };

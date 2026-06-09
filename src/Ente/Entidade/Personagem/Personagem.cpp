@@ -53,15 +53,6 @@ namespace Personagens {
     }
 
 
-    void Personagem::desenhar(sf::RenderWindow& window) {
-        getSprite().setPosition(getPosicao());
-        window.draw(getSprite());
-    }
-
-    void Personagem::salvarDataBuffer() {
-        Entidades::Entidade::salvarDataBuffer();
-    }
-
     float Personagem::getVidaPercentual() const {
         if (vidaMaxima <= 0)
             return 0.0f;

@@ -44,20 +44,21 @@ namespace Personagens {
     public:
         Jogador();
         ~Jogador();
+
         void setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g);
         Gerenciadores::Gerenciador_Gravidade* getGerenciadorGravidade();
-        bool colidir(Inimigo* I);
+        Gerenciadores::Observador_Input* getObserver();
+
         void executar();
-        void atualizar();
         void salvar();
         void mover();
         void setCampeao(EscolhaCampeao campeao);
-        void desenhar(sf::RenderWindow& window);
-        Gerenciadores::Observador_Input* getObserver();
+
         float getPontos() const { return pontos; }
         int getAbates() const { return abates; }
         void adicionarPontos(float valor);
         void registrarAbate();
+
         void aoColidir(Entidade* E) { E->interagir_Colisao(this); }
         void interagir_Colisao(Inimigo* I);
         void interagir_Colisao(Obstaculos::Obstaculo* O);

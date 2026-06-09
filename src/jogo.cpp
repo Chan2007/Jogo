@@ -77,7 +77,7 @@ void Jogo::executar() {
 
         // Atualização da lógica da janela
         if (estadoTela == TelaFase1 && faseAtual != NULL) {
-            faseAtual->atualizar(dt);
+            faseAtual->executar();
             // IMPORTANTE!!! Se o(s) jogador(es) mudou(aram) de fase, o Jogo que tem que decidir o que fazer
         }
         else if (estadoTela == TelaMenu)

@@ -17,7 +17,6 @@ namespace Fases {
             const int maxInimigos;
 
             void processarEventos(const sf::Event &evento);
-            void atualizar(float dt);
             void renderizar(sf::RenderWindow &janela);
 
             Gerenciadores::Gerenciador_Textura gerenciadorTextura;
@@ -41,7 +40,7 @@ namespace Fases {
         public:
             Primeira_Fase();
             ~Primeira_Fase(){};
-            void executar(){}
+            void executar();
         };
 } // Fases
 

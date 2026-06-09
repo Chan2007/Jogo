@@ -57,11 +57,6 @@ void Inimigo_Facil::danificar(Personagens::Jogador* J) {
     }
 }
 
-void Inimigo_Facil::atualizar() {
-
-    executar();
-}
-
 void Inimigo_Facil::executar() {
 
     if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
@@ -152,7 +147,7 @@ void Inimigo_Facil::executar() {
         }
 
         // Comportamento de Perseguir
-        else if (menorDistancia <= getAlcancePerseguicao()) {
+        else if (menorDistancia <= alcancePerseguicao) {
             interagindo = true;
 
             if (dx > 0) {

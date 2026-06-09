@@ -7,14 +7,13 @@
 
 namespace Fases {
     Primeira_Fase::Primeira_Fase() : Fase(), maxInimigos(5) {
-        // Inicializa o cenário apenas uma vez na criação da fase
         Primeira_Fase::criarCenario();
-
         Primeira_Fase::criarObstaculos();
         Primeira_Fase::criarInimigos();
         Primeira_Fase::criarProjeteis();
         criarJogadores();
         criarInimMedios();
+        Primeira_Fase::executar();
     }
 
     void Primeira_Fase::criarCenario() {
@@ -44,12 +43,13 @@ namespace Fases {
     }
 
     // Evolução da física/lógica no frame atual
-    void Primeira_Fase::atualizar(const float dt) {
+    void Primeira_Fase::executar() {
+        const float dt = 0.016f;
+        jogador.executar();
         gerenciadorGrafico->updateAnimation();
-        
-        // Executa os gerenciadores de física usando o delta time recebido do Jogo
-        gerenciadorColisao.executar(gerenciadorGrafico->getGerenciador().getJanela().getSize(), &gerenciadorGravidade);
+        gerenciadorColisao.executar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela().getSize(), &gerenciadorGravidade);
         gerenciadorGravidade.executar(dt);
+        renderizar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela());
     }
 
     // Renderiza para a janela

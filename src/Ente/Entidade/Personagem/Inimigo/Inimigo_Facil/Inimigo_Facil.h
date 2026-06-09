@@ -13,21 +13,21 @@ namespace Personagens {
 }
 
 class Inimigo_Facil : public Personagens::Inimigo {
-private:
-    float raio;
-    int tamanho;
-    Entidades::Projetil* tiro;
-public:
-    Inimigo_Facil();
-    ~Inimigo_Facil();
-    void danificar(Personagens::Jogador* J);
-    void atualizar();
-    void executar();
-    void mover();
-    void salvar();
-    Entidades::Projetil* getProjetil() { return tiro; }
-    float getRaio() { return raio; }
-    int getTamanho() { return tamanho; }
+    private:
+        float raio;
+        int tamanho;
+        Entidades::Projetil* tiro;
+    public:
+        Inimigo_Facil();
+        ~Inimigo_Facil();
+        void danificar(Personagens::Jogador* J);
+
+        void executar();
+        void mover();
+        void salvar();
+        Entidades::Projetil* getProjetil() { return tiro; }
+        float getRaio() { return raio; }
+        int getTamanho() { return tamanho; }
 };
 
 

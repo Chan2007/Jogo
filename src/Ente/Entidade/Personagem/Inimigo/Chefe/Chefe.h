@@ -19,11 +19,11 @@ public:
     Chefe();
     ~Chefe();
     void danificar(Personagens::Jogador* J);
-    void atualizar();
     void executar();
     void salvar();
+    void mover(){};
     float getRaio() { return raio; }
-    int getTamanho() { return tamanho; };
+    int getTamanho() { return tamanho; }
     short int getForca() { return forca; }
 };
 

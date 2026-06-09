@@ -33,14 +33,6 @@ namespace Personagens {
 
     Inimigo::~Inimigo() {}
 
-    void Inimigo::salvarDataBuffer() {
-        Personagem::salvarDataBuffer();
-    }
-
-    void Inimigo::desenhar(sf::RenderWindow& window) {
-        window.draw(getSprite());
-    }
-
     bool Inimigo::estaEmAlcance(const sf::Vector2f& alvo) const {
         sf::Vector2f origem = getPosicao();
         float dx = alvo.x - origem.x;

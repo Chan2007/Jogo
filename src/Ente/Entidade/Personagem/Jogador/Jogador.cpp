@@ -90,18 +90,6 @@ namespace Personagens {
         getSprite().setOrigin(static_cast<float>(frameWidth) / 2.0f, static_cast<float>(frameHeight) / 2.0f);
     }
 
-    void Jogador::desenhar(sf::RenderWindow& window) {
-        window.draw(getSprite());
-    }
-
-    bool Jogador::colidir(Inimigo* I) {
-        return (I != 0);
-    }
-
-    void Jogador::atualizar() {
-        executar();
-    }
-
     void Jogador::executar() {
         regenerarVida(1.0f);
         mover();

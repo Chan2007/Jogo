@@ -9,13 +9,15 @@
 namespace Obstaculos {
     class Obstaculo_Facil: public Obstaculo {
         private:
-            float altura;
             float dano;
         public:
             Obstaculo_Facil();
             ~Obstaculo_Facil();
-            void executar(float dt);
-            float getAltura();
+
+            void executar();
+            void mover();
+            void salvar();
+
             float getDano();
             void setPlataforma(Personagens::Jogador* J);
     };

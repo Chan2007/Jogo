@@ -46,7 +46,8 @@ namespace Fases {
     }
 
     // 2. Cuidar apenas da evolução da física/lógica no frame atual
-    void Segunda_Fase::atualizar(const float dt) {
+    void Segunda_Fase::executar() {
+        float dt = 0.016f;
         animadorFase.update();
 
         // Executa gerenciadores de física usando o delta time recebido do Jogo

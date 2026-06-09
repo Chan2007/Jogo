@@ -12,8 +12,6 @@ namespace Obstaculos {
 
 	Plataforma::Plataforma(TipoPlataforma tipo) :
 		Obstaculo(),
-		altura(32),
-		largura(32),
 		tipoPlataforma(tipo)
 	{
 		setTipo(Entidades::ENTIDADE_OBSTACULO);
@@ -70,8 +68,7 @@ namespace Obstaculos {
 					std::cerr << "Erro: A textura falhou ao carregar: " << arquivoSprite << std::endl;
 				}
 				getSprite().setTextureRect(sf::IntRect(96, 64, 32, 32));
-				getSprite().setOrigin(16.0f, 16.f);
-				getSprite().setScale(50.f, 2.f);
+				getSprite().setScale(100.0f, 1.0f);
 				break;
 
 		}

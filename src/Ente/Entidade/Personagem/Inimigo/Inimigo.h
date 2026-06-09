@@ -27,25 +27,23 @@ namespace Personagens {
     public:
         Inimigo();
         ~Inimigo();
-        void desenhar(sf::RenderWindow& window);
-        int getAtaque() const { return ataque; }
-        float getAlcancePerseguicao() const { return alcancePerseguicao; }
+
         bool getElite() const { return elite; }
-        void setAtaque(int valor) { if (valor >= 0) ataque = valor; }
-        void setAlcancePerseguicao(float valor) { if (valor >= 0.0f) alcancePerseguicao = valor; }
         void setElite(bool valor) { elite = valor; }
         bool estaEmAlcance(const sf::Vector2f& alvo) const;
         void inverterPatrulha();
-        void aoColidir(Entidades::Entidade* E) { E->interagir_Colisao(this); }
+
+        void aoColidir(Entidade* E) { E->interagir_Colisao(this); }
         void interagir_Colisao(Inimigo* I);
         void interagir_Colisao(Obstaculos::Obstaculo* O);
         void interagir_Colisao(Entidades::Projetil* P);
         void interagir_Colisao(Jogador* J);
-        void salvarDataBuffer();
-        virtual void atualizar() = 0;
+
+        virtual void executar() = 0;
         virtual void salvar() = 0;
         virtual void mover() = 0;
         virtual void danificar(Jogador* J) = 0;
+
         static void incluirJogador(Jogador* J) { listaJogadores.push_back(J); }
     };
 }

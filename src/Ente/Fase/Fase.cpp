@@ -29,10 +29,11 @@ namespace Fases {
         Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
         if (chao) {
             gerenciadorColisao.incluirEntidade(chao);
-            chao->getSprite().setPosition(sf::Vector2f((desktop.width)/2, (desktop.height)/2));
+            chao->setPosicao(sf::Vector2f(static_cast<float>(desktop.width), static_cast<float>(desktop.height) - chao->getTamanho().height));
+
             LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
         }
-        else {std::cerr << "Falha ao criar chao" << std::endl;}
+        else {std::cerr << "Falha ao criar chão" << std::endl;}
 
         Obstaculos::Plataforma* novaPlat;
         Ente::sementear();
@@ -52,7 +53,7 @@ namespace Fases {
             sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
             while (!posicaoValida && tentativas < 500) {
                 const int sizex = janela.getSize().x - novaPlat->getTamanho().width;
-                const int sizey = janela.getSize().y - novaPlat->getTamanho().height - chao->getAltura() / 2;
+                const int sizey = janela.getSize().y - novaPlat->getTamanho().height - chao->getTamanho().height / 2;
                 novaPlat->getSprite().setPosition(rand() % sizex + novaPlat->getTamanho().width / 2, rand() % sizey + novaPlat->getTamanho().height / 2);
 
                 sf::FloatRect hitboxExpandida = novaPlat->getSprite().getGlobalBounds();

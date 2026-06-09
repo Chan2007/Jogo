@@ -6,8 +6,7 @@
 #include <QTimer>
 #include <QConicalGradient>
 
-MenuButton::MenuButton(QWidget *parent)
-    : MenuButton("", parent)
+MenuButton::MenuButton(QWidget *parent): MenuButton("", parent)
 {
 }
 

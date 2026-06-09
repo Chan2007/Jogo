@@ -11,7 +11,7 @@ Chefe::Chefe() :
     tamanho(32),
     forca(2)
 {
-    Ente::sementear();
+    sementear();
 
     velocidadeMax = 15.f;
     nivelMaldade = 200;
@@ -38,7 +38,7 @@ Chefe::Chefe() :
             getSprite().setTextureRect(rectAtual);
         }
         else {
-            std::cerr << "Erro: não foi possivel carregar a spritesheet do chefe em: " << caminhoArquivoSprite << std::endl;
+            std::cerr << "Erro: nï¿½o foi possivel carregar a spritesheet do chefe em: " << caminhoArquivoSprite << std::endl;
         }
     }
     getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
@@ -55,9 +55,35 @@ void Chefe::danificar(Personagens::Jogador* J) {
     }
 }
 
-void Chefe::atualizar() {
-    executar();
+void Chefe::executar() {
 
+    if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
+        frameAcumulado += clockAnimacao.restart().asSeconds();
+
+        if (frameAcumulado >= tempoPorFrame) {
+
+            indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
+
+            int coluna = indexFrameAtual % colunasSpritesheet;
+            int linha = indexFrameAtual / colunasSpritesheet;
+
+            rectAtual.left = coluna * frameWidth;
+            rectAtual.top = linha * frameHeight;
+
+            getSprite().setTextureRect(rectAtual);
+
+            frameAcumulado -= tempoPorFrame;
+        }
+    }
+    else {
+        indexFrameAtual = 0;
+        rectAtual.left = 0;
+        rectAtual.top = 0;
+        getSprite().setTextureRect(rectAtual);
+
+        clockAnimacao.restart();
+        frameAcumulado = 0.0f;
+    }
     float dt = 0.016f;
     tempoUltimoAtaque += clockAnimacao.restart().asSeconds();
 
@@ -99,7 +125,7 @@ void Chefe::atualizar() {
             }
         }
         // Comportamento de Perseguir
-        else if (menorDistancia <= getAlcancePerseguicao()) {
+        else if (menorDistancia <= alcancePerseguicao) {
             interagindo = true;
 
             if (dx > 0) {
@@ -112,37 +138,6 @@ void Chefe::atualizar() {
     }
 
     if (!interagindo) { moverHorizontal(0.f); }
-}
-
-void Chefe::executar() {
-
-    if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
-        frameAcumulado += clockAnimacao.restart().asSeconds();
-
-        if (frameAcumulado >= tempoPorFrame) {
-
-            indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
-
-            int coluna = indexFrameAtual % colunasSpritesheet;
-            int linha = indexFrameAtual / colunasSpritesheet;
-
-            rectAtual.left = coluna * frameWidth;
-            rectAtual.top = linha * frameHeight;
-
-            getSprite().setTextureRect(rectAtual);
-
-            frameAcumulado -= tempoPorFrame;
-        }
-    }
-    else {
-        indexFrameAtual = 0;
-        rectAtual.left = 0;
-        rectAtual.top = 0;
-        getSprite().setTextureRect(rectAtual);
-
-        clockAnimacao.restart();
-        frameAcumulado = 0.0f;
-    }
 }
 
 void Chefe::salvar() {

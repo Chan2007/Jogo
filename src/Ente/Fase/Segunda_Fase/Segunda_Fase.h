@@ -14,7 +14,6 @@ namespace Fases {
             const int maxChefoes;
 
             void processarEventos(const sf::Event &evento);
-            void atualizar(float dt);
             void renderizar(sf::RenderWindow &janela);
 
             Gerenciadores::Gerenciador_Textura gerenciadorTextura;
@@ -33,6 +32,8 @@ namespace Fases {
         public:
             Segunda_Fase();
             ~Segunda_Fase();
+            void executar();
+
     };
 } // Fases
 
