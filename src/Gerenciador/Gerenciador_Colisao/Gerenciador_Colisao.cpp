@@ -75,7 +75,6 @@ namespace Gerenciadores {
     bool Gerenciador_Colisao::colidiu(const Entidades::Entidade* entidade, const Entidades::Entidade* movel) {
         if (!entidade || !movel) return false;
 
-        // A SFML tem uma função nativa maravilhosa e super otimizada para detectar colisão de caixas!
         return entidade->getTamanho().intersects(movel->getTamanho());
     }
 
@@ -85,7 +84,6 @@ namespace Gerenciadores {
         const sf::FloatRect tamE = entidade->getTamanho();
         const sf::FloatRect tamM = movel->getTamanho();
 
-        // Calcula o centro EXATO das hitboxes virtuais (ignorando a posição do desenho)
         float centroEx = tamE.left + tamE.width / 2.0f;
         float centroEy = tamE.top + tamE.height / 2.0f;
 
@@ -163,16 +161,14 @@ namespace Gerenciadores {
     }
 
     void Gerenciador_Colisao::verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel) {
-        if (!entidade || !movel) return;
+        if (!entidade || !movel || entidade == movel) return;
 
-        if (entidade == movel) return;
-
-        movel->setColisao(false);
         if (colidiu(entidade, movel)) {
-            calculaColisao(entidade, movel);
-            movel->setColisao(true);
-            movel->aoColidir(entidade);
-            entidade->aoColidir(movel);
+        calculaColisao(entidade, movel);
+        movel->setColisao(true);
+
+        movel->aoColidir(entidade);
+        entidade->aoColidir(movel);
         }
     }
     void Gerenciador_Colisao::verificarObstaculo(Entidades::Entidade* entidade) const {
@@ -219,7 +215,7 @@ namespace Gerenciadores {
                 Personagens::Inimigo* inimigo = *itInim;
                 if (inimigo == NULL) continue;
 
-                verificarColisao(jogador, inimigo);
+                verificarColisao(inimigo, jogador);
 
                 if (!jogador->estaVivo() || Linimigos.empty())
                     break;
@@ -235,7 +231,7 @@ namespace Gerenciadores {
                 Entidades::Projetil* projetil = *itProj;
                 if (projetil == NULL) continue;
 
-                verificarColisao(jogador, projetil);
+                verificarColisao(projetil, jogador);
 
                 if (!jogador->estaVivo()) break;
             }
@@ -273,7 +269,7 @@ namespace Gerenciadores {
             for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
                 Entidades::Projetil* projetil = *itProj;
                 if (projetil != NULL)
-                    verificarColisao(projetil, obstaculo);
+                    verificarColisao(obstaculo, projetil);
             }
         }
 

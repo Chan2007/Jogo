@@ -7,13 +7,11 @@
 
 Chefe::Chefe() :
     Inimigo(),
-    raio(200.f),
-    tamanho(32),
     forca(2)
 {
     sementear();
 
-    velocidadeMax = 15.f;
+    velocidadeMax = 220.f;
     nivelMaldade = 200;
     poder = 130;
     setVida(1200);
@@ -22,16 +20,17 @@ Chefe::Chefe() :
     elite = rand() % 10 < 1;
     cooldownAtaque = 1.8f;
     tempoUltimoAtaque = 0.0f;
-    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/eldersheet.png");
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/eldersheet2.png");
 
     if (rand() % 10 < 5) { poder *= forca; }
 
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
+
             getSprite().setTexture(getTextura());
             totalFramesAnimacao = 18;
             colunasSpritesheet = 9;
-            tempoPorFrame = 0.8f;
+            tempoPorFrame = 0.08f;
             frameWidth = 128;
             frameHeight = 128;
             rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
@@ -53,6 +52,20 @@ void Chefe::danificar(Personagens::Jogador* J) {
         J->receberDano(causarDanoBasico());
         std::cout << "Dragao Sabio atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
     }
+}
+
+sf::FloatRect Chefe::getTamanho() const {
+    sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
+    // sprite: 128*2.5 = 320x320, origin no centro
+    // hitbox menor e centralizada verticalmente no personagem
+    float largura = 120.f;
+    float altura = 140.f;
+    return sf::FloatRect(
+        caixaImagem.left + (caixaImagem.width / 2.f) - (largura / 2.f),
+        caixaImagem.top + (caixaImagem.height / 2.f) - (altura / 2.f),
+        largura,
+        altura
+    );
 }
 
 void Chefe::executar() {

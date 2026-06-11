@@ -1,38 +1,36 @@
-//
-// Created by Henrique on 05/05/2026.
-//
 
 #include "Inimigo_Medio.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 
 Inimigo_Medio::Inimigo_Medio() :
     Inimigo(),
-    raio(250.f),
     tamanho(40)
 {
     Ente::sementear();
 
-    velocidadeMax = 8.f;
+    velocidadeMax = 60.f;
     nivelMaldade = 64;
     poder = 65;
     setVida(450);
     alcancePerseguicao = 0;
-    alcanceAtaque = 60;
+    alcanceAtaque = 300;
     elite = rand() % 10 < 3;
     cooldownAtaque = 2.0f;
     tempoUltimoAtaque = 0.0f;
-    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/bluesheet.png");
+    limiteDeslocamento = 250.f;
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/bluesheet2.png");
 
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
             getSprite().setTexture(getTextura());
             totalFramesAnimacao = 18;
             colunasSpritesheet = 9;
-            tempoPorFrame = 0.8f;
+            tempoPorFrame = 0.08f;
             frameWidth = 128;
             frameHeight = 128;
             rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
             getSprite().setTextureRect(rectAtual);
+            getSprite().setScale(2.5f, 2.5f);
         }
         else {
             std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo médio em: " << caminhoArquivoSprite << std::endl;
@@ -51,11 +49,24 @@ void Inimigo_Medio::danificar(Personagens::Jogador* J) {
     }
 }
 
+sf::FloatRect Inimigo_Medio::getTamanho() const {
+    sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
+    // sprite: 128*2.5 = 320x320, origin no centro
+    // hitbox menor e centralizada verticalmente no personagem
+    float largura = 110.f;
+    float altura = 140.f;
+    return sf::FloatRect(
+        caixaImagem.left + (caixaImagem.width / 2.f) - (largura / 2.f),
+        caixaImagem.top + (caixaImagem.height / 2.f) - (altura / 2.f),
+        largura,
+        altura
+    );
+}
+
 void Inimigo_Medio::atualizar() {
-    executar();
 
     float dt = 0.016f;
-    tempoUltimoAtaque += clockAnimacao.restart().asSeconds();
+    tempoUltimoAtaque += dt;
 
     sf::Vector2f posInimigo = getSprite().getPosition();
 
@@ -112,6 +123,10 @@ void Inimigo_Medio::atualizar() {
 
         moverHorizontal(direcaoPatrulha);
     }
+
+    sf::Vector2f pos = getPosicao();
+    pos.x += getVelocidade().x * dt;
+    setPosicao(pos);
 }
 
 void Inimigo_Medio::executar() {
@@ -144,6 +159,7 @@ void Inimigo_Medio::executar() {
         clockAnimacao.restart();
         frameAcumulado = 0.0f;
     }
+    atualizar();
 }
 
 void Inimigo_Medio::mover() {

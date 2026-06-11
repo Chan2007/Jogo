@@ -1,6 +1,3 @@
-//
-// Created by Henrique on 05/05/2026.
-//
 
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H

@@ -14,16 +14,17 @@ namespace Entidades {
     Projetil::Projetil() :
         Entidade("Projetil"),
         dano(35),
-        velocidade(20.f, 20.f),
+        velocidade(350.f, 350.f),
         alcanceMaximo(900.0f),
         distanciaPercorrida(0.0f),
-        tempoVida(3.0f),
+        tempoVida(15.0f),
         perfurante(false),
         doJogador(true)
     {
         setTipo(ENTIDADE_PROJETIL);
+        setVelocidade(velocidade);
 
-        std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo.png");
+        std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png");
         if (!arquivosprite.empty()) {
             if (getTextura().loadFromFile(arquivosprite)) {
                 getSprite().setTexture(getTextura());
@@ -34,17 +35,19 @@ namespace Entidades {
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
+        getSprite().setScale(10.f, 10.f);
     }
 
     Projetil::~Projetil() {}
 
     void Projetil::mover() {
+        const float dt = 0.016f;
         sf::Vector2f posicao = getPosicao();
-        posicao.x += velocidade.x;
-        posicao.y += velocidade.y;
+        posicao.x += velocidade.x * dt;
+        posicao.y += velocidade.y * dt;
         setPosicao(posicao);
-        registrarDeslocamento((velocidade.x < 0.0f ? -velocidade.x : velocidade.x) +
-            (velocidade.y < 0.0f ? -velocidade.y : velocidade.y));
+        registrarDeslocamento((velocidade.x < 0.0f ? -velocidade.x : velocidade.x) * dt +
+            (velocidade.y < 0.0f ? -velocidade.y : velocidade.y) * dt);
     }
 
     void Projetil::atualizar() {
@@ -60,6 +63,7 @@ namespace Entidades {
     }
 
     void Projetil::executar() {
+        atualizar();
     }
 
     bool Projetil::expirou() const {

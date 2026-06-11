@@ -1,6 +1,4 @@
-//
-// Created by Henrique on 05/05/2026.
-//
+
 
 #include "Inimigo_Facil.h"
 #include "Ente/Entidade/Entidade.h"
@@ -11,12 +9,11 @@
 Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
-    tamanho(32),
     tiro(NULL)
 {
     Ente::sementear();
 
-    velocidadeMax = 12.f;
+    velocidadeMax = 250.f;
     nivelMaldade = 32;
     poder = 20;
     setVida(170);
@@ -25,17 +22,17 @@ Inimigo_Facil::Inimigo_Facil() :
     elite = rand() % 10 < 5;
     cooldownAtaque = 1.5f;
     tempoUltimoAtaque = 0.0f;
-    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet.png");
-
+    limiteDeslocamento = 600.f;
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet2.png");
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
             getSprite().setTexture(getTextura());
             totalFramesAnimacao = 18;
             colunasSpritesheet = 9;
-            tempoPorFrame = 0.8f;
+            tempoPorFrame = 0.08f;
             frameWidth = 1262;
             frameHeight = 1028;
-            getSprite().setScale(0.05f, 0.05f);
+            getSprite().setScale(0.08f, 0.08f);
             rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
             getSprite().setTextureRect(rectAtual);
         }
@@ -57,6 +54,20 @@ void Inimigo_Facil::danificar(Personagens::Jogador* J) {
     }
 }
 
+sf::FloatRect Inimigo_Facil::getTamanho() const {
+    sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
+    // sprite: 128*2.5 = 320x320, origin no centro
+    // hitbox menor e centralizada verticalmente no personagem
+    float largura = 60.f;
+    float altura = 60.f;
+    return sf::FloatRect(
+        caixaImagem.left + (caixaImagem.width / 2.f) - (largura / 2.f),
+        caixaImagem.top + (caixaImagem.height / 2.f) - (altura / 2.f),
+        largura,
+        altura
+    );
+}
+
 void Inimigo_Facil::executar() {
 
     if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
@@ -75,7 +86,7 @@ void Inimigo_Facil::executar() {
             getSprite().setTextureRect(rectAtual);
 
             frameAcumulado -= tempoPorFrame;
-        }
+        }   
     }
     else {
 
@@ -88,10 +99,10 @@ void Inimigo_Facil::executar() {
         frameAcumulado = 0.0f;
     }
 
-    float dt = 0.016f;
-    tempoUltimoAtaque += clockAnimacao.restart().asSeconds();
+    const float dt = 0.016f;
+    tempoUltimoAtaque += dt;
 
-    sf::Vector2f posInimigo = getSprite().getPosition();
+    sf::Vector2f posInimigo = getPosicao();
 
     Personagens::Jogador* alvoMaisProximo = NULL;
     float menorDistancia = -1.f;
@@ -100,7 +111,7 @@ void Inimigo_Facil::executar() {
         Personagens::Jogador* j = listaJogadores[i];
 
         if (j != NULL && j->estaVivo()) {
-            sf::Vector2f posJogador = j->getSprite().getPosition();
+            sf::Vector2f posJogador = j->getPosicao();
 
             float dx = posJogador.x - posInimigo.x;
             float dy = posJogador.y - posInimigo.y;
@@ -133,7 +144,8 @@ void Inimigo_Facil::executar() {
 
                 float dirX = dx / menorDistancia;
                 float dirY = dy / menorDistancia;
-                novoTiro->setVelocidade(sf::Vector2f(dirX * getVelocidade().x, dirY * getVelocidade().y));
+
+                novoTiro->setVelocidade(sf::Vector2f(dirX * novoTiro->getVelocidade().x, dirY * novoTiro->getVelocidade().y));
 
                 Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(novoTiro);
                 Gerenciadores::Gerenciador_Gravidade::getGerenciador().aplicarGravidade(novoTiro, true);
@@ -170,6 +182,10 @@ void Inimigo_Facil::executar() {
 
         moverHorizontal(direcaoPatrulha);
     }
+
+    sf::Vector2f pos = getPosicao();
+    pos.x += getVelocidade().x * dt;
+    setPosicao(pos);
 }
 
 void Inimigo_Facil::mover() {

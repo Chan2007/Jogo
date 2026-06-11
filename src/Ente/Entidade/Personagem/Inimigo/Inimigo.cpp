@@ -1,6 +1,4 @@
-//
-// Created by Henrique on 05/05/2026.
-//
+
 
 #include "Inimigo.h"
 
@@ -43,6 +41,15 @@ namespace Personagens {
     void Inimigo::inverterPatrulha() {
         direcaoPatrulha *= -1.f;
         deslocamentoPatrulha = 0.f;
+
+        float escalaX = std::abs(getSprite().getScale().x);
+        float escalaY = getSprite().getScale().y;
+
+        // direcaoPatrulha > 0 = indo para direita = inverte X
+        if (direcaoPatrulha > 0.f)
+            getSprite().setScale(escalaX, escalaY);
+        else
+            getSprite().setScale(-escalaX, escalaY);
     }
 
     void Inimigo::interagir_Colisao(Inimigo* I) {
@@ -88,7 +95,5 @@ namespace Personagens {
     }
 
     void Inimigo::interagir_Colisao(Jogador* J) {
-        if (J)
-            J->receberDano(ataque);
     }
 }

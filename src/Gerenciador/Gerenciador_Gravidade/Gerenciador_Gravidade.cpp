@@ -63,7 +63,6 @@ namespace Gerenciadores {
         setVy(entidade, vy);
     }
     void Gerenciador_Gravidade::executar(float dt) {
-        entidadesNoChao.clear();
         for (int i = 0; i < static_cast<int>(entidadesAfetadas.size()); ++i)
             atualizarGravidade(entidadesAfetadas[i], dt);
     }

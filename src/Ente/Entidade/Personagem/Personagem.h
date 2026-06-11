@@ -1,6 +1,4 @@
-//
-// Created by Henrique on 05/05/2026.
-//
+
 
 #ifndef JOGO_PERSONAGEM_H
 #define JOGO_PERSONAGEM_H
@@ -54,11 +52,13 @@ namespace Personagens {
         int chanceCritica;
         float regeneracaoVida;
         int estado;
+        sf::Clock clockDano;
+        float tempoDano;
     public:
         Personagem();
         virtual ~Personagem();
 
-        sf::FloatRect getTamanho() const;
+        virtual sf::FloatRect getTamanho() const;
         sf::Vector2f getVelocidade() const { return velocidade; }
         sf::Vector2f getAceleracao() const { return aceleracao; }
         void setVelocidade(sf::Vector2f v) { velocidade.x = v.x; velocidade.y = v.y; }

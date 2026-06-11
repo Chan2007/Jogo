@@ -1,6 +1,5 @@
-//
-// Created by Henrique on 05/05/2026.
-//
+
+#include <iostream>
 
 #include "Personagem.h"
 
@@ -79,9 +78,13 @@ namespace Personagens {
     }
 
     int Personagem::receberDano(int dano) {
-        if (dano <= 0 || !estaVivo())
-            return 0;
+        if (dano <= 0 || !estaVivo()) return 0;
         setVida(vida - dano);
+        std::cout << getNome() << " recebeu " << dano << " de dano. Vida: " << vida << std::endl;
+        getSprite().setColor(sf::Color(255, 80, 80, 255));
+        tempoDano = 0.2f;
+        clockDano.restart();
+
         return dano;
     }
 

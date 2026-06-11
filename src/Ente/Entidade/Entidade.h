@@ -75,7 +75,6 @@ namespace Entidades {
             bool getAtivo() const {return ativo;}
             virtual sf::FloatRect getTamanho() const { return sprite.getGlobalBounds(); }
 
-
             void setPosicao(sf::Vector2f pos) {sprite.setPosition(pos);}
             const sf::Sprite& getSprite() const {return sprite;}
             void setTipo(TipoEntidade t) {tipo = t;}

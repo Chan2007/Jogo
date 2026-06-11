@@ -12,8 +12,6 @@ namespace Personagens {
 
 class Chefe : public Personagens::Inimigo {
 private:
-    float raio;
-    int tamanho;
     short int forca;
 public:
     Chefe();
@@ -22,8 +20,7 @@ public:
     void executar();
     void salvar();
     void mover(){};
-    float getRaio() { return raio; }
-    int getTamanho() { return tamanho; }
+    sf::FloatRect getTamanho() const;
     short int getForca() { return forca; }
 };
 

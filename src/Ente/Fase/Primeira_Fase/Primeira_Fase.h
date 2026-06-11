@@ -1,6 +1,3 @@
-//
-// Created by Henrique on 09/05/2026.
-//
 
 #ifndef JOGO_PRIMEIRA_FASE_H
 #define JOGO_PRIMEIRA_FASE_H
@@ -20,7 +17,6 @@ namespace Fases {
             void renderizar(sf::RenderWindow &janela);
 
             Gerenciadores::Gerenciador_Textura gerenciadorTextura;
-            Jogo jogo;
 
             std::string diretorio_Frames_Fase;
         protected:
@@ -34,8 +30,8 @@ namespace Fases {
             void criarProjeteis(){}
             void criarCenario();
 
-            void criarInimMedios(){}
-            void criarObstMedios(){}
+            void criarInimMedios();
+            void criarObstMedios() {}
             void criarJogadores();
         public:
             Primeira_Fase();

@@ -1,6 +1,3 @@
-//
-// Created by Henrique on 05/05/2026.
-//
 
 #include "Jogador.h"
 
@@ -38,13 +35,13 @@ namespace Personagens {
             setVidaMaxima(620);
             setVida(620);
             setPoder(65);
-            setVelocidade(sf::Vector2f(0.1f, 0.1f));
+
 
             totalFramesAnimacao = 8;
             colunasSpritesheet = 4;
             frameWidth = 230;
             frameHeight = 120;
-            tempoPorFrame = 0.08f;
+            tempoPorFrame = 0.12f;
             caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
             caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
             break;
@@ -91,6 +88,15 @@ namespace Personagens {
     }
 
     void Jogador::executar() {
+
+        if (tempoDano > 0.f) {
+            tempoDano -= clockDano.restart().asSeconds();
+            if (tempoDano <= 0.f) {
+                tempoDano = 0.f;
+                getSprite().setColor(sf::Color(255, 255, 255, 255)); // restaura cor
+            }
+        }
+
         regenerarVida(1.0f);
         mover();
 
@@ -175,28 +181,22 @@ namespace Personagens {
     }
 
     void Jogador::interagir_Colisao(Inimigo* I) {
-        if (I)
-            receberDano(I->causarDanoBasico());
     }
 
     void Jogador::interagir_Colisao(Obstaculos::Obstaculo* O) {
         if (!O) return;
+            sf::FloatRect hitboxJogador = getSprite().getGlobalBounds();
+            sf::FloatRect hitboxObs = O->getSprite().getGlobalBounds();
 
-        // Pega as caixas de colisão
-        sf::FloatRect hitboxJogador = getSprite().getGlobalBounds();
-        sf::FloatRect hitboxObs = O->getSprite().getGlobalBounds();
+            float peDoJogador = hitboxJogador.top + hitboxJogador.height;
+            float topoPlataforma = hitboxObs.top;
 
-        // Calcula a altura do pé do jogador e do meio da plataforma
-        float peDoJogador = hitboxJogador.top + hitboxJogador.height;
-        float centroDaPlataforma = hitboxObs.top + (hitboxObs.height / 2.0f);
-
-        // Se o pé do jogador estiver na metade de CIMA da plataforma, ele aterrou!
-        if (peDoJogador <= centroDaPlataforma) {
-            if (pGravidade != NULL) {
-                // Avisa a gravidade que o jogador está no chão e pode pular de novo
-                pGravidade->aoTocarChao(this, sf::Vector2f(0.f, -1.f));
+            // Verifica se o jogador está pousando em cima (margem de tolerância)
+            if (peDoJogador <= topoPlataforma + 10.f) {
+                if (pGravidade != NULL) {
+                    pGravidade->aoTocarChao(this, sf::Vector2f(0.f, -1.f));
+                }
             }
-        }
     }
 
     void Jogador::interagir_Colisao(Entidades::Projetil* P) {

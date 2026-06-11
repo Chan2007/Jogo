@@ -77,7 +77,6 @@ namespace Gerenciadores {
             }
             static bool colidiu(const Entidades::Entidade *entidade, const Entidades::Entidade *movel);
             static void calculaColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
-
             static bool verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela,
                                                Gerenciador_Gravidade* pGravidade = NULL);
             Gerenciador_Colisao();

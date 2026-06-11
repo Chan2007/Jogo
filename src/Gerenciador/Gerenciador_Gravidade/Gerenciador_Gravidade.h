@@ -34,6 +34,7 @@ namespace Gerenciadores {
             static Gerenciador_Gravidade& Gerenciador_Gravidade::getGerenciador();
             void atualizarGravidade(Entidades::Entidade* entidade, float dt) const;
             void aplicarGravidade(Entidades::Entidade* entidade, bool afetada);
+            void resetarChao() { entidadesNoChao.clear(); }
             float getGravidade() const {return gravidade;}
             void setGravidade(const float g) {gravidade = g;}
             void aoTocarChao(Entidades::Entidade* entidade, const sf::Vector2f& normal);

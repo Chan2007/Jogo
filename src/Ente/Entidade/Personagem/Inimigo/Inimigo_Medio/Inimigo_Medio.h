@@ -12,7 +12,6 @@ namespace Personagens {
 
 class Inimigo_Medio :public Personagens::Inimigo {
 private:
-    float raio;
     int tamanho;
 public:
     Inimigo_Medio();
@@ -22,8 +21,8 @@ public:
     void executar();
     void salvar();
     void mover();
-    float getRaio() { return raio; }
-    int getTamanho() { return tamanho; };
+    sf::FloatRect getTamanho() const;
+    int gettamanho() { return tamanho; };
 };
 
 

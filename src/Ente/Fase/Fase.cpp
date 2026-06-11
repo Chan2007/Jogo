@@ -1,6 +1,4 @@
-//
-// Created by Henrique on 09/05/2026.
-//
+
 
 #include "Fase.h"
 
@@ -37,14 +35,24 @@ namespace Fases {
 
         Obstaculos::Plataforma* novaPlat;
         Ente::sementear();
-        const int fator = rand() % 8 + 3;
+
+        for (int i = 1; i <= 3; i++) {
+            if (rand() % 10 < 5) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1); }
+            else if ((rand() % 10) < 4) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2); }
+            else { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3); }
+
+            if (!novaPlat) { std::cerr << "Falha ao criar nova plataforma." << std::endl; }
+
+            novaPlat->getSprite().setPosition(500 * i, 1500 - (250 * i));
+            LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
+            gerenciadorColisao.incluirEntidade(novaPlat);
+        }
+
+        const int fator = rand() % 10;
         for (int i = 0; i < fator; i++) {
-            if (rand() % 10 <5)
-                novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1);
-            else if ((rand()%10)<4)
-                novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2);
-            else
-                novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3);
+            if (rand() % 10 < 5) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1); }
+            else if ((rand() % 10) < 4) { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2); }
+            else { novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3); }
 
             if (!novaPlat) {std::cerr << "Falha ao criar nova plataforma." << std::endl;}
 
@@ -53,8 +61,8 @@ namespace Fases {
             sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
             while (!posicaoValida && tentativas < 500) {
                 const int sizex = janela.getSize().x - novaPlat->getTamanho().width;
-                const int sizey = janela.getSize().y - novaPlat->getTamanho().height - chao->getTamanho().height / 2;
-                novaPlat->getSprite().setPosition(rand() % sizex + novaPlat->getTamanho().width / 2, rand() % sizey + novaPlat->getTamanho().height / 2);
+                const int sizey = janela.getSize().y - novaPlat->getTamanho().height - chao->getTamanho().height / 2 - 200;
+                novaPlat->getSprite().setPosition(rand() % sizex + novaPlat->getTamanho().width / 2, (rand() % sizey + novaPlat->getTamanho().height / 2) + 200);
 
                 sf::FloatRect hitboxExpandida = novaPlat->getSprite().getGlobalBounds();
                 hitboxExpandida.left -= 20.f;
@@ -77,7 +85,7 @@ namespace Fases {
 
     Fase::~Fase() {
         // Esvazia e deleta os ponteiros de entidades acumulados na fase
-        LEntidades.limparLista();
+        //LEntidades.limparLista();
         // Limpa as referências de ponteiros nos gerenciadores para o próximo estado
         gerenciadorColisao.limpar();
         gerenciadorGravidade.limpar();
@@ -108,13 +116,13 @@ namespace Fases {
         Inimigo_Facil* minion = NULL;
         Ente::sementear();
         const int fator = rand() % 8 + 3;
-        sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
         for (int i = 0; i < fator; i++) {
             minion = new Inimigo_Facil();
             if (minion) {
-                minion->setPosicao(sf::Vector2f(720.f, 560.f));
-                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));
+                minion->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
                 gerenciadorColisao.incluirEntidade(minion);
+                gerenciadorGravidade.aplicarGravidade(minion, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));
             }
         }
         minion = NULL;

@@ -46,6 +46,20 @@ namespace Listas {
         }
     }
 
+    void ListaEntidades::executarTodas() const {
+        if (!LEntidade) return;
+
+        Elemento<Entidades::Entidade>* pAux = LEntidade->getPrimeiro();
+
+        while (pAux != NULL) {
+            Entidades::Entidade* pEntidade = pAux->getInfo();
+            if (pEntidade) {
+                pEntidade->executar();
+            }
+            pAux = pAux->getProximo();
+        }
+    }
+
     Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) const {
         if (!LEntidade) return NULL;
         return LEntidade->localizarElemento(E);
