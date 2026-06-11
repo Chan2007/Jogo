@@ -191,6 +191,17 @@ namespace Gerenciadores {
         std::list<Personagens::Inimigo*>::iterator itInim;
         std::set<Entidades::Projetil*>::iterator itProj;
 
+        // verifica se os projeteis estão ativos
+        itProj = Lprojetil.begin();
+        while (itProj != Lprojetil.end()) {
+            if (*itProj == NULL || !(*itProj)->getAtivo()) {
+                itProj = Lprojetil.erase(itProj);
+            }
+            else {
+                ++itProj;
+            }
+        }
+
         // Colisão entre jogadores e obstáculos
         for (itJog = Ljogadores.begin(); itJog != Ljogadores.end(); ++itJog) {
             Personagens::Jogador* jogador = *itJog;

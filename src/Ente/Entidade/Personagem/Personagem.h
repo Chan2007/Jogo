@@ -54,6 +54,7 @@ namespace Personagens {
         int estado;
         sf::Clock clockDano;
         float tempoDano;
+        bool invulneravel;
     public:
         Personagem();
         virtual ~Personagem();
@@ -86,6 +87,8 @@ namespace Personagens {
         void regenerarVida(float deltaTempo);
         void moverHorizontal(float direcao);
         void resetarCombate();
+        void setInvulneravel(bool i) { invulneravel = i; }
+        bool getInvulneravel() { return invulneravel; }
         virtual void executar() = 0;
         virtual void salvar() = 0;
         virtual void mover() = 0;

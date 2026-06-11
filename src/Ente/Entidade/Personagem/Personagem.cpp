@@ -27,7 +27,8 @@ namespace Personagens {
         alcanceAtaque(125),
         chanceCritica(0),
         regeneracaoVida(2.0f),
-        estado(static_cast<int>(ESTADO_OCIOSO))
+        estado(static_cast<int>(ESTADO_OCIOSO)),
+        invulneravel(false)
     {
     }
 

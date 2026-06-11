@@ -90,7 +90,7 @@ namespace Fases {
                 gerenciadorGravidade.aplicarGravidade(azulo, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
             }
-            azulo = NULL;
         }
+        azulo = NULL;
     }
 }

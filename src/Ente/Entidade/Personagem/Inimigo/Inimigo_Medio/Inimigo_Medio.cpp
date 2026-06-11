@@ -13,7 +13,7 @@ Inimigo_Medio::Inimigo_Medio() :
     poder = 65;
     setVida(450);
     alcancePerseguicao = 0;
-    alcanceAtaque = 300;
+    alcanceAtaque = 200;
     elite = rand() % 10 < 3;
     cooldownAtaque = 2.0f;
     tempoUltimoAtaque = 0.0f;
@@ -102,10 +102,12 @@ void Inimigo_Medio::atualizar() {
 
             if (tempoUltimoAtaque >= cooldownAtaque) {
 
-                if (dx > 0) getSprite().setScale(-1.f, 1.f);
-                else getSprite().setScale(1.f, 1.f);
+                sf::Vector2f escala = getSprite().getScale();
 
-                danificar(alvoMaisProximo);
+                if (dx > 0) getSprite().setScale(-escala.x, escala.y);
+                else getSprite().setScale(escala.x, escala.y);
+
+                if (!alvoMaisProximo->getInvulneravel()) { danificar(alvoMaisProximo); }
                 tempoUltimoAtaque = 0.0f;
             }
         }

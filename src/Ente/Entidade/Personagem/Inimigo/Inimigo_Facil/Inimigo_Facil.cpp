@@ -17,10 +17,10 @@ Inimigo_Facil::Inimigo_Facil() :
     nivelMaldade = 32;
     poder = 20;
     setVida(170);
-    alcancePerseguicao = 200;
+    alcancePerseguicao = 300;
     alcanceAtaque = 110;
     elite = rand() % 10 < 5;
-    cooldownAtaque = 1.5f;
+    cooldownAtaque = 10.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 600.f;
     caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet2.png");
@@ -135,12 +135,11 @@ void Inimigo_Facil::executar() {
             setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
             interagindo = true;
 
-            if (tempoUltimoAtaque >= cooldownAtaque) {
+            if (tempoUltimoAtaque >= cooldownAtaque && !alvoMaisProximo->getInvulneravel()) {
 
                 Entidades::Projetil* novoTiro = new Entidades::Projetil();
                 novoTiro->setPosicao(posInimigo);
                 novoTiro->setDoJogador(false);
-                novoTiro->setDano(poder);
 
                 float dirX = dx / menorDistancia;
                 float dirY = dy / menorDistancia;

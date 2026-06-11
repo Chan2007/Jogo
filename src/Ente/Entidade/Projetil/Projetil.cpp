@@ -14,7 +14,7 @@ namespace Entidades {
     Projetil::Projetil() :
         Entidade("Projetil"),
         dano(35),
-        velocidade(350.f, 350.f),
+        velocidade(140.f, 140.f),
         alcanceMaximo(900.0f),
         distanciaPercorrida(0.0f),
         tempoVida(15.0f),
@@ -35,7 +35,7 @@ namespace Entidades {
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
-        getSprite().setScale(10.f, 10.f);
+        getSprite().setScale(6.f, 6.f);
     }
 
     Projetil::~Projetil() {}
@@ -76,8 +76,7 @@ namespace Entidades {
     }
 
     void Projetil::interagir_Colisao(Personagens::Inimigo* I) {
-        if (!I)
-            return;
+        if (!I || !getAtivo()) return;
         if (doJogador) {
             I->receberDano(dano);
             if (!perfurante)
@@ -97,11 +96,25 @@ namespace Entidades {
     }
 
     void Projetil::interagir_Colisao(Personagens::Jogador* J) {
-        if (!J)
-            return;
+        if (!J || !getAtivo()) return;
+
         if (!doJogador) {
             J->receberDano(dano);
             if (!perfurante) { setAtivo(false); }
         }
+    }
+
+    sf::FloatRect Projetil::getTamanho() const {
+        sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
+        // sprite: 128*2.5 = 320x320, origin no centro
+        // hitbox menor e centralizada verticalmente no personagem
+        float largura = 60.f;
+        float altura = 60.f;
+        return sf::FloatRect(
+            caixaImagem.left + (caixaImagem.width / 2.f) - (largura / 2.f),
+            caixaImagem.top + (caixaImagem.height / 2.f) - (altura / 2.f),
+            largura,
+            altura
+        );
     }
 }

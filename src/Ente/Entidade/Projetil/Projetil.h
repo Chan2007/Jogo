@@ -17,6 +17,8 @@ namespace Entidades {
         float tempoVida;
         bool perfurante;
         bool doJogador;
+        float tempoUltimoAtaque;
+        float cooldownAtaque;
     public:
         Projetil();
         ~Projetil();
@@ -37,6 +39,7 @@ namespace Entidades {
         void setAlcanceMaximo(float valor) { if (valor > 0.0f) alcanceMaximo = valor; }
         void setTempoVida(float valor) { if (valor >= 0.0f) tempoVida = valor; }
         void setPerfurante(bool valor) { perfurante = valor; }
+        sf::FloatRect getTamanho() const;
         bool expirou() const;
         void registrarDeslocamento(float delta);
         void setDoJogador(bool valor) { doJogador = valor; }

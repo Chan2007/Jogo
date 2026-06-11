@@ -97,7 +97,7 @@ namespace Personagens {
             }
         }
 
-        regenerarVida(1.0f);
+        //regenerarVida(1.0f);
         mover();
 
         if (estado == static_cast<int>(ESTADO_MOVIMENTO)) {
@@ -146,6 +146,7 @@ namespace Personagens {
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             direcaoHorizontal = -1.0f;
         }
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::F)) { setInvulneravel(false); }
         moverHorizontal(direcaoHorizontal);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
@@ -181,6 +182,8 @@ namespace Personagens {
     }
 
     void Jogador::interagir_Colisao(Inimigo* I) {
+        if (!I) return;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) { setInvulneravel(true); }
     }
 
     void Jogador::interagir_Colisao(Obstaculos::Obstaculo* O) {
