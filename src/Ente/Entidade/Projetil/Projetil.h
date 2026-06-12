@@ -12,10 +12,6 @@ namespace Entidades {
     protected:
         int dano;
         sf::Vector2f velocidade;
-        float alcanceMaximo;
-        float distanciaPercorrida;
-        float tempoVida;
-        bool perfurante;
         bool doJogador;
         float tempoUltimoAtaque;
         float cooldownAtaque;
@@ -31,17 +27,8 @@ namespace Entidades {
         void setVy(float vy) { velocidade.y = vy; }
         void setVx(float vx) { velocidade.x = vx; }
         int getDano() const { return dano; }
-        float getAlcanceMaximo() const { return alcanceMaximo; }
-        float getDistanciaPercorrida() const { return distanciaPercorrida; }
-        float getTempoVida() const { return tempoVida; }
-        bool getPerfurante() const { return perfurante; }
         void setDano(int valor) { if (valor >= 0) dano = valor; }
-        void setAlcanceMaximo(float valor) { if (valor > 0.0f) alcanceMaximo = valor; }
-        void setTempoVida(float valor) { if (valor >= 0.0f) tempoVida = valor; }
-        void setPerfurante(bool valor) { perfurante = valor; }
         sf::FloatRect getTamanho() const;
-        bool expirou() const;
-        void registrarDeslocamento(float delta);
         void setDoJogador(bool valor) { doJogador = valor; }
         bool getDoJogador() const { return doJogador; }
         void aoColidir(Entidades::Entidade* E) { E->interagir_Colisao(this); }

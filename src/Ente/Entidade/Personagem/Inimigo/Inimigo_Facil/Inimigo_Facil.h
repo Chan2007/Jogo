@@ -25,6 +25,7 @@ class Inimigo_Facil : public Personagens::Inimigo {
         void executar();
         void mover();
         void salvar();
+        void setProjetil(Entidades::Projetil* p) { if (p) { tiro = p; } }
         Entidades::Projetil* getProjetil() { return tiro; }
         float getRaio() { return raio; }
 };

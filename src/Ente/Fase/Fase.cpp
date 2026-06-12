@@ -7,6 +7,7 @@
 #include "Listas/ListaEntidades.h"
 #include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo_Facil/Inimigo_Facil.h"
+#include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
@@ -114,6 +115,7 @@ namespace Fases {
     }
     void Fase::criarInimFaceis(){
         Inimigo_Facil* minion = NULL;
+        Entidades::Projetil* tiroInim = NULL;
         Ente::sementear();
         const int fator = rand() % 8 + 3;
         for (int i = 0; i < fator; i++) {
@@ -123,6 +125,15 @@ namespace Fases {
                 gerenciadorColisao.incluirEntidade(minion);
                 gerenciadorGravidade.aplicarGravidade(minion, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));
+                tiroInim = new Entidades::Projetil();
+                if (tiroInim) {
+                    tiroInim->setDoJogador(false);
+                    tiroInim->setAtivo(false);
+                    minion->setProjetil(tiroInim);
+                    gerenciadorColisao.incluirEntidade(tiroInim);
+                    gerenciadorGravidade.aplicarGravidade(tiroInim, true);
+                    LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(tiroInim));
+                }
             }
         }
         minion = NULL;

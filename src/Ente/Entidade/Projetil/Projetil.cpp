@@ -14,15 +14,12 @@ namespace Entidades {
     Projetil::Projetil() :
         Entidade("Projetil"),
         dano(35),
-        velocidade(140.f, 140.f),
-        alcanceMaximo(900.0f),
-        distanciaPercorrida(0.0f),
-        tempoVida(15.0f),
-        perfurante(false),
-        doJogador(true)
+        velocidade(2000.f, 1400.f),
+        doJogador(false)
     {
         setTipo(ENTIDADE_PROJETIL);
         setVelocidade(velocidade);
+        setPosicao(sf::Vector2f(0.f, 0.f));
 
         std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png");
         if (!arquivosprite.empty()) {
@@ -35,7 +32,7 @@ namespace Entidades {
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
-        getSprite().setScale(6.f, 6.f);
+        getSprite().setScale(0.4f, 0.4f);
     }
 
     Projetil::~Projetil() {}
@@ -46,16 +43,10 @@ namespace Entidades {
         posicao.x += velocidade.x * dt;
         posicao.y += velocidade.y * dt;
         setPosicao(posicao);
-        registrarDeslocamento((velocidade.x < 0.0f ? -velocidade.x : velocidade.x) * dt +
-            (velocidade.y < 0.0f ? -velocidade.y : velocidade.y) * dt);
     }
 
     void Projetil::atualizar() {
         mover();
-        if (tempoVida > 0.0f)
-            tempoVida -= 1.0f / 60.0f;
-        if (expirou())
-            setAtivo(false);
     }
 
     void Projetil::salvar() {
@@ -66,21 +57,11 @@ namespace Entidades {
         atualizar();
     }
 
-    bool Projetil::expirou() const {
-        return tempoVida <= 0.0f || distanciaPercorrida >= alcanceMaximo;
-    }
-
-    void Projetil::registrarDeslocamento(float delta) {
-        if (delta > 0.0f)
-            distanciaPercorrida += delta;
-    }
-
     void Projetil::interagir_Colisao(Personagens::Inimigo* I) {
         if (!I || !getAtivo()) return;
         if (doJogador) {
             I->receberDano(dano);
-            if (!perfurante)
-                setAtivo(false);
+            setAtivo(false);
         }
     }
 
@@ -98,18 +79,18 @@ namespace Entidades {
     void Projetil::interagir_Colisao(Personagens::Jogador* J) {
         if (!J || !getAtivo()) return;
 
+        // Verifica se o tiro é inimigo para causar dano
         if (!doJogador) {
             J->receberDano(dano);
-            if (!perfurante) { setAtivo(false); }
+            std::cout << "Jogador foi atingido por um projétil." << std::endl;
+            setAtivo(false);
         }
     }
 
     sf::FloatRect Projetil::getTamanho() const {
         sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
-        // sprite: 128*2.5 = 320x320, origin no centro
-        // hitbox menor e centralizada verticalmente no personagem
-        float largura = 60.f;
-        float altura = 60.f;
+        float largura = 90.f;
+        float altura = 70.f;
         return sf::FloatRect(
             caixaImagem.left + (caixaImagem.width / 2.f) - (largura / 2.f),
             caixaImagem.top + (caixaImagem.height / 2.f) - (altura / 2.f),

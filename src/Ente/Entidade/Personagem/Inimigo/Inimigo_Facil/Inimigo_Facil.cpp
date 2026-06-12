@@ -6,6 +6,8 @@
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
+enum EstadoCombate;
+
 Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
@@ -18,9 +20,9 @@ Inimigo_Facil::Inimigo_Facil() :
     poder = 20;
     setVida(170);
     alcancePerseguicao = 300;
-    alcanceAtaque = 110;
+    alcanceAtaque = 250;
     elite = rand() % 10 < 5;
-    cooldownAtaque = 10.5f;
+    cooldownAtaque = 6.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 600.f;
     caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet2.png");
@@ -132,27 +134,27 @@ void Inimigo_Facil::executar() {
 
         // Comportamento de Atacar
         if (menorDistancia <= getAlcanceAtaque()) {
+
             setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
+            setEstado(Personagens::ESTADO_OCIOSO);
             interagindo = true;
 
-            if (tempoUltimoAtaque >= cooldownAtaque && !alvoMaisProximo->getInvulneravel()) {
+            if (tempoUltimoAtaque >= cooldownAtaque) {
 
-                Entidades::Projetil* novoTiro = new Entidades::Projetil();
-                novoTiro->setPosicao(posInimigo);
-                novoTiro->setDoJogador(false);
+                if (tiro) {
+                    if (dx > 0) { tiro->setPosicao(sf::Vector2f(posInimigo.x + getTamanho().width, posInimigo.y - getTamanho().height)); }
+                    else { tiro->setPosicao(sf::Vector2f(posInimigo.x - getTamanho().width, posInimigo.y)); }
+                    tiro->setAtivo(true);
+                    tiro->setDoJogador(false);
+                    tiro->setDano(poder);
+                    Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(tiro);
 
-                float dirX = dx / menorDistancia;
-                float dirY = dy / menorDistancia;
+                    float dirX = dx / menorDistancia;
+                    float dirY = dy / menorDistancia;
 
-                novoTiro->setVelocidade(sf::Vector2f(dirX * novoTiro->getVelocidade().x, dirY * novoTiro->getVelocidade().y));
-
-                Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(novoTiro);
-                Gerenciadores::Gerenciador_Gravidade::getGerenciador().aplicarGravidade(novoTiro, true);
-
-                if (Entidades::Entidade::getListaEntidades() != NULL) {
-                    Entidades::Entidade::getListaEntidades()->incluirEntidade(novoTiro);
+                    const float velocidadeTiro = 600.f;
+                    tiro->setVelocidade(sf::Vector2f(dirX * velocidadeTiro, dirY * velocidadeTiro));
                 }
-
                 tempoUltimoAtaque = 0.0f;
             }
         }
