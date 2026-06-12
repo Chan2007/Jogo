@@ -8,6 +8,7 @@ Inimigo_Medio::Inimigo_Medio() :
 {
     Ente::sementear();
 
+    setNome("Azulo"),
     velocidadeMax = 60.f;
     nivelMaldade = 64;
     poder = 65;
@@ -45,7 +46,7 @@ Inimigo_Medio::~Inimigo_Medio() {
 void Inimigo_Medio::danificar(Personagens::Jogador* J) {
     if (J) {
         J->receberDano(causarDanoBasico());
-        std::cout << "Azulo atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
+        std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
     }
 }
 

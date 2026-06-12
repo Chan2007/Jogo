@@ -46,7 +46,6 @@ namespace Fases {
         const float dt = 0.016f;
 
         LEntidades.executarTodas();
-        if (Entidades::Entidade::getListaEntidades()) { Entidades::Entidade::getListaEntidades()->executarTodas(); }
 
         gerenciadorGrafico->updateAnimation();
 
@@ -62,7 +61,7 @@ namespace Fases {
     void Primeira_Fase::renderizar(sf::RenderWindow& janela) {
         gerenciadorGrafico->drawAnimation();
         LEntidades.desenharTodas(janela);
-        if (Entidades::Entidade::getListaEntidades()) { Entidades::Entidade::getListaEntidades()->desenharTodas(janela); }
+
     }
 
     void Primeira_Fase::criarJogadores() {
@@ -80,8 +79,18 @@ namespace Fases {
     
     void Primeira_Fase::criarInimMedios() {
         Inimigo_Medio* azulo = NULL;
+        for (int i = 0; i < 3; i++) {
+            azulo = new Inimigo_Medio();
+            if (azulo) {
+                azulo->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
+                gerenciadorColisao.incluirEntidade(azulo);
+                gerenciadorGravidade.aplicarGravidade(azulo, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
+            }
+        }
+        azulo = NULL;
         Ente::sementear();
-        const int fator = rand() % 3 + 3;
+        const int fator = rand() % 3;
         for (int i = 0; i < fator; i++) {
             azulo = new Inimigo_Medio();
             if (azulo) {

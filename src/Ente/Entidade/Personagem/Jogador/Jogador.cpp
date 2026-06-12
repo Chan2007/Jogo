@@ -34,7 +34,7 @@ namespace Personagens {
             setNome("Naafiri");
             setVidaMaxima(620);
             setVida(620);
-            setPoder(65);
+            setPoder(999);
 
 
             totalFramesAnimacao = 8;
@@ -184,6 +184,7 @@ namespace Personagens {
 
     void Jogador::interagir_Colisao(Inimigo* I) {
         if (!I) return;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { I->receberDano(poder); }
     }
 
     void Jogador::interagir_Colisao(Obstaculos::Obstaculo* O) {
@@ -203,16 +204,9 @@ namespace Personagens {
     }
 
     void Jogador::interagir_Colisao(Entidades::Projetil* P) {
-        if (!P || !P->getAtivo()) { return; }
-
-        if (!P->getDoJogador()) {
-            receberDano(P->getDano());
-            P->setAtivo(false);
-        }
     }
 
     void Jogador::interagir_Colisao(Jogador* J) {
-        if (J && J != this)
-            setColisao(true);
+        if (J && J != this) { setColisao(true); }
     }
 }

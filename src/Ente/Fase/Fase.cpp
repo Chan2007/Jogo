@@ -7,6 +7,7 @@
 #include "Listas/ListaEntidades.h"
 #include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo_Facil/Inimigo_Facil.h"
+#include "Ente/Entidade/Personagem/Inimigo/Chefe/Chefe.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
@@ -114,6 +115,7 @@ namespace Fases {
         return true;
     }
     void Fase::criarInimFaceis(){
+        /*
         Inimigo_Facil* minion = NULL;
         Entidades::Projetil* tiroInim = NULL;
         Ente::sementear();
@@ -137,5 +139,26 @@ namespace Fases {
             }
         }
         minion = NULL;
+        */
+        
+        Chefe* ElderDragon = NULL;
+        Entidades::Projetil* tiroInim = NULL;
+        ElderDragon = new Chefe();
+        if (ElderDragon) {
+                ElderDragon->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
+                gerenciadorColisao.incluirEntidade(ElderDragon);
+                gerenciadorGravidade.aplicarGravidade(ElderDragon, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(ElderDragon));
+                tiroInim = new Entidades::Projetil();
+                if (tiroInim) {
+                    tiroInim->setDoJogador(false);
+                    tiroInim->setAtivo(false);
+                    ElderDragon->setProjetil(tiroInim);
+                    gerenciadorColisao.incluirEntidade(tiroInim);
+                    gerenciadorGravidade.aplicarGravidade(tiroInim, true);
+                    LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(tiroInim));
+                }
+        }
+        ElderDragon = NULL;
     }
 } // Fases

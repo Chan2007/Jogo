@@ -6,8 +6,6 @@
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
-enum EstadoCombate;
-
 Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
@@ -15,6 +13,7 @@ Inimigo_Facil::Inimigo_Facil() :
 {
     Ente::sementear();
 
+    setNome("minion"),
     velocidadeMax = 250.f;
     nivelMaldade = 32;
     poder = 20;
@@ -52,14 +51,13 @@ Inimigo_Facil::~Inimigo_Facil() {
 void Inimigo_Facil::danificar(Personagens::Jogador* J) {
     if (J) {
         J->receberDano(causarDanoBasico());
-        std::cout << "Minion atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
+        std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
     }
 }
 
 sf::FloatRect Inimigo_Facil::getTamanho() const {
     sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
-    // sprite: 128*2.5 = 320x320, origin no centro
-    // hitbox menor e centralizada verticalmente no personagem
+
     float largura = 60.f;
     float altura = 60.f;
     return sf::FloatRect(
@@ -146,12 +144,13 @@ void Inimigo_Facil::executar() {
                     tiro->setAtivo(true);
                     tiro->setDoJogador(false);
                     tiro->setDano(poder);
+                    tiro->setVelocidade(sf::Vector2f(140.f, 140.f));
                     Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(tiro);
 
                     float dirX = dx / menorDistancia;
                     float dirY = dy / menorDistancia;
 
-                    const float velocidadeTiro = 600.f;
+                    const float velocidadeTiro = 140.f;
                     tiro->setVelocidade(sf::Vector2f(dirX * velocidadeTiro, dirY * velocidadeTiro));
                 }
                 tempoUltimoAtaque = 0.0f;

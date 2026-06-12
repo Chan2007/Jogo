@@ -13,14 +13,17 @@ namespace Personagens {
 class Chefe : public Personagens::Inimigo {
 private:
     short int forca;
+    Entidades::Projetil* bolaDeFogo;
 public:
     Chefe();
     ~Chefe();
     void danificar(Personagens::Jogador* J);
     void executar();
     void salvar();
-    void mover(){};
+    void mover(){}
     sf::FloatRect getTamanho() const;
+    void setProjetil(Entidades::Projetil* p) { if (p) { bolaDeFogo = p; } }
+    Entidades::Projetil* getProjetil() { return bolaDeFogo; }
     short int getForca() { return forca; }
 };
 

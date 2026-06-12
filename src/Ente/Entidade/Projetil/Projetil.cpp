@@ -14,12 +14,12 @@ namespace Entidades {
     Projetil::Projetil() :
         Entidade("Projetil"),
         dano(35),
-        velocidade(2000.f, 1400.f),
+        velocidade(140.f, 140.f),
         doJogador(false)
     {
         setTipo(ENTIDADE_PROJETIL);
         setVelocidade(velocidade);
-        setPosicao(sf::Vector2f(0.f, 0.f));
+        setPosicao(sf::Vector2f(0.f, 1080.f));
 
         std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png");
         if (!arquivosprite.empty()) {
@@ -32,17 +32,19 @@ namespace Entidades {
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
-        getSprite().setScale(0.4f, 0.4f);
+        getSprite().setScale(0.15f, 0.15f);
     }
 
     Projetil::~Projetil() {}
 
     void Projetil::mover() {
-        const float dt = 0.016f;
-        sf::Vector2f posicao = getPosicao();
-        posicao.x += velocidade.x * (dt+0.02);
-        posicao.y += velocidade.y * dt;
-        setPosicao(posicao);
+        if (getAtivo()) {
+            const float dt = 0.016f;
+            sf::Vector2f posicao = getPosicao();
+            posicao.x += velocidade.x * (dt + 0.02);
+            posicao.y += velocidade.y * dt;
+            setPosicao(posicao);
+        }
     }
 
     void Projetil::atualizar() {
@@ -81,8 +83,10 @@ namespace Entidades {
 
         // Verifica se o tiro é inimigo para causar dano
         if (!doJogador) {
-            J->receberDano(dano);
-            std::cout << "Jogador foi atingido por um projétil." << std::endl;
+            if (!J->getInvulneravel()) {
+                J->receberDano(dano);
+                std::cout << "Jogador foi atingido por um projetil." << std::endl;
+            }
             setAtivo(false);
         }
     }
