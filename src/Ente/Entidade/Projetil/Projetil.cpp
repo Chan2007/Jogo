@@ -40,7 +40,7 @@ namespace Entidades {
     void Projetil::mover() {
         const float dt = 0.016f;
         sf::Vector2f posicao = getPosicao();
-        posicao.x += velocidade.x * dt;
+        posicao.x += velocidade.x * (dt+0.02);
         posicao.y += velocidade.y * dt;
         setPosicao(posicao);
     }

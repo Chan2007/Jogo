@@ -142,8 +142,7 @@ void Inimigo_Facil::executar() {
             if (tempoUltimoAtaque >= cooldownAtaque) {
 
                 if (tiro) {
-                    if (dx > 0) { tiro->setPosicao(sf::Vector2f(posInimigo.x + getTamanho().width, posInimigo.y - getTamanho().height)); }
-                    else { tiro->setPosicao(sf::Vector2f(posInimigo.x - getTamanho().width, posInimigo.y)); }
+                    tiro->setPosicao(sf::Vector2f(posInimigo.x, posInimigo.y - getTamanho().height));
                     tiro->setAtivo(true);
                     tiro->setDoJogador(false);
                     tiro->setDano(poder);

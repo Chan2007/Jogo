@@ -15,7 +15,7 @@ Inimigo_Medio::Inimigo_Medio() :
     alcancePerseguicao = 0;
     alcanceAtaque = 200;
     elite = rand() % 10 < 3;
-    cooldownAtaque = 3.5f;
+    cooldownAtaque = 4.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 250.f;
     caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/bluesheet2.png");
