@@ -40,7 +40,7 @@ namespace Listas {
         while (pAux != NULL) {
             Entidades::Entidade* pEntidade = pAux->getInfo();
             if (pEntidade) {
-                pEntidade->desenhar(janela);
+                pEntidade->desenhar();
             }
             pAux = pAux->getProximo();
         }

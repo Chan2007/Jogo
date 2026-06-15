@@ -5,10 +5,10 @@
 #ifndef JOGO_FASE_H
 #define JOGO_FASE_H
 
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
-#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "jogo.h"
+#include "Ente/Ente.h"
 #include "Gerenciador/Gerenciador_Audio/Gerenciador_Audio.h"
+#include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Listas/ListaEntidades.h"
 
 namespace Listas {
@@ -16,10 +16,12 @@ namespace Listas {
 }
 namespace Fases {
     class Fase: public Ente {
+        private:
+            bool verificarLimitesJanela(Entidades::Entidade *entidade);
         protected:
             Listas::ListaEntidades LEntidades;
 
-            sf::VideoMode desktop;
+            sf::Vector2u tamanhoJanela;
 
             virtual void criarObstaculos() = 0;
             virtual void criarInimigos() = 0;
@@ -27,12 +29,17 @@ namespace Fases {
             virtual void criarCenario() = 0;
 
             void criarInimFaceis();
+            void criarJogadores();
+
+            void definirLimitesJanela();
+
             void criarPlataformas();
 
-            Personagens::Jogador jogador;
+            Jogo* jogo;
             Gerenciadores::Gerenciador_Gravidade& gerenciadorGravidade;
-            Gerenciadores::Gerenciador_Colisao& gerenciadorColisao;
+            Gerenciadores::Gerenciador_Colisao* gerenciadorColisao;
             Gerenciadores::Gerenciador_Audio& audio;
+            Gerenciadores::Gerenciador_Input& gerenciadorInput;
             std::string diretorio_Audio;
 
         public:
@@ -45,7 +52,7 @@ namespace Fases {
             bool trocarMusica(int fase) const;
             virtual void processarEventos(const sf::Event &evento) = 0;
             virtual void executar() = 0;
-            virtual void renderizar(sf::RenderWindow &janela) = 0;
+            virtual void renderizar() = 0;
 
     };
 } // Fases

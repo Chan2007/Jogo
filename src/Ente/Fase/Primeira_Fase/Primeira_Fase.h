@@ -14,9 +14,7 @@ namespace Fases {
             const int maxInimigos;
 
             void processarEventos(const sf::Event &evento);
-            void renderizar(sf::RenderWindow &janela);
-
-            Gerenciadores::Gerenciador_Textura gerenciadorTextura;
+            void renderizar();
 
             std::string diretorio_Frames_Fase;
         protected:
@@ -32,7 +30,7 @@ namespace Fases {
 
             void criarInimMedios();
             void criarObstMedios() {}
-            void criarJogadores();
+
         public:
             Primeira_Fase();
             ~Primeira_Fase(){};

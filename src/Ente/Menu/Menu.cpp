@@ -10,10 +10,10 @@
 #include "qtmaterialslider.h"
 
 
-Menu::Menu(QWidget *parent)
-    : QMainWindow(parent)
+Menu::Menu(QWidget *parent):
+    QMainWindow(parent)
     , ui(new Ui::Menu)
-    , jogo()
+    , jogo(Jogo::getJogo())
     , jogoInicializado(false)
     , telas()
     , particulas(NULL)
@@ -31,8 +31,8 @@ Menu::Menu(QWidget *parent)
     if (materialSlider) {
         materialSlider->setThumbColor(QColor(0, 0, 0)); // Preto absoluto
     }
-    configurarTelaPrincipal();
-    configurarTelaConfiguracao();
+    init_MainMenu();
+    init_ConfigMenu();
     telas.setContainer(ui->stackedWidget);
     telas.setInitialScreen(ui->mainPage);
 
@@ -42,53 +42,74 @@ Menu::Menu(QWidget *parent)
     particulas = new ParticleWidget(ui->mainPage);
     particulas->lower();
     particulas->show();
-    atualizarParticula();
-    atualizarPilhaParticula();
+    update_Particle();
+    update_Stack();
 
     ui->musicCheckBox->setChecked(true);
     ui->volumeSlider->setRange(0, 100);
     ui->volumeSlider->setValue(50);
-    atualizarTextoVolume(ui->volumeSlider->value());
-    ui->startButton->iniciarAnimacaoEntrada(0);
+    update_VolumeText(ui->volumeSlider->value());
+    ui->phase1Button->iniciarAnimacaoEntrada(0);
     ui->settingsButton->iniciarAnimacaoEntrada(80);
     ui->exitButton->iniciarAnimacaoEntrada(160);
-    ui->backButton->iniciarAnimacaoEntrada(0);
+    ui->backFromSettingsButton->iniciarAnimacaoEntrada(0);
+    ui->phase2Button->iniciarAnimacaoEntrada(80);
+    ui->loadGameButton->iniciarAnimacaoEntrada(160);
+    ui->rankingButton->iniciarAnimacaoEntrada(240);
 }
 
 Menu::~Menu(){ delete ui;}
 
 void Menu::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
-    atualizarParticula();
+    update_Particle();
 }
 
-void Menu::configurarTelaPrincipal() {
+void Menu::init_MainMenu() {
     ui->menuPanelLayout->setAlignment(Qt::AlignTop);
     ui->heroTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->heroSubtitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     ui->statusLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    ui->startButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    ui->phase1Button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     ui->settingsButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     ui->exitButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    ui->startButton->setMaximumHeight(100);
+    ui->phase1Button->setMaximumHeight(100);
     ui->settingsButton->setMaximumHeight(100);
     ui->exitButton->setMaximumHeight(100);
 }
 
-void Menu::configurarTelaConfiguracao() {
+void Menu::init_ConfigMenu() {
     ui->settingsPageLayout->setAlignment(ui->settingsPanel, Qt::AlignHCenter);
     ui->settingsTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     ui->settingsSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     ui->sectionTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->backButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    ui->backFromSettingsButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     ui->settingsPage->setGeometry(ui->centralwidget->rect());
     ui->settingsPanel->setAttribute(Qt::WA_TranslucentBackground);
     ui->settingsPanel->setAutoFillBackground(false);
-    ui->backButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
+    ui->backFromSettingsButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
+    ui->loadGamePage->setGeometry(ui->centralwidget->rect());
+    ui->loadGamePanel->setAttribute(Qt::WA_TranslucentBackground);
+    ui->loadGamePanel->setAutoFillBackground(false);
+    ui->backFromLoadButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
 
+    ui->rankingPage->setGeometry(ui->centralwidget->rect());
+    ui->rankingPanel->setAttribute(Qt::WA_TranslucentBackground);
+    ui->rankingPanel->setAutoFillBackground(false);
+    ui->backFromRankingButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
+
+    ui->loadGamePageLayout->setAlignment(ui->loadGamePanel, Qt::AlignHCenter);
+    ui->loadGameTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ui->loadGameSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ui->backFromLoadButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
+
+    ui->rankingPageLayout->setAlignment(ui->rankingPanel, Qt::AlignHCenter);
+    ui->rankingTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ui->rankingSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    ui->backFromRankingButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
 }
 
-void Menu::animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar) {
+void Menu::animate_Transition(QWidget *origem, QWidget *destino, bool empilhar) {
     if (!origem || !destino || origem == destino) return;
 
     if (empilhar) telas.pushScreen(destino);
@@ -136,7 +157,7 @@ void Menu::animarTransicaoTela(QWidget *origem, QWidget *destino, bool empilhar)
 }
 
 
-void Menu::atualizarParticula() {
+void Menu::update_Particle() {
     if (!particulas || !ui || !ui->centralwidget) return;
 
     const int larguraBase = ui->mainPage->width();
@@ -160,7 +181,7 @@ void Menu::atualizarParticula() {
     particulas->lower();
 }
 
-void Menu::atualizarPilhaParticula() {
+void Menu::update_Stack() {
     if (!particulas || !ui || !ui->stackedWidget) return;
 
     const bool visivel = ui->stackedWidget->currentWidget() == ui->mainPage;
@@ -168,24 +189,24 @@ void Menu::atualizarPilhaParticula() {
     if (visivel) particulas->lower();
 }
 
-void Menu::atualizarTextoVolume(float value) {
+void Menu::update_VolumeText(float value) {
     if (ui && ui->volumeValueLabel)
         ui->volumeValueLabel->setText(QString::number(value) + "%");
 }
 
-void Menu::on_startButton_clicked() {
-    if (jogo.estaAberto()) return; // Previne múltiplas instâncias da janela
+void Menu::on_phase1Button_clicked() {
+    if (jogo->estaAberto()) return; // Previne múltiplas instâncias da janela
 
-    jogo.setVolume(static_cast<float>(ui->volumeSlider->value()));
-    jogo.setMusica(ui->musicCheckBox->isChecked());
+    jogo->setVolume(static_cast<float>(ui->volumeSlider->value()));
+    jogo->setMusica(ui->musicCheckBox->isChecked());
 
     // Esconde a janela do menu Qt temporariamente
     hide();
 
     // Inicializa o ambiente SFML, define o estado inicial e entra no laço de gameplay
-    jogo.inicializar();
-    jogo.mudarEstado(Jogo::TelaFase1);
-    jogo.executar(); //  programa permanece aqui durante as fases
+    jogo->inicializar();
+    jogo->mudarEstado(Jogo::TelaFase1);
+    jogo->executar(); //  programa permanece aqui durante as fases
 
     // No momento em que a janela SFML for fechada, o fluxo retorna para este ponto
     showNormal(); // Restaura a visibilidade do menu Qt
@@ -195,25 +216,25 @@ void Menu::on_startButton_clicked() {
 }
 
 void Menu::on_settingsButton_clicked() {
-    animarTransicaoTela(ui->mainPage, ui->settingsPage, true);
+    animate_Transition(ui->mainPage, ui->settingsPage, true);
 
     // Na prática, isso não impacta no jogo, já que o widget do menu thodo é enviado para trás...
     ui->statusLabel->setText("Configurações abertas.");
 }
 
-void Menu::on_backButton_clicked() {
-    animarTransicaoTela(ui->settingsPage, ui->mainPage, false);
+void Menu::on_backFromSettingsButton_clicked() {
+    animate_Transition(ui->settingsPage, ui->mainPage, false);
     ui->statusLabel->setText("Menu principal");
 }
 
 void Menu::on_musicCheckBox_toggled(bool checked) {
     ui->musicCheckBox->setText(checked ? "Ativada" : "Desativada");
-    jogo.setMusica(checked);
+    jogo->setMusica(checked);
 }
 
 void Menu::on_volumeSlider_valueChanged(int value) {
-    atualizarTextoVolume(static_cast<float>(value));
-    jogo.setVolume(static_cast<float>(value));
+    update_VolumeText(static_cast<float>(value));
+    jogo->setVolume(static_cast<float>(value));
 }
 
 void Menu::on_exitButton_clicked() {
@@ -224,5 +245,42 @@ void Menu::onFadeOutFinished() {
     m_efeitoOrigem->setOpacity(1.0);
     m_efeitoDestino->setOpacity(1.0);
 
-    atualizarPilhaParticula();
+    update_Stack();
+}
+void Menu::on_phase2Button_clicked() {
+    if (jogo->estaAberto()) return;
+
+    jogo->setVolume(static_cast<float>(ui->volumeSlider->value()));
+    jogo->setMusica(ui->musicCheckBox->isChecked());
+
+    hide();
+
+    jogo->inicializar();
+    jogo->mudarEstado(Jogo::TelaFase2);
+    jogo->executar();
+
+    showNormal();
+    raise();
+    activateWindow();
+    ui->statusLabel->setText("Menu principal");
+}
+
+void Menu::on_loadGameButton_clicked() {
+    animate_Transition(ui->mainPage, ui->loadGamePage, true);
+    ui->statusLabel->setText("Carregar jogo.");
+}
+
+void Menu::on_rankingButton_clicked() {
+    animate_Transition(ui->mainPage, ui->rankingPage, true);
+    ui->statusLabel->setText("Ranking.");
+}
+
+void Menu::on_backFromLoadButton_clicked() {
+    animate_Transition(ui->loadGamePage, ui->mainPage, false);
+    ui->statusLabel->setText("Menu principal");
+}
+
+void Menu::on_backFromRankingButton_clicked() {
+    animate_Transition(ui->rankingPage, ui->mainPage, false);
+    ui->statusLabel->setText("Menu principal");
 }

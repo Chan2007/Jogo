@@ -62,7 +62,8 @@ namespace Gerenciadores {
         entidade->setPosicao(posicao);
         setVy(entidade, vy);
     }
-    void Gerenciador_Gravidade::executar(float dt) {
+    void Gerenciador_Gravidade::executar() {
+        float dt = 0.016f;
         for (int i = 0; i < static_cast<int>(entidadesAfetadas.size()); ++i)
             atualizarGravidade(entidadesAfetadas[i], dt);
     }

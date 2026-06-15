@@ -19,7 +19,7 @@ namespace Obstaculos {
             void salvar();
 
             float getDano();
-            void setPlataforma(Personagens::Jogador* J);
+            void obstaculizar(Personagens::Jogador* J);
     };
 } // Obstaculo
 

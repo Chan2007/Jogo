@@ -24,14 +24,10 @@ namespace Obstaculos {
             virtual void executar() = 0;
             virtual void salvar() = 0;
             virtual void mover() = 0;
-            virtual void setPlataforma(Personagens::Jogador* J) = 0;
-            // Padrão visitor
-            void aoColidir(Entidade* E) {E->interagir_Colisao(this);}
+            virtual void obstaculizar(Personagens::Jogador* J) = 0;
 
-            void interagir_Colisao(Personagens::Inimigo* I);
-            void interagir_Colisao(Obstaculo* O);
-            void interagir_Colisao(Entidades::Projetil* P);
-            void interagir_Colisao(Personagens::Jogador* J);
+            // Padrão visitor
+            void aceitar(VisitorColisao *visitor);
     };
 } // Obstaculo
 

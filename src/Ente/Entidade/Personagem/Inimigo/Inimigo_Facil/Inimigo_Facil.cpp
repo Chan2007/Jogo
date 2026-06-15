@@ -1,6 +1,7 @@
 
 
 #include "Inimigo_Facil.h"
+#include <iostream>
 #include "Ente/Entidade/Entidade.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"

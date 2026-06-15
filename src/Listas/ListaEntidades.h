@@ -19,6 +19,7 @@ namespace Listas {
         ~ListaEntidades();
         bool incluirEntidade(Entidades::Entidade *E) const;
         void limparLista() const;
+        Elemento<Entidades::Entidade>* getPrimeiro() const {return LEntidade->getPrimeiro();}
         void desenharTodas(sf::RenderWindow& janela) const;
         void executarTodas() const;
         Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E) const;

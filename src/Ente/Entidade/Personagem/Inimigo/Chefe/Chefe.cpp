@@ -3,20 +3,23 @@
 //
 
 #include "Chefe.h"
+#include <iostream>
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 Chefe::Chefe() :
     Inimigo(),
     forca(2),
     bolaDeFogo(NULL)
 {
-    Ente::sementear();
+    sementear();
 
     setNome("Dragao Sabio"),
     velocidadeMax = 220.f;
     nivelMaldade = 200;
-    poder = 130;
+    poder = 50;
+    setVidaMaxima(1200);
     setVida(1200);
     alcancePerseguicao = 400;
     alcanceAtaque = 250;
@@ -25,7 +28,7 @@ Chefe::Chefe() :
     tempoUltimoAtaque = 0.0f;
     caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/eldersheet2.png");
 
-    if (rand() % 10 < 5) { poder *= forca; }
+    if (gerar_num_binom() > 5) { poder *= forca; }
 
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {

@@ -4,6 +4,8 @@
 
 #include "Obstaculo.h"
 #include "Ente/Entidade/Entidade.h"
+#include "Sistema/Fisica/Visitor_Colisao.h"
+
 namespace Obstaculos {
     Obstaculo::Obstaculo() :
         Entidade("Obstaculo"),
@@ -14,16 +16,7 @@ namespace Obstaculos {
     Obstaculo::~Obstaculo() {
     }
 
-    void Obstaculo::interagir_Colisao(Personagens::Inimigo* I) {
-    }
-
-    void Obstaculo::interagir_Colisao(Obstaculo* O) {
-    }
-
-    void Obstaculo::interagir_Colisao(Entidades::Projetil* P) {
-    }
-
-    void Obstaculo::interagir_Colisao(Personagens::Jogador* J) {
-        setPlataforma(J);
+    void Obstaculo::aceitar(VisitorColisao* visitor) {
+        if (visitor) visitor->visitar(this);
     }
 } // Obstaculo

@@ -1,18 +1,18 @@
-#include "Animador.h"
-#include "Sistema/Caminho/Encontrar_Caminho.h"
 #include <algorithm>
-#include <cstdio>
-#include <cstdlib>
 #include <sstream>
 
-Animador::FrameData::FrameData(): caminho_spSheet(), RectTextura(), textura(NULL){}
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Animador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Proxy_Textura.h"
+
+Animador::FrameData::FrameData()
+    : caminho_spSheet(), RectTextura(), textura(NULL) {}
 
 Animador::Animador(Gerenciadores::Gerenciador_Textura* gerenciadorTextura):
     SpriteAtual(),
     ProxSprite(),
-    bufferReady(false),
-    threadRunning(false),
-    thread(NULL),
+    proxy(gerenciadorTextura),
     allowLoad(true),
     frames_data(),
     gerenciadorTextura(gerenciadorTextura),
@@ -25,53 +25,7 @@ Animador::Animador(Gerenciadores::Gerenciador_Textura* gerenciadorTextura):
     loaded(false)
 {}
 
-Animador::~Animador() {
-    if (thread) {
-        thread->wait();
-        delete thread;
-        thread = NULL;
-    }
-}
-
-void Animador::loadThread() {
-    // Carrega a textura e coloca direto no cache do gerenciador
-    gerenciadorTextura->carregarTextura(pathToLoad);
-
-    // Sinaliza que a textura está pronta
-    mutex.lock();
-    bufferReady = true;
-    threadRunning = false;
-    mutex.unlock();
-}
-
-void Animador::preLoadNextFrame(const unsigned int index) {
-    // Verifica se há thread rondando COM LOCK para evitar race condition
-    mutex.lock();
-    const bool threadEstaRodando = threadRunning;
-    mutex.unlock();
-
-    // Se thread anterior continua rodando, não dispara uma nova
-    if (threadEstaRodando) return;
-
-    // Limpa thread anterior se terminou
-    if (thread) {
-        delete thread;
-        thread = NULL;
-    }
-
-    // Prepara o caminho a carregar
-    pathToLoad = frames_data[index].caminho_spSheet;
-
-    // Sinaliza que thread vai rodar
-    mutex.lock();
-    bufferReady = false;
-    threadRunning = true;
-    mutex.unlock();
-
-    // Dispara thread para carregar a textura
-    thread = new sf::Thread(&Animador::loadThread, this);
-    thread->launch();
-}
+Animador::~Animador() {}
 
 sf::Texture* Animador::findTexture(const std::string& path) const {
     if (!gerenciadorTextura) return NULL;
@@ -200,9 +154,10 @@ bool Animador::loadFrames(const std::string &pathPrefix, const std::string &name
     updateBlend();
     clock.restart();
     if (frames_data.size() > 1)
-        preLoadNextFrame(1);
+        proxy.preLoadNextFrame(frames_data[1].caminho_spSheet);
     return true;
 }
+
 
 void Animador::update() {
     if (!loaded || frames_data.empty()) return;
@@ -237,13 +192,12 @@ void Animador::update() {
 
         // Pré-carrega o frame seguinte
         const unsigned int temp_nextIndex = (nextIndex + 1) % total;
-        preLoadNextFrame(temp_nextIndex);
+        proxy.preLoadNextFrame(frames_data[temp_nextIndex].caminho_spSheet);
 
     }
     // Restaura permissão de carregamento
     allowLoad = temp;
 }
-
 
 void Animador::draw(sf::RenderTarget& target) const {
     if (!loaded) return;
@@ -260,35 +214,27 @@ void Animador::setSheetTargetSize(const sf::Vector2u& size) {
     targetSize = size;
     if (loaded) updateSpriteScale();
 }
+
 void Animador::atualizarSpriteEntidade(
-    sf::Sprite& sprite,
-    sf::IntRect& rectAtual,
-    int numFrames,
-    unsigned int cols,
-    unsigned int rows,
-    float tempoPorFrame,
-    float dt,
-    float& tempoAcumulado,
-    int& indexFrameAtual
-)
+    sf::Sprite& sprite, sf::IntRect& rectAtual,
+    int numFrames, unsigned int cols, unsigned int rows,
+    float tempoPorFrame, float dt,
+    float& tempoAcumulado, int& indexFrameAtual)
 {
     if (numFrames <= 0 || cols <= 0 || rows <= 0) return;
     const sf::Texture* textura = sprite.getTexture();
-    if (!textura) return; // Se a entidade ainda não carregou textura
+    if (!textura) return;
 
-    // Largura e altura do frame
     const int frameW = textura->getSize().x / cols;
     const int frameH = textura->getSize().y / rows;
 
     tempoAcumulado += dt;
-
     if (tempoAcumulado >= tempoPorFrame) {
         tempoAcumulado = 0.0f;
-
         indexFrameAtual = (indexFrameAtual + 1) % numFrames;
 
-        int tu = indexFrameAtual % cols;
-        int tv = indexFrameAtual / cols;
+        const int tu = indexFrameAtual % cols;
+        const int tv = indexFrameAtual / cols;
 
         rectAtual.left = tu * frameW;
         rectAtual.top = tv * frameH;

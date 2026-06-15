@@ -1,21 +1,23 @@
 
 #include "Inimigo_Medio.h"
+#include <iostream>
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 Inimigo_Medio::Inimigo_Medio() :
     Inimigo(),
     tamanho(40)
 {
-    Ente::sementear();
+    sementear();
 
     setNome("Azulo"),
     velocidadeMax = 60.f;
     nivelMaldade = 64;
-    poder = 65;
+    poder = 35;
     setVida(450);
     alcancePerseguicao = 0;
     alcanceAtaque = 200;
-    elite = rand() % 10 < 3;
+    elite = gerar_num_binom(0.0, 0.0, 20) > 5;
     cooldownAtaque = 4.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 250.f;
@@ -34,7 +36,7 @@ Inimigo_Medio::Inimigo_Medio() :
             getSprite().setScale(2.5f, 2.5f);
         }
         else {
-            std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo médio em: " << caminhoArquivoSprite << std::endl;
+            std::cerr << "Erro: nï¿½o foi possivel carregar a spritesheet do inimigo mï¿½dio em: " << caminhoArquivoSprite << std::endl;
         }
     }
     getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);

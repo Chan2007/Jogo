@@ -9,6 +9,8 @@
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
+#include "Sistema/Fisica/Visitor_Colisao_Inimigo.h"
+#include "Sistema/Fisica/Visitor_Colisao_Jogador.h"
 
 namespace Gerenciadores {
     class Observer_Colisao;
@@ -18,7 +20,7 @@ namespace Gerenciadores {
         static Gerenciador_Colisao instancia;
         return instancia;
     }
-    Gerenciador_Colisao::Gerenciador_Colisao(): Observer_Colisao() {}
+    Gerenciador_Colisao::Gerenciador_Colisao() {}
 
     Gerenciador_Colisao::~Gerenciador_Colisao() {limpar();}
     void Gerenciador_Colisao::limpar() {
@@ -61,7 +63,7 @@ namespace Gerenciadores {
 
     bool Gerenciador_Colisao::verificarPosicaoLivre(const sf::FloatRect& hitboxProvisoria) {
 
-        for (auto it = Lobstaculos.begin(); it != Lobstaculos.end(); ++it) {
+        for (std::vector<Obstaculos::Obstaculo*>::const_iterator it = Lobstaculos.begin(); it != Lobstaculos.end(); ++it) {
             Entidades::Entidade* obstaculo = *it;
             if (obstaculo) {
                 if (hitboxProvisoria.intersects(obstaculo->getTamanho())) {
@@ -72,14 +74,11 @@ namespace Gerenciadores {
         return true;
     }
 
-    bool Gerenciador_Colisao::colidiu(const Entidades::Entidade* entidade, const Entidades::Entidade* movel) {
+    bool Gerenciador_Colisao::verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel) {
+
         if (!entidade || !movel) return false;
-
-        return entidade->getTamanho().intersects(movel->getTamanho());
-    }
-
-    void Gerenciador_Colisao::calculaColisao(const Entidades::Entidade* entidade, Entidades::Entidade* movel) {
-        if (!entidade || !movel) return;
+        if (entidade == movel) return false;
+        if (!entidade->getTamanho().intersects(movel->getTamanho())) return false;
 
         const sf::FloatRect tamE = entidade->getTamanho();
         const sf::FloatRect tamM = movel->getTamanho();
@@ -110,192 +109,165 @@ namespace Gerenciadores {
                 movel->setPosicao(sf::Vector2f(posAtual.x, posAtual.y + intersecY));
             else {
                 movel->setPosicao(sf::Vector2f(posAtual.x, posAtual.y - intersecY));
-                Gerenciadores::Gerenciador_Gravidade::getGerenciador().aoTocarChao(movel, sf::Vector2f(0.f, -1.f));
+                Gerenciador_Gravidade::getGerenciador().aoTocarChao(movel, sf::Vector2f(0.f, -1.f));
             }
-            Gerenciadores::Gerenciador_Gravidade::getGerenciador().setVy(movel, 0.0f);
+            Gerenciador_Gravidade::getGerenciador().setVy(movel, 0.0f);
         }
+        return true;
     }
 
-    bool Gerenciador_Colisao::verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela, Gerenciador_Gravidade* pGravidade) {
-        if (!entidade) return false;
-
-        const sf::Vector2f posicaoAtual = entidade->getPosicao();
-        const sf::FloatRect tamanho = entidade->getTamanho();
-
-        float limiteLargura = static_cast<float>(tamanhoJanela.x);
-        float limiteAltura = static_cast<float>(tamanhoJanela.y);
-
-        sf::Vector2f novaPosicao = posicaoAtual;
-        bool colidiuBorda = false;
-
-        float metadeLargura = tamanho.width / 2.0f;
-        float metadeAltura = tamanho.height / 2.0f;
-
-        if (novaPosicao.x - metadeLargura < 0.0f) {
-            novaPosicao.x = metadeLargura;
-            colidiuBorda = true;
-        }
-
-        else if (novaPosicao.x + metadeLargura > limiteLargura) {
-            novaPosicao.x = limiteLargura - metadeLargura;
-            colidiuBorda = true;
-        }
-
-        if (novaPosicao.y - metadeAltura < 0.0f) {
-            novaPosicao.y = metadeAltura;
-            colidiuBorda = true;
-        }
-
-        else if (novaPosicao.y + metadeAltura > limiteAltura) {
-            novaPosicao.y = limiteAltura - metadeAltura;
-            colidiuBorda = true;
-
-            if (pGravidade) pGravidade->aoTocarChao(entidade, sf::Vector2f(0.0f, -1.0f));
-        }
-
-        if (colidiuBorda) {
-            entidade->setPosicao(novaPosicao);
-            entidade->setColisao(true);
-        }
-        return colidiuBorda;
-    }
-
-    void Gerenciador_Colisao::verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel) {
-        if (!entidade || !movel || entidade == movel) return;
-
-        if (colidiu(entidade, movel)) {
-        calculaColisao(entidade, movel);
-        movel->setColisao(true);
-
-        movel->aoColidir(entidade);
-        entidade->aoColidir(movel);
-        }
-    }
-    void Gerenciador_Colisao::verificarObstaculo(Entidades::Entidade* entidade) const {
-        colisao_Entidade_Classe(Lobstaculos, entidade);
-    }
-
-    void Gerenciador_Colisao::verificarProjetil(Entidades::Entidade* entidade) const {
-        colisao_Entidade_Classe(Lprojetil, entidade);
-    }
-
-    void Gerenciador_Colisao::verificarInimigo(Entidades::Entidade* entidade) const {
-        colisao_Entidade_Classe(Linimigos, entidade);
-    }
-    void Gerenciador_Colisao::verificarJogador(Entidades::Entidade* entidade) const {
-        colisao_Entidade_Classe(Ljogadores, entidade);
-    }
-    void Gerenciador_Colisao::executar(const sf::Vector2u& tamanhoJanela, Gerenciador_Gravidade* pGravidade) {
-        std::vector<Personagens::Jogador*>::iterator itJog;
-        std::vector<Obstaculos::Obstaculo*>::iterator itObs;
-        std::list<Personagens::Inimigo*>::iterator itInim;
-        std::set<Entidades::Projetil*>::iterator itProj;
-
-        // Colisão entre jogadores e obstáculos
+    void Gerenciador_Colisao::tratarColisoesJogsObstacs() const {
+        std::vector<Personagens::Jogador *>::const_iterator itJog;
         for (itJog = Ljogadores.begin(); itJog != Ljogadores.end(); ++itJog) {
             Personagens::Jogador* jogador = *itJog;
-            if (jogador == NULL) continue;
+            if (!jogador) continue;
 
+            // Jogador x Obstáculos
+            std::vector<Obstaculos::Obstaculo *>::const_iterator itObs;
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
-                if (obstaculo != NULL)
-                    verificarColisao(obstaculo, jogador);
-
-                // Sair do loop deste jogador, mas NÃO parar o gerenciador
-                if (!jogador->estaVivo()) break;
+                if (obstaculo && verificarColisao(jogador, obstaculo)) {
+                    VisitorColisaoJogador visitor(jogador);
+                    obstaculo->aceitar(&visitor);
+                }
             }
         }
+    }
 
-        // Colisão entre jogadores e inimigos
+    void Gerenciador_Colisao::tratarColisoesJogsProjeteis() const {
+        std::vector<Personagens::Jogador *>::const_iterator itJog;
         for (itJog = Ljogadores.begin(); itJog != Ljogadores.end(); ++itJog) {
             Personagens::Jogador* jogador = *itJog;
-            if (jogador == NULL) continue;
+            if (!jogador) continue;
 
+            // Jogador x Projétil
+            std::set<Entidades::Projetil *>::const_iterator itProj;
+            for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
+                Entidades::Projetil* projetil = *itProj;
+                if (projetil && verificarColisao(jogador, projetil)) {
+                    VisitorColisaoJogador visitor(jogador);
+                    projetil->aceitar(&visitor);
+                }
+            }
+        }
+    }
+
+    void Gerenciador_Colisao::tratarColisoesJogsInimgs() const {
+        std::vector<Personagens::Jogador *>::const_iterator itJog;
+        for (itJog = Ljogadores.begin(); itJog != Ljogadores.end(); ++itJog) {
+            Personagens::Jogador* jogador = *itJog;
+            if (!jogador) continue;
+
+            // Jogador x Inimigos
+            std::list<Personagens::Inimigo *>::const_iterator itInim;
             for (itInim = Linimigos.begin(); itInim != Linimigos.end(); ++itInim) {
                 Personagens::Inimigo* inimigo = *itInim;
-                if (inimigo == NULL) continue;
-
-                verificarColisao(inimigo, jogador);
-
-                if (!jogador->estaVivo() || Linimigos.empty())
-                    break;
+                if (inimigo && verificarColisao(jogador, inimigo)) {
+                    VisitorColisaoJogador visitor(jogador);
+                    inimigo->aceitar(&visitor);
+                }
             }
         }
-
-        // olisão entre jogadores e projéteis
+    }
+    void Gerenciador_Colisao::tratarColisoesJogs() const {
+        std::vector<Personagens::Jogador *>::const_iterator itJog;
         for (itJog = Ljogadores.begin(); itJog != Ljogadores.end(); ++itJog) {
             Personagens::Jogador* jogador = *itJog;
-            if (jogador == NULL) continue;
+            if (!jogador) continue;
 
-            for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
-                Entidades::Projetil* projetil = *itProj;
-                if (projetil == NULL) continue;
-
-                verificarColisao(projetil, jogador);
-
-                if (!jogador->estaVivo()) break;
+            // Jogador x Jogador
+            std::vector<Personagens::Jogador *>::const_iterator itJog2;
+            for (itJog2 = Ljogadores.begin(); itJog2 != Ljogadores.end(); ++itJog2) {
+                Personagens::Jogador* jogador2 = *itJog2;
+                if (jogador2 && verificarColisao(jogador, jogador2)) {
+                    VisitorColisaoJogador visitor(jogador);
+                    jogador2->aceitar(&visitor);
+                }
             }
         }
-
-        // Colisão entre inimigos e obstáculos
+    }
+    void Gerenciador_Colisao::tratarColisoesInim() const {
+        std::vector<Obstaculos::Obstaculo *>::const_iterator itObs;
+        std::set<Entidades::Projetil *>::const_iterator itProj;
+        std::list<Personagens::Inimigo *>::const_iterator itInim;
         for (itInim = Linimigos.begin(); itInim != Linimigos.end(); ++itInim) {
-            Personagens::Inimigo* inimigo = *itInim;
-            if (inimigo == NULL) continue;
+            Personagens::Inimigo* inimigo1 = *itInim;
+            if (!inimigo1) continue;
 
+            // Inimigo x Obstáculos
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
-                if (obstaculo != NULL)
-                    verificarColisao(obstaculo, inimigo);
+                if (obstaculo && verificarColisao(inimigo1, obstaculo)) {
+                    VisitorColisaoInimigo visitor(inimigo1);
+                    obstaculo->aceitar(&visitor);
+                }
             }
-        }
-
-        // Colisão entre inimigos e projéteis
-        for (itInim = Linimigos.begin(); itInim != Linimigos.end(); ++itInim) {
-            Personagens::Inimigo* inimigo = *itInim;
-            if (inimigo == NULL) continue;
-
+            // Inimigo x Projétil
             for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
-                Entidades::Projetil* projetil = *itProj;
-                if (projetil != NULL)
-                    verificarColisao(projetil, inimigo);
+                Entidades::Projetil* projetil= *itProj;
+                if (projetil && verificarColisao(inimigo1, projetil)) {
+                    VisitorColisaoInimigo visitor(inimigo1);
+                    projetil->aceitar(&visitor);
+                }
+            }
+
+            // Inimigo x Inimigo
+            std::list<Personagens::Inimigo *>::const_iterator itInim2;
+            for (itInim2 = Linimigos.begin(); itInim2 != Linimigos.end(); ++itInim2) {
+                Personagens::Inimigo* inimigo2 = *itInim2;
+                if (inimigo2 && inimigo1 != inimigo2 && verificarColisao(inimigo1, inimigo2)) {
+                    VisitorColisaoInimigo visitor(inimigo1);
+                    inimigo2->aceitar(&visitor);
+                }
             }
         }
-
-        // Colisão entre obstáculos e projéteis
-        for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
-            Obstaculos::Obstaculo* obstaculo = *itObs;
-            if (obstaculo == NULL) continue;
-
-            for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
-                Entidades::Projetil* projetil = *itProj;
-                if (projetil != NULL)
-                    verificarColisao(obstaculo, projetil);
-            }
-        }
-
-        // Checagem de colisão nas bordas da janela
-        for (itJog = Ljogadores.begin(); itJog != Ljogadores.end(); ++itJog) {
-            if (*itJog != NULL) verificarLimitesJanela(*itJog, tamanhoJanela, pGravidade);
-        }
-
-        for (itInim = Linimigos.begin(); itInim != Linimigos.end(); ++itInim) {
-            if (*itInim != NULL) verificarLimitesJanela(*itInim, tamanhoJanela, pGravidade);
-        }
-
-        for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
-            if (*itProj != NULL) verificarLimitesJanela(*itProj, tamanhoJanela, pGravidade);
-        }
-
-        // verifica se os projeteis estão ativos
-        itProj = Lprojetil.begin();
-        while (itProj != Lprojetil.end()) {
-            if (*itProj == NULL || !(*itProj)->getAtivo()) {
-                itProj = Lprojetil.erase(itProj);
-            }
-            else {
-                ++itProj;
-            }
-        }
+    }
+    void Gerenciador_Colisao::tratarColisoesProj() const{
+        std::vector<Obstaculos::Obstaculo *>::const_iterator itObs;
+        std::set<Entidades::Projetil *>::const_iterator itProj;
         
+        for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
+            Entidades::Projetil* projetil1 = *itProj;
+            if (!projetil1) continue;
+
+            // Projétil x Obstáculos
+            for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
+                Obstaculos::Obstaculo* obstaculo = *itObs;
+                if (obstaculo && verificarColisao(projetil1, obstaculo)) {
+                    projetil1->setAtivo(false);
+                }
+            }
+            // Projétil x Projétil
+            std::set<Entidades::Projetil*>::const_iterator itProj2;
+            for (itProj2 = Lprojetil.begin(); itProj2 != Lprojetil.end(); ++itProj2) {
+                Entidades::Projetil* projetil2 = *itProj2;
+                if (projetil2 && projetil1 != projetil2 && verificarColisao(projetil1, projetil2)) {
+                    projetil1->setAtivo(false);
+                    projetil2->setAtivo(false);
+                }
+            }
+        }
+    }
+    void Gerenciador_Colisao::executar() {
+
+        // Colisão entre jogadores
+        tratarColisoesJogs();
+
+        // Colisão entre jogadores e obstáculos
+        tratarColisoesJogsObstacs();
+
+        // Colisão entre jogadores e inimigos
+        tratarColisoesJogsInimgs();
+
+        // Colisão entre jogadores e projéteis
+        tratarColisoesJogsProjeteis();
+
+        // Colisão entre inimigos e outros
+        tratarColisoesInim();
+
+        // Colisão entre projéteis e outros
+        tratarColisoesProj();
+
+
     }
 } // Gerenciador

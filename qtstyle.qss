@@ -43,17 +43,23 @@
     padding-top: 20px;
 }
 
-#settingsPanel {
+#settingsPanel,
+#loadGamePanel,
+#rankingPanel {
     border: none;
     padding: 52px 52px 36px 52px;
     min-width: 1000px;
     min-height: 700px;
 }
-QWidget #settingsPage {
+QWidget #settingsPage,
+QWidget #loadGamePage,
+QWidget #rankingPage {
     background: transparent;
 }
 
-QWidget #settingsPanel {
+QWidget #settingsPanel,
+QWidget #loadGamePanel,
+QWidget #rankingPanel {
     border-image: url("../assets/bg_frames/bg_derived.jpg") 0 0 0 0 stretch stretch;
     background-position: center;
     background-repeat: no-repeat;
@@ -78,7 +84,9 @@ QWidget #settingsPanel {
 }
 
 #mainMenuPanel MenuButton,
-#settingsPanel MenuButton {
+#settingsPanel MenuButton,
+#loadGamePanel MenuButton,
+#rankingPanel MenuButton {
     font-family: "Segoe UI", "Arial", "Helvetica";
     font-size: 25px;
     font-weight: 900;
@@ -87,7 +95,9 @@ QWidget #settingsPanel {
     padding: 0px 0px 0px 200px;
     margin: 0px;
 }
-#settingsPanel MenuButton {
+#settingsPanel MenuButton,
+#loadGamePanel MenuButton,
+#rankingPanel MenuButton {
     min-width: 500px;
     max-height: 100px;
     text-align: center;

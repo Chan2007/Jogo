@@ -30,14 +30,14 @@ namespace Personagens {
 
         bool getElite() const { return elite; }
         void setElite(bool valor) { elite = valor; }
+
+        float getDirecaoPatrulha() const { return direcaoPatrulha; }
+
         bool estaEmAlcance(const sf::Vector2f& alvo) const;
         void inverterPatrulha();
 
-        void aoColidir(Entidade* E) { E->interagir_Colisao(this); }
-        void interagir_Colisao(Inimigo* I);
-        void interagir_Colisao(Obstaculos::Obstaculo* O);
-        void interagir_Colisao(Entidades::Projetil* P);
-        void interagir_Colisao(Jogador* J);
+        // Padrão visitor
+        void aceitar(VisitorColisao *visitor);
 
         virtual void executar() = 0;
         virtual void salvar() = 0;

@@ -14,21 +14,15 @@ namespace Fases {
         Primeira_Fase::criarProjeteis();
         criarJogadores();
         criarInimMedios();
-        Primeira_Fase::executar();
     }
 
     void Primeira_Fase::criarCenario() {
-        const sf::RenderWindow& janela = gerenciadorGrafico->getJanela();
-        const sf::VideoMode tamanhoJanela = sf::VideoMode(janela.getSize().x, janela.getSize().y);
 
         diretorio_Frames_Fase = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/fase1");
         diretorio_Audio = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
 
         if (!diretorio_Frames_Fase.empty())
-            Gerenciadores::Gerenciador_Grafico::getGerenciador().loadAnimation(diretorio_Frames_Fase,"bg_fase1_",376,2,4,3);
-
-        if (!diretorio_Frames_Fase.empty())
-            gerenciadorGrafico->loadAnimation(diretorio_Frames_Fase, "bg_fase1_", 376, 1, 4, 3);
+            gerenciadorGrafico->loadAnimation(diretorio_Frames_Fase,"bg_fase1_",376,2,4,3);
 
         if (!diretorio_Audio.empty())
             trocarMusica(1);
@@ -36,66 +30,38 @@ namespace Fases {
 
     // Inputs específicos da Fase 1
     void Primeira_Fase::processarEventos(const sf::Event& evento) {
-        if (evento.type == sf::Event::KeyPressed) {
-            // TODO -> Ex.: Se pressionar ESC, o Jogo pausa
-        }
+        gerenciadorInput.notificarObservadores(evento);
     }
 
     // Evolução da física/lógica no frame atual
     void Primeira_Fase::executar() {
-        const float dt = 0.016f;
-
         LEntidades.executarTodas();
 
         gerenciadorGrafico->updateAnimation();
 
-        sf::Vector2u tamanhoAtual(desktop.width, desktop.height);
+        gerenciadorGravidade.executar();
+        gerenciadorColisao->executar();
 
-        gerenciadorGravidade.executar(dt);
-        gerenciadorColisao.executar(tamanhoAtual, &gerenciadorGravidade);
-
-        renderizar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela());
+        renderizar();
+        definirLimitesJanela();
     }
 
     // Renderiza para a janela
-    void Primeira_Fase::renderizar(sf::RenderWindow& janela) {
+    void Primeira_Fase::renderizar() {
         gerenciadorGrafico->drawAnimation();
-        LEntidades.desenharTodas(janela);
+        LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
 
-    }
-
-    void Primeira_Fase::criarJogadores() {
-
-        jogador.setCampeao(Personagens::CAMPEAO_NAAFIRI);
-        jogador.setPosicao(sf::Vector2f((jogador.getTamanho().width)/2, desktop.height - (jogador.getTamanho().height)/2));
-        std::cout << "Jogador criado: " << jogador.getNome() << std::endl;
-
-        jogador.setGerenciadorGravidade(&gerenciadorGravidade);
-        gerenciadorColisao.incluirEntidade(&jogador);
-        gerenciadorGravidade.aplicarGravidade(&jogador, true);
-        LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(&jogador));
-        Personagens::Inimigo::incluirJogador(&jogador);
     }
     
     void Primeira_Fase::criarInimMedios() {
         Inimigo_Medio* azulo = NULL;
-        for (int i = 0; i < 3; i++) {
-            azulo = new Inimigo_Medio();
-            if (azulo) {
-                azulo->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
-                gerenciadorColisao.incluirEntidade(azulo);
-                gerenciadorGravidade.aplicarGravidade(azulo, true);
-                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
-            }
-        }
-        azulo = NULL;
-        Ente::sementear();
-        const int fator = rand() % 3;
+        sementear();
+        const int fator = static_cast<int>(gerar_num_exp(1, 5, 0.5));
         for (int i = 0; i < fator; i++) {
             azulo = new Inimigo_Medio();
             if (azulo) {
-                azulo->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
-                gerenciadorColisao.incluirEntidade(azulo);
+                azulo->setPosicao(sf::Vector2f((rand() % (tamanhoJanela.y - 300)) + 300, rand() % tamanhoJanela.y));
+                gerenciadorColisao->incluirEntidade(azulo);
                 gerenciadorGravidade.aplicarGravidade(azulo, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
             }

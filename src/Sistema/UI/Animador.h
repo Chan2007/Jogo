@@ -3,71 +3,58 @@
 
 #include <SFML/Graphics.hpp>
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Proxy_Textura.h"
 #include <string>
 #include <vector>
 
 class Animador {
     private:
         struct FrameData {
-            std::string caminho_spSheet;
-            sf::IntRect RectTextura;
+            std::string  caminho_spSheet;
+            sf::IntRect  RectTextura;
             sf::Texture* textura;
             FrameData();
         };
 
-        sf::Sprite SpriteAtual;
-        sf::Sprite ProxSprite;
-        sf::Mutex mutex;
-        bool bufferReady;
-        bool threadRunning;
-
-        // sf::Thread não é copiável, precisa de ponteiro
-        sf::Thread* thread;
-
-        void preLoadNextFrame(unsigned int index);
-        void loadThread();
-
-        // Dados compartilhados com a thread
-        std::string pathToLoad;
-
-        // Flag para evitar carregamento síncrono durante update
-        mutable bool allowLoad;
+        sf::Sprite    SpriteAtual;
+        sf::Sprite    ProxSprite;
+        Gerenciadores::Proxy_Textura proxy;          // ← proxy substitui thread/mutex/flags
+        mutable bool  allowLoad;
 
         std::vector<FrameData> frames_data;
-
         Gerenciadores::Gerenciador_Textura* gerenciadorTextura;
 
         unsigned int FrameIndexAtual;
-        sf::Clock clock;
-        float frameAccumulator;
-        float frameTime;
+        sf::Clock    clock;
+        float        frameAccumulator;
+        float        frameTime;
         sf::Vector2u frameSize;
         sf::Vector2u targetSize;
         sf::Vector2f position;
-        bool loaded;
+        bool         loaded;
 
         void updateSpriteScale();
         void updateBlend();
         sf::Texture* findTexture(const std::string& path) const;
         void applyFrame(sf::Sprite& sprite, FrameData& frameData);
 
-
     public:
-        // Evitar declaração implícita
         explicit Animador(Gerenciadores::Gerenciador_Textura* gerenciadorTextura = NULL);
         ~Animador();
 
-        bool loadFrames(const std::string& pathPrefix, 
+        bool loadFrames(const std::string& pathPrefix,
                         const std::string& name,
-                        int numFrames, int frameStep, 
+                        int numFrames, int frameStep,
                         unsigned int colunas, unsigned int linhas);
         void update();
-        void draw(sf::RenderTarget &target) const;
+        void draw(sf::RenderTarget& target) const;
         void setSheetPosition(const sf::Vector2f& pos);
         void setSheetTargetSize(const sf::Vector2u& size);
 
-        static void atualizarSpriteEntidade(sf::Sprite &sprite, sf::IntRect &rectAtual, int numFrames,
-                                     unsigned int cols, unsigned int rows, float tempoPorFrame, float dt, float &tempoAcumulado, int &indexFrameAtual);
+        static void atualizarSpriteEntidade(sf::Sprite& sprite, sf::IntRect& rectAtual,
+                                            int numFrames, unsigned int cols, unsigned int rows,
+                                            float tempoPorFrame, float dt,
+                                            float& tempoAcumulado, int& indexFrameAtual);
 };
 
 #endif

@@ -17,10 +17,20 @@ namespace Gerenciadores {
         private:
             std::vector <Observador_Input*> observadores;
             Mapeador_Input mapeador;
-
-        public:
             Gerenciador_Input();
-            ~Gerenciador_Input();
+            Gerenciador_Input(const Gerenciador_Input&);
+            Gerenciador_Input& operator=(const Gerenciador_Input&);
+        public:
+            static Gerenciador_Input& getGerenciador() {
+                static Gerenciador_Input gerenciador;
+                return gerenciador;
+            }
+            ~Gerenciador_Input(){
+                for (int i = 0; i < observadores.size(); i++) {
+                    if (observadores[i]) delete observadores[i];
+                }
+                observadores.clear();
+            }
 
             // Padrão observer
             void inscrever(Observador_Input* obs){if (obs) observadores.push_back(obs); }

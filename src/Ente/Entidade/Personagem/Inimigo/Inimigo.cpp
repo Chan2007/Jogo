@@ -7,6 +7,7 @@
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
+#include "Sistema/Fisica/Visitor_Colisao.h"
 
 std::vector<Personagens::Jogador*> Personagens::Inimigo::listaJogadores;
 
@@ -52,48 +53,7 @@ namespace Personagens {
             getSprite().setScale(-escalaX, escalaY);
     }
 
-    void Inimigo::interagir_Colisao(Inimigo* I) {
-        if (I && I != this)
-            setColisao(true);
-    }
-
-    void Inimigo::interagir_Colisao(Obstaculos::Obstaculo* O) {
-        if (!O) return;
-        setColisao(true);
-
-        sf::FloatRect hitboxInimigo = getSprite().getGlobalBounds();
-        sf::FloatRect hitboxObs = O->getSprite().getGlobalBounds();
-
-        float centroYInimigo = hitboxInimigo.top + (hitboxInimigo.height / 2.f);
-        float centroXInimigo = hitboxInimigo.left + (hitboxInimigo.width / 2.f);
-
-        bool bateuNaParede = (centroYInimigo > hitboxObs.top) && (centroYInimigo < hitboxObs.top + hitboxObs.height);
-
-        if (bateuNaParede) {
-            inverterPatrulha();
-        }
-
-        else {
-            float margem = 5.0f;
-
-            if (direcaoPatrulha > 0.0f) {
-                //Checa se o centro passou da borda direita da plataforma
-                if (centroXInimigo >= (hitboxObs.left + hitboxObs.width) - margem) {
-                    inverterPatrulha();
-                }
-            }
-            else if (direcaoPatrulha < 0.0f) {
-                // Checa se o centro passou da borda esquerda da plataforma
-                if (centroXInimigo <= hitboxObs.left + margem) {
-                    inverterPatrulha();
-                }
-            }
-        }
-    }
-
-    void Inimigo::interagir_Colisao(Entidades::Projetil* P) {
-    }
-
-    void Inimigo::interagir_Colisao(Jogador* J) {
+    void Inimigo::aceitar(VisitorColisao* visitor) {
+        if (visitor) visitor->visitar(this);
     }
 }

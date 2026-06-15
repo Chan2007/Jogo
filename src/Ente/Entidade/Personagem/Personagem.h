@@ -84,7 +84,7 @@ namespace Personagens {
         int receberDano(int dano);
         int causarDanoBasico() const;
         void curar(int valor);
-        void regenerarVida(float deltaTempo);
+        void regenerarVida(float dt);
         void moverHorizontal(float direcao);
         void resetarCombate();
         void setInvulneravel(bool i) { invulneravel = i; }

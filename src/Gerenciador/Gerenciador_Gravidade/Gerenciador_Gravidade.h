@@ -28,6 +28,8 @@ namespace Gerenciadores {
             Gerenciador_Gravidade();
 
             static Gerenciador_Gravidade* gerenciador_gravidade;
+            Gerenciador_Gravidade(const Gerenciador_Gravidade&);
+            Gerenciador_Gravidade& operator=(const Gerenciador_Gravidade&);
 
         public:
             ~Gerenciador_Gravidade();
@@ -51,7 +53,7 @@ namespace Gerenciadores {
             float getAtrito() const {return atrito;}
             float getRestituicao() const {return restituicao;}
             void limpar();
-            void executar(float dt);
+            void executar();
 
     };
 } // Gerenciadores

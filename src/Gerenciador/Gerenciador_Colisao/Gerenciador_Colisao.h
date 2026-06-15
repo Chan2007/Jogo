@@ -11,7 +11,9 @@
 #include <set>
 #include <algorithm>
 
-#include "Sistema/Fisica/Observer_Colisao.h"
+namespace Fases {
+    class Fase;
+}
 
 namespace Entidades {
     class Entidade;
@@ -32,7 +34,7 @@ namespace Gerenciadores {
 
     class Gerenciador_Gravidade;
 
-    class Gerenciador_Colisao: public Observer_Colisao {
+    class Gerenciador_Colisao {
         private:
             std::vector <Obstaculos::Obstaculo*> Lobstaculos;
             std::list <Personagens::Inimigo*> Linimigos;
@@ -69,16 +71,7 @@ namespace Gerenciadores {
             static void removerDaLista(std::set<tipo*>& lista, tipo* entidade) {
                 lista.erase(entidade);
             }
-            template <class Container>
-            static void colisao_Entidade_Classe(const Container& lista, Entidades::Entidade* entidade) {
-                typename Container::const_iterator it;
-                for (it = lista.begin(); it != lista.end(); ++it)
-                    verificarColisao(*it, entidade);
-            }
-            static bool colidiu(const Entidades::Entidade *entidade, const Entidades::Entidade *movel);
-            static void calculaColisao(const Entidades::Entidade *entidade, Entidades::Entidade *movel);
-            static bool verificarLimitesJanela(Entidades::Entidade* entidade, const sf::Vector2u& tamanhoJanela,
-                                               Gerenciador_Gravidade* pGravidade = NULL);
+
             Gerenciador_Colisao();
             Gerenciador_Colisao(const Gerenciador_Colisao&);
             Gerenciador_Colisao& operator=(const Gerenciador_Colisao&);
@@ -86,15 +79,20 @@ namespace Gerenciadores {
             static Gerenciador_Colisao& getGerenciador();
             ~Gerenciador_Colisao();
             void limpar();
+
             void incluirEntidade(Entidades::Entidade* entidade);
             void removerEntidade(Entidades::Entidade* entidade);
             bool verificarPosicaoLivre(const sf::FloatRect& hitboxProvisoria);
-            static void verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel);
-            void verificarObstaculo(Entidades::Entidade* entidade) const;
-            void verificarProjetil(Entidades::Entidade* entidade) const;
-            void verificarInimigo(Entidades::Entidade* entidade) const;
-            void verificarJogador(Entidades::Entidade* entidade) const;
-            void executar(const sf::Vector2u &tamanhoJanela, Gerenciador_Gravidade *pGravidade = NULL);
+            static bool verificarColisao(Entidades::Entidade *entidade, Entidades::Entidade *movel);
+            void tratarColisoesJogsObstacs() const;
+            void tratarColisoesJogsProjeteis() const;
+            void tratarColisoesJogsInimgs() const;
+            void tratarColisoesJogs() const;
+
+            void tratarColisoesInim() const;
+            void tratarColisoesProj() const;
+
+            void executar();
     };
 } // Gerenciador
 

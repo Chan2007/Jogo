@@ -41,6 +41,16 @@
       <property name="bottomMargin">
        <number>36</number>
       </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="topBarLabel">
+        <property name="text">
+         <string>Jogo baseado em League of Legends</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QStackedWidget" name="stackedWidget">
         <property name="sizePolicy">
@@ -50,7 +60,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="mainPage">
          <layout class="QVBoxLayout" name="mainPageLayout">
@@ -71,6 +81,11 @@
           </property>
           <item>
            <widget class="QLabel" name="heroTitleLabel">
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Meu Jogo</string>
             </property>
@@ -83,6 +98,11 @@
               <width>400</width>
               <height>0</height>
              </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
             </property>
             <property name="text">
              <string>Aventure-se no desconhecido</string>
@@ -147,7 +167,7 @@
               <number>20</number>
              </property>
              <item>
-              <widget class="MenuButton" name="startButton">
+              <widget class="MenuButton" name="phase1Button">
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -158,7 +178,55 @@
                 </font>
                </property>
                <property name="text">
-                <string>Iniciar jogo</string>
+                <string>Fase 1</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MenuButton" name="phase2Button">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <strikeout>false</strikeout>
+                 <kerning>true</kerning>
+                </font>
+               </property>
+               <property name="text">
+                <string>Fase 2</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MenuButton" name="loadGameButton">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <strikeout>false</strikeout>
+                 <kerning>true</kerning>
+                </font>
+               </property>
+               <property name="text">
+                <string>Carregar jogo</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="MenuButton" name="rankingButton">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                 <strikeout>false</strikeout>
+                 <kerning>true</kerning>
+                </font>
+               </property>
+               <property name="text">
+                <string>Ranking</string>
                </property>
               </widget>
              </item>
@@ -205,6 +273,11 @@
           </item>
           <item>
            <widget class="QLabel" name="statusLabel">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>Menu Principal</string>
             </property>
@@ -417,7 +490,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="MenuButton" name="backButton">
+              <widget class="MenuButton" name="backFromSettingsButton">
                <property name="text">
                 <string>Voltar ao Menu</string>
                </property>
@@ -441,16 +514,198 @@
           </item>
          </layout>
         </widget>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="topBarLabel">
-        <property name="text">
-         <string>Jogo baseado em League of Legends</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
+        <widget class="QWidget" name="loadGamePage">
+         <layout class="QVBoxLayout" name="loadGamePageLayout">
+          <property name="spacing">
+           <number>40</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>12</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="PaintedPanel" name="loadGamePanel">
+            <property name="maximumSize">
+             <size>
+              <width>560</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="loadGamePanelLayout">
+             <property name="spacing">
+              <number>28</number>
+             </property>
+             <property name="leftMargin">
+              <number>84</number>
+             </property>
+             <property name="topMargin">
+              <number>28</number>
+             </property>
+             <property name="rightMargin">
+              <number>84</number>
+             </property>
+             <property name="bottomMargin">
+              <number>28</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="loadGameTitleLabel">
+               <property name="text">
+                <string>Carregar Jogo</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="loadGameSubtitleLabel">
+               <property name="text">
+                <string>Em breve...</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="loadGameSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>14</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="MenuButton" name="backFromLoadButton">
+               <property name="text">
+                <string>Voltar ao Menu</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="loadGameBottomSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="rankingPage">
+         <layout class="QVBoxLayout" name="rankingPageLayout">
+          <property name="spacing">
+           <number>40</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>12</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="PaintedPanel" name="rankingPanel">
+            <property name="maximumSize">
+             <size>
+              <width>560</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <layout class="QVBoxLayout" name="rankingPanelLayout">
+             <property name="spacing">
+              <number>28</number>
+             </property>
+             <property name="leftMargin">
+              <number>84</number>
+             </property>
+             <property name="topMargin">
+              <number>28</number>
+             </property>
+             <property name="rightMargin">
+              <number>84</number>
+             </property>
+             <property name="bottomMargin">
+              <number>28</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="rankingTitleLabel">
+               <property name="text">
+                <string>Ranking</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="rankingSubtitleLabel">
+               <property name="text">
+                <string>Em breve...</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="rankingSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>14</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="MenuButton" name="backFromRankingButton">
+               <property name="text">
+                <string>Voltar ao Menu</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer name="rankingBottomSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>

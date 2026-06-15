@@ -29,13 +29,12 @@ namespace Entidades {
         int getDano() const { return dano; }
         void setDano(int valor) { if (valor >= 0) dano = valor; }
         sf::FloatRect getTamanho() const;
+
+        void aceitar(VisitorColisao *visitor);
+
         void setDoJogador(bool valor) { doJogador = valor; }
         bool getDoJogador() const { return doJogador; }
-        void aoColidir(Entidades::Entidade* E) { E->interagir_Colisao(this); }
-        void interagir_Colisao(Personagens::Inimigo* I);
-        void interagir_Colisao(Obstaculos::Obstaculo* O);
-        void interagir_Colisao(Projetil* P);
-        void interagir_Colisao(Personagens::Jogador* J);
+
     };
 } // Entidades
 

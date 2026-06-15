@@ -4,9 +4,12 @@
 
 #include "Segunda_Fase.h"
 
-#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
+#include "Ente/Entidade/Personagem/Inimigo/Chefe/Chefe.h"
+#include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
+
+
 
 namespace Fases {
     Segunda_Fase::Segunda_Fase() : Fase(), maxChefoes(2) {
@@ -21,43 +24,67 @@ namespace Fases {
     Segunda_Fase::~Segunda_Fase() {}
 
     void Segunda_Fase::criarCenario() {
-        sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
-        const sf::Vector2u tamanhoJanela = janela.getSize();
-
         diretorio_Frames_Fase = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/fase2");
         diretorio_Audio = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
 
-        animadorFase.setSheetTargetSize(tamanhoJanela);
+        if (!diretorio_Frames_Fase.empty())
+            gerenciadorGrafico->loadAnimation(diretorio_Frames_Fase,"bg_fase2_",451,2,4,7);
 
-        if (!diretorio_Frames_Fase.empty()) {
-            animadorFase.loadFrames(diretorio_Frames_Fase, "bg_fase2_", 451, 2, 4, 7);
-        }
-
-        if (!diretorio_Audio.empty()) {
+        if (!diretorio_Audio.empty())
             trocarMusica(2);
-        }
     }
 
-    // 1. Cuidar apenas dos inputs específicos da Fase 1
+    // Inputs específicos da Fase 2
     void Segunda_Fase::processarEventos(const sf::Event& evento) {
-        if (evento.type == sf::Event::KeyPressed) {
-            // Exemplo: Se pressionar ESC, o Jogo poderá capturar para pausar
-        }
+        gerenciadorInput.notificarObservadores(evento);
     }
 
-    // 2. Cuidar apenas da evolução da física/lógica no frame atual
+    // Cuidar apenas da evolução da física/lógica
     void Segunda_Fase::executar() {
-        float dt = 0.016f;
-        animadorFase.update();
+        LEntidades.executarTodas();
+        gerenciadorGrafico->updateAnimation();
 
         // Executa gerenciadores de física usando o delta time recebido do Jogo
-        gerenciadorColisao.executar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela().getSize(), &gerenciadorGravidade);
-        gerenciadorGravidade.executar(dt);
+        gerenciadorColisao->executar();
+        gerenciadorGravidade.executar();
+
+        renderizar();
+        definirLimitesJanela();
     }
 
-    // 3. Cuidar apenas de mandar os elementos para a janela
-    void Segunda_Fase::renderizar(sf::RenderWindow& janela) {
-        animadorFase.draw(janela);
-        LEntidades.desenharTodas(janela);
+    // Cuidar apenas de mandar os elementos para a janela
+    void Segunda_Fase::renderizar() {
+        gerenciadorGrafico->drawAnimation();
+        LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
+    }
+    void Segunda_Fase::criarChefoes() {
+        Chefe* ElderDragon = NULL;
+        Entidades::Projetil* tiroInim = NULL;
+        ElderDragon = new Chefe();
+        if (ElderDragon) {
+            ElderDragon->setPosicao(
+                sf::Vector2f(
+                gerar_num_norm((tamanhoJanela.x - 300)/2.0, tamanhoJanela.x/6.0,0, static_cast<int>(tamanhoJanela.x - 300)),
+                gerar_num_norm(tamanhoJanela.y/2.0, tamanhoJanela.y/6.0, 0, static_cast<int>(tamanhoJanela.y))
+                )
+            );
+            gerenciadorColisao->incluirEntidade(ElderDragon);
+            gerenciadorGravidade.aplicarGravidade(ElderDragon, true);
+            LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(ElderDragon));
+            tiroInim = new Entidades::Projetil();
+            if (tiroInim) {
+                tiroInim->setDoJogador(false);
+                tiroInim->setAtivo(false);
+                ElderDragon->setProjetil(tiroInim);
+                gerenciadorColisao->incluirEntidade(tiroInim);
+                gerenciadorGravidade.aplicarGravidade(tiroInim, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(tiroInim));
+            }
+        }
+        ElderDragon = NULL;
+    }
+
+    void Segunda_Fase::criarProjeteis() {
+
     }
 } // Fases

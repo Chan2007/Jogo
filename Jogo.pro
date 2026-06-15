@@ -8,9 +8,9 @@ INCLUDEPATH += $$PWD/src
 # ====================================================================
 # Arquivos Base (Apenas os que estão na RAIZ do projeto)
 # ====================================================================
-HEADERS += mainwindow.h
-SOURCES += mainwindow.cpp main.cpp
-FORMS   += mainwindow.ui
+HEADERS += Menu.h
+SOURCES += Menu.cpp main.cpp
+FORMS   += Menu.ui
 
 # Inclui suporte a traduções se o Qt Creator precisar
 TRANSLATIONS += GUI_Jogo_pt_BR.ts

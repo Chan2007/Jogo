@@ -2,10 +2,8 @@
 #ifndef JOGO_JOGADOR_H
 #define JOGO_JOGADOR_H
 
-#include <iostream>
 #include "Sistema/Input/Observador_Input.h"
 #include "Ente/Entidade/Personagem/Personagem.h"
-#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Gerenciadores {
     class Observador_Input;
@@ -31,36 +29,37 @@ namespace Personagens {
         CAMPEAO_VIEGO
     };
 
-    class Jogador : public Personagem {
+    class Jogador : public Personagem, public Gerenciadores::Observador_Input {
     private:
-        Gerenciadores::Observador_Input* ObserverJogador;
-        Gerenciadores::Gerenciador_Gravidade* pGravidade;
+        bool movendoEsquerda;
+        bool movendoDireita;
+        bool pulando;
+        bool atacando;
+        bool usandoHabilidade;
     protected:
         float pontos;
         int abates;
+        int idJogador;
     public:
         Jogador();
         ~Jogador();
 
-        void setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g);
-        Gerenciadores::Gerenciador_Gravidade* getGerenciadorGravidade();
-        Gerenciadores::Observador_Input* getObserver();
+        void aoApertarTecla(const Gerenciadores::Tecla& evento);
 
         void executar();
         void salvar();
         void mover();
         void setCampeao(EscolhaCampeao campeao);
+        void setIdJogador(const int id) { idJogador = id; }
 
+        int getIdJogador() const { return idJogador; }
         float getPontos() const { return pontos; }
         int getAbates() const { return abates; }
         void adicionarPontos(float valor);
         void registrarAbate();
 
-        void aoColidir(Entidade* E) { E->interagir_Colisao(this); }
-        void interagir_Colisao(Inimigo* I);
-        void interagir_Colisao(Obstaculos::Obstaculo* O);
-        void interagir_Colisao(Entidades::Projetil* P);
-        void interagir_Colisao(Jogador* J);
+        void aceitar(VisitorColisao *visitor);
+
     };
 } // Personagens
 

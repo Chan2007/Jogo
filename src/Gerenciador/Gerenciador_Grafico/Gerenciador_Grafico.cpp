@@ -16,13 +16,14 @@ namespace Gerenciadores {
         static Gerenciador_Grafico instancia;
         return instancia;
     }
-    bool Gerenciador_Grafico::loadAnimation(const std::string& prefix, const std::string& name,
-                                         const int numFrames, const int frameStep,
-                                         const unsigned int cols, const unsigned int rows) {
-        if (!window.isOpen()) return false;
+
+    void Gerenciador_Grafico::loadAnimation(const std::string &prefix, const std::string &name,
+                                            const int numFrames, const int frameStep,
+                                            const unsigned int cols, const unsigned int rows) {
+        if (!window.isOpen()) return;
         animadorFundo.setSheetTargetSize(sf::Vector2u(tamanho.width, tamanho.height));
         animadorFundo.setSheetPosition(position);
-        return animadorFundo.loadFrames(prefix, name, numFrames, frameStep, cols, rows);
+        animadorFundo.loadFrames(prefix, name, numFrames, frameStep, cols, rows);
     }
 
     void Gerenciador_Grafico::updateAnimation() {

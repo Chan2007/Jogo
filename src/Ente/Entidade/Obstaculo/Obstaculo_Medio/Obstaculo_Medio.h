@@ -6,20 +6,25 @@
 #define JOGO_OBSTACULO_MEDIO_H
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 
+namespace Personagens {
+    class Jogador;
+}
+
 namespace Obstaculos {
     class Obstaculo_Medio: public Obstaculo {
         private:
             float altura;
             float largura;
-            float dano;
         public:
             Obstaculo_Medio();
             ~Obstaculo_Medio();
-            void executar(float dt);
-            float getAltura();
-            float getLargura();
-            float getDano();
-            void setPlataforma(Personagens::Jogador* J);
+            void executar();
+            void mover(){}
+            void salvar(){}
+            float getAltura() { return altura; }
+            float getLargura() { return largura; }
+            float getDano() { return 0; }
+            void obstaculizar(Personagens::Jogador* p);
     };
 } // Obstaculo
 

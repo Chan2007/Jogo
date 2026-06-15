@@ -7,12 +7,14 @@
 #include <iostream>
 
 #include "Sistema/Caminho/Encontrar_Caminho.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 
 namespace Obstaculos {
 
 	Plataforma::Plataforma(TipoPlataforma tipo) :
 		Obstaculo(),
-		tipoPlataforma(tipo)
+		tipoPlataforma(tipo),
+		altura(60)
 	{
 		setTipo(Entidades::ENTIDADE_OBSTACULO);
 		perigoso = false;
@@ -59,7 +61,7 @@ namespace Obstaculos {
 		}
 	}
 
-    void Plataforma::setPlataforma(Personagens::Jogador* J) {
+    void Plataforma::obstaculizar(Personagens::Jogador* J) {
         if (!J) return;
 		gerenciadorGravidade.aoTocarChao(J, sf::Vector2f(0.f, -1.f));
     }
