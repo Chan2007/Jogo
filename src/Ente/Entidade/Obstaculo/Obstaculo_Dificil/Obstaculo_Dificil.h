@@ -6,20 +6,26 @@
 #define JOGO_OBSTACULO_DIFICIL_H
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 
+namespace Personagens {
+    class Jogador;
+}
+
 namespace Obstaculos {
     class Obstaculo_Dificil: public Obstaculo {
         private:
-            float dano;
+            float impulso;
+            short int danosidade;
         public:
             Obstaculo_Dificil();
             ~Obstaculo_Dificil();
 
             void executar();
-            void mover();
-            void salvar();
+            void mover() {}
+            void salvar() {}
 
-            float getDano();
-            void setPlataforma(Personagens::Jogador* J);
+            float getDano() { return danosidade; }
+            void setPlataforma(Personagens::Jogador* J){}
+            void obstaculizar(Personagens::Jogador* p);
     };
 } // Obstaculo
 

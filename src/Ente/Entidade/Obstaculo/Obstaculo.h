@@ -25,6 +25,8 @@ namespace Obstaculos {
             virtual void salvar() = 0;
             virtual void mover() = 0;
             virtual void setPlataforma(Personagens::Jogador* J) = 0;
+            virtual void obstaculizar(Personagens::Jogador* p) = 0;
+
             // Padrão visitor
             void aoColidir(Entidade* E) {E->interagir_Colisao(this);}
 

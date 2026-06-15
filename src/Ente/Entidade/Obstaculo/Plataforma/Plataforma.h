@@ -5,7 +5,10 @@
 #ifndef JOGO_PLATAFORMA_H
 #define JOGO_PLATAFORMA_H
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+
+namespace Personagens {
+    class Jogador;
+}
 
 namespace Obstaculos{
         class Plataforma:public Obstaculo {
@@ -17,6 +20,7 @@ namespace Obstaculos{
                     CHAO
                 };
             private:
+                int altura;
                 TipoPlataforma tipoPlataforma;
             public:
                 Plataforma(TipoPlataforma tipo = NORMAL1);
@@ -26,6 +30,7 @@ namespace Obstaculos{
                 void salvar(){};
                 void mover(){};
                 void setPlataforma(Personagens::Jogador* J);
+                void obstaculizar(Personagens::Jogador* p) {}
         };
 } // Obstaculo
 
