@@ -11,11 +11,25 @@
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
-    Jogador::Jogador() : Personagem(), movendoEsquerda(false), movendoDireita(false), pulando(false),
-    atacando(false), usandoHabilidade(false), pontos(0.0f), abates(0)
+    Jogador::Jogador(
+        sf::Vector2f posicao = sf::Vector2f(20.0f, 40.0f), 
+        sf::Color corBarra = sf::Color(0, 255, 0)
+    ) : 
+    Personagem(), 
+    movendoEsquerda(false), movendoDireita(false), 
+    pulando(false), atacando(false), usandoHabilidade(false), 
+    pontos(0.0f), abates(0), fundoVida(), barraVida()
     {
         setTipo(Entidades::ENTIDADE_JOGADOR);
         velocidadeMax = 300.f;
+
+        fundoVida.setSize(sf::Vector2f(200.0f, 20.0f));
+        fundoVida.setPosition(posicao);
+        fundoVida.setFillColor(sf::Color(100, 100, 100));
+
+        barraVida.setSize(sf::Vector2f(200.0f, 20.0f));
+        barraVida.setPosition(posicao);
+        barraVida.setFillColor(corBarra);
     }
 
     Jogador::~Jogador() {}

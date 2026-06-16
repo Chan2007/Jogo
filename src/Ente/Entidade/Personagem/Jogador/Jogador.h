@@ -40,6 +40,8 @@ namespace Personagens {
         float pontos;
         int abates;
         int idJogador;
+        sf::RectangleShape fundoVida;
+        sf::RectangleShape barraVida;
     public:
         Jogador();
         ~Jogador();
