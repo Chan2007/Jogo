@@ -1,9 +1,12 @@
 #include "Proxy_Textura.h"
 #include "Gerenciador_Textura.h"
+#include <SFML/OpenGL.hpp>
 
 namespace Gerenciadores {
     void Proxy_Textura::loadThread() {
+        sf::Context context;
         gerenciadorTextura->carregarTextura(pathToLoad);
+        glFlush(); 
         mutex.lock();
         bufferReady = true;
         threadRunning = false;

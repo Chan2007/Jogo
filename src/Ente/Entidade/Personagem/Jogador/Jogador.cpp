@@ -18,6 +18,14 @@ namespace Personagens {
     pontos(0.0f), abates(0), fundoVida(), barraVida()
     {
         velocidadeMax = 300.f;
+
+        fundoVida.setSize(sf::Vector2f(200.0f, 20.0f));
+        fundoVida.setPosition(posicao);
+        fundoVida.setFillColor(sf::Color(100, 100, 100));
+
+        barraVida.setSize(sf::Vector2f(200.0f, 20.0f));
+        barraVida.setPosition(posicao);
+        barraVida.setFillColor(corBarra);
     }
 
     Jogador::~Jogador() {}
