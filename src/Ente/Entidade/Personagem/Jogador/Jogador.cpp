@@ -169,7 +169,7 @@ namespace Personagens {
 
     void Jogador::adicionarPontos(float valor) {
         if (valor > 0.0f) { pontos += valor; }
-        std::cout << getNome() << " recebeu " << valor << " pontos. Pontuação atual: " << pontos << std::endl;
+        std::cout << getNome() << " recebeu " << valor << " pontos. Pontuacao atual: " << pontos << std::endl;
     }
 
     void Jogador::registrarAbate() {

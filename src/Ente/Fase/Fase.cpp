@@ -41,7 +41,7 @@ namespace Fases {
 
         Obstaculos::Plataforma* novaPlat;
         sementear();
-        const int fator = rand() % 3 + 3;
+        const int fator = rand() % 3 + 8;
         for (int i = 0; i < fator; i++) {
             double media = 3;
             double desvio_padrao = 2;

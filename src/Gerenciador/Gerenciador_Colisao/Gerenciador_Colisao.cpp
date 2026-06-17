@@ -5,12 +5,13 @@
 #include "Gerenciador_Colisao.h"
 
 #include "Ente/Entidade/Entidade.h"
-#include "Ente/Entidade/Obstaculo/Obstaculo.h"
+#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Sistema/Fisica/Visitor_Colisao_Inimigo.h"
 #include "Sistema/Fisica/Visitor_Colisao_Jogador.h"
+#include <iostream>
 
 namespace Gerenciadores {
     class Observer_Colisao;
@@ -127,8 +128,9 @@ namespace Gerenciadores {
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
                 if (obstaculo && verificarColisao(obstaculo, jogador)) {
-                    VisitorColisaoJogador visitor(jogador);
-                    obstaculo->aceitar(&visitor);
+                    /*VisitorColisaoJogador visitor(jogador);
+                    obstaculo->aceitar(&visitor);*/
+                    obstaculo->obstaculizar(jogador);
                 }
             }
         }
@@ -145,8 +147,15 @@ namespace Gerenciadores {
             for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
                 Entidades::Projetil* projetil = *itProj;
                 if (projetil && verificarColisao(jogador, projetil) && projetil->getVigente()) {
-                    VisitorColisaoJogador visitor(jogador);
-                    projetil->aceitar(&visitor);
+                    /*VisitorColisaoJogador visitor(jogador);
+                    projetil->aceitar(&visitor);*/
+                    if (!projetil->getDoJogador()) {
+                        if (!jogador->getInvulneravel()) {
+                            jogador->receberDano(projetil->getDano());
+                            std::cout << "Jogador foi atingido por um projetil." << std::endl;
+                        }
+                        projetil->setAtivo(false);
+                    }
                 }
             }
         }
@@ -163,8 +172,17 @@ namespace Gerenciadores {
             for (itInim = Linimigos.begin(); itInim != Linimigos.end(); ++itInim) {
                 Personagens::Inimigo* inimigo = *itInim;
                 if (inimigo && verificarColisao(inimigo, jogador) && inimigo->getVigente()) {
-                    VisitorColisaoJogador visitor(jogador);
-                    inimigo->aceitar(&visitor);
+                    /*VisitorColisaoJogador visitor(jogador);
+                    inimigo->aceitar(&visitor);*/
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+                        inimigo->receberDano(jogador->getPoder());
+                        if (inimigo->getVida() <= 0) {
+                            float pontoAnt = jogador->getPontos();
+                            jogador->registrarAbate();
+                            std::cout << "Inimigo abatido! Pontos ganhos: " << jogador->getPontos() - pontoAnt << std::endl;
+                            inimigo->setVigente(false);
+                        }
+                    }
                 }
             }
         }
@@ -197,9 +215,12 @@ namespace Gerenciadores {
             // Inimigo x Obstáculos
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
-                if (obstaculo && verificarColisao(obstaculo, inimigo1)) {
-                    VisitorColisaoInimigo visitor(inimigo1);
-                    obstaculo->aceitar(&visitor);
+                Obstaculos::Plataforma* p = dynamic_cast<Obstaculos::Plataforma*>(obstaculo);
+                if (p) {
+                    if (obstaculo && verificarColisao(obstaculo, inimigo1)) {
+                        VisitorColisaoInimigo visitor(inimigo1);
+                        obstaculo->aceitar(&visitor);
+                    }
                 }
             }
             // Inimigo x Projétil
@@ -211,6 +232,15 @@ namespace Gerenciadores {
                 }
             }
 
+            // Inimigo x Inimigo
+            std::list<Personagens::Inimigo*>::const_iterator itInim2;
+            for (itInim2 = Linimigos.begin(); itInim2 != Linimigos.end(); ++itInim2) {
+                Personagens::Inimigo* inimigo2 = *itInim2;
+                if (inimigo2 && inimigo1 != inimigo2 && verificarColisao(inimigo1, inimigo2)) {
+                    /*VisitorColisaoInimigo visitor(inimigo1);
+                    inimigo2->aceitar(&visitor);*/
+                }
+            }
 
         }
     }

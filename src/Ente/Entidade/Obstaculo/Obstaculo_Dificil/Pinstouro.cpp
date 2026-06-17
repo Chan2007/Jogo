@@ -39,7 +39,7 @@ namespace Obstaculos {
 	void Pinstouro::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
 				p->receberDano(static_cast<int>(danosidade));
-				std::cout << " Pinstouro lançou o jogador" << std::endl;
+				std::cout << " Pinstouro lancou o jogador" << std::endl;
 
 				sf::Vector2f posJog = p->getPosicao();
 				sf::FloatRect tamJog = p->getTamanho();

@@ -11,7 +11,7 @@ namespace Entidades {
         getSprite().setPosition(getPosicao());
         gerenciadorGrafico->getJanela().draw(getSprite());
 
-        sf::RectangleShape hitbox;
+        /*sf::RectangleShape hitbox;
         hitbox.setSize(sf::Vector2f(getTamanho().width, getTamanho().height));
         hitbox.setPosition(getPosicao());
 
@@ -20,7 +20,7 @@ namespace Entidades {
         hitbox.setOutlineThickness(2.0f);            // Espessura da linha
         hitbox.setOrigin(getTamanho().width / 2.f, getTamanho().height / 2.f);
 
-        gerenciadorGrafico->getJanela().draw(hitbox);
+        gerenciadorGrafico->getJanela().draw(hitbox);*/
     }
 
     Listas::ListaEntidades* Entidade::listaEntidades = NULL;
