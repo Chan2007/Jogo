@@ -103,7 +103,7 @@ namespace Personagens {
     void Personagem::moverHorizontal(float direcao) {
         sf::Vector2f velAtual = getVelocidade();
 
-        if (velAtual.x > velocidadeMax) { velAtual.x *= 0.95f; }
+        if (std::abs(velAtual.x) > velocidadeMax) { velAtual.x *= 0.95f; }
         else { velAtual.x = direcao * velocidadeMax; }
 
         setVelocidade(velAtual);

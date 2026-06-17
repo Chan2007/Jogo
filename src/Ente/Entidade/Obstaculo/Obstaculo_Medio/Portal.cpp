@@ -36,7 +36,7 @@ namespace Obstaculos {
 
 	void Portal::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
-			if (p->getTamanho().intersects(getTamanho())) {
+
 				sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
 				const int rangeX = janela.getSize().x - p->getTamanho().width;
 				const int rangeY = janela.getSize().y - p->getTamanho().height;
@@ -49,7 +49,7 @@ namespace Obstaculos {
 					p->setVelocidade(sf::Vector2f(0.f, 0.f));
 
 				}
-			}
+
 		}
 	}
 

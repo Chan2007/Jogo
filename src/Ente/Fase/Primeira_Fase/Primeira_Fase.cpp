@@ -62,7 +62,7 @@ namespace Fases {
     void Primeira_Fase::criarInimMedios() {
         Azulo* azulo = NULL;
         sementear();
-        const int fator = static_cast<int>(gerar_num_exp(1, maxInimMedios, 2));
+        const int fator = static_cast<int>(gerar_num_exp(3, maxInimMedios, 2));
         for (int i = 1; i <= fator; i++) {
             azulo = new Azulo();
             if (azulo) {

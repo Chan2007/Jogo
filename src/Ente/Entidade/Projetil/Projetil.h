@@ -36,6 +36,7 @@ namespace Entidades {
             ativo = a;
             setVigente(ativo);
         }
+        bool getAtivo() { return ativo; }
         int getDano() const { return dano; }
         void setDano(int valor) { if (valor >= 0) dano = valor; }
 
