@@ -7,8 +7,8 @@
 #include "jogo.h"
 #include "Listas/ListaEntidades.h"
 #include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
-#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Facil/Inimigo_Facil.h"
-#include "Ente/Entidade/Personagem/Inimigo/Chefe/Chefe.h"
+#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Facil/Minion.h"
+#include "Ente/Entidade/Personagem/Inimigo/Chefe/DragaoAnciao.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
@@ -118,12 +118,12 @@ namespace Fases {
     }
     void Fase::criarInimFaceis(){
 
-        Inimigo_Facil* minion = NULL;
+        Minion* minion = NULL;
         Entidades::Projetil* tiroInim1 = NULL;
         sementear();
         const int fator = rand() % 3 + 3;
         for (int i = 0; i < fator; i++) {
-            minion = new Inimigo_Facil();
+            minion = new Minion();
             if (minion) {
                 minion->setPosicao(sf::Vector2f((rand() % (tamanhoJanela.x - 300)) + 300, rand() % tamanhoJanela.y));
                 gerenciadorColisao->incluirEntidade(minion);

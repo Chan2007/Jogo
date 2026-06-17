@@ -88,9 +88,9 @@ namespace Gerenciadores {
             void tratarColisoesJogsProjeteis() const;
             void tratarColisoesJogsInimgs() const;
             void tratarColisoesJogs() const;
-
             void tratarColisoesInim() const;
             void tratarColisoesProj() const;
+            void tratarColisoesObst() const;
 
             void executar();
     };

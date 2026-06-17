@@ -23,6 +23,12 @@ void VisitorColisaoJogador::colidir(Personagens::Inimigo* I) {
     if (!I || !jogador) return;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
         I->receberDano(jogador->getPoder());
+        if (I->getVida() <= 0) {
+            float pontoAnt = jogador->getPontos();
+            jogador->registrarAbate();
+            std::cout << "Inimigo abatido! Pontos ganhos: " << jogador->getPontos() - pontoAnt << std::endl;
+            I->setVigente(false);
+        }
 }
 
 void VisitorColisaoJogador::colidir(Obstaculos::Obstaculo* O) {

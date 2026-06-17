@@ -2,9 +2,9 @@
 
 #include <iostream>
 
-#include "Ente/Entidade/Obstaculo/Obstaculo_Medio/Obstaculo_Medio.h"
-#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Inimigo_Medio.h"
-#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
+#include "Ente/Entidade/Obstaculo/Obstaculo_Medio/Portal.h"
+#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Azulo.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
@@ -47,14 +47,24 @@ namespace Fases {
     void Primeira_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
         LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
+        if (jogo->getJogador1()) {
+            jogo->getJogador1()->desenharBarra();
+            jogo->getJogador1()->atualizarBarra();
+        }
+
+        // JOGADOR 2: Fixo no Canto Superior Direito
+        if (jogo->getJogador2() && jogo->getJogador2Ativo()) {
+            jogo->getJogador2()->desenharBarra();
+            jogo->getJogador2()->atualizarBarra();
+        }
     }
     
     void Primeira_Fase::criarInimMedios() {
-        Inimigo_Medio* azulo = NULL;
+        Azulo* azulo = NULL;
         sementear();
         const int fator = static_cast<int>(gerar_num_exp(1, maxInimMedios, 2));
         for (int i = 0; i < fator; i++) {
-            azulo = new Inimigo_Medio();
+            azulo = new Azulo();
             if (azulo) {
                 azulo->setPosicao(sf::Vector2f(rand() % tamanhoJanela.y, rand() % tamanhoJanela.y));
                 gerenciadorColisao->incluirEntidade(azulo);
@@ -66,13 +76,13 @@ namespace Fases {
     }
     void Primeira_Fase::criarObstMedios() {
 
-        Obstaculos::Obstaculo_Medio* portal = NULL;
+        Obstaculos::Portal* portal = NULL;
         sementear();
 
         const int fator = gerar_num_norm(3, 0.75, 0, 5);
 
         for (int i = 0; i <= fator; i++) {
-            portal = new Obstaculos::Obstaculo_Medio();
+            portal = new Obstaculos::Portal();
             if (portal) {
 
                 portal->setPosicao(sf::Vector2f(350 * i, (rand() % tamanhoJanela.y - 300) + 300));
@@ -82,19 +92,6 @@ namespace Fases {
             }
         }
         portal = NULL;
-        /*
-        Obstaculos::Obstaculo_Dificil* Pinstouro = NULL;
-        for (int i = 1; i <= 3; i++) {
-            Pinstouro = new Obstaculos::Obstaculo_Dificil();
-            if (Pinstouro) {
-                Pinstouro->setPosicao(sf::Vector2f(300 * i, (rand() % desktop.height - 300) + 300));
-                gerenciadorColisao.incluirEntidade(Pinstouro);
-                gerenciadorGravidade.aplicarGravidade(Pinstouro, true);
-                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(Pinstouro));
-            }
-            Pinstouro = NULL;
-        }
-        */
     }
 
 }

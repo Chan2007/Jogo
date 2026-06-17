@@ -4,8 +4,9 @@
 
 #include "Segunda_Fase.h"
 
-#include "Ente/Entidade/Obstaculo/Obstaculo_Dificil/Obstaculo_Dificil.h"
-#include "Ente/Entidade/Personagem/Inimigo/Chefe/Chefe.h"
+#include "Ente/Entidade/Obstaculo/Obstaculo_Dificil/Pinstouro.h"
+#include "Ente/Entidade/Personagem/Inimigo/Chefe/DragaoAnciao.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
@@ -18,7 +19,7 @@ namespace Fases {
         Segunda_Fase::criarCenario();
         Segunda_Fase::criarObstaculos();
         Segunda_Fase::criarInimigos();
-        Segunda_Fase::criarProjeteis();
+        criarProjeteis();
     }
 
     Segunda_Fase::~Segunda_Fase() {}
@@ -54,13 +55,23 @@ namespace Fases {
     void Segunda_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
         LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
+        if (jogo->getJogador1()) {
+            jogo->getJogador1()->desenharBarra();
+            jogo->getJogador1()->atualizarBarra();
+        }
+
+        // JOGADOR 2: Fixo no Canto Superior Direito
+        if (jogo->getJogador2() && jogo->getJogador2Ativo()) {
+            jogo->getJogador2()->desenharBarra();
+            jogo->getJogador2()->atualizarBarra();
+        }
     }
     void Segunda_Fase::criarChefoes() {
-        Chefe* ElderDragon = NULL;
+        DragaoAnciao* ElderDragon = NULL;
         Entidades::Projetil* tiroInim = NULL;
         const int fator = gerar_num_exp(3, maxChefoes, 0.5);
         for (int i = 0; i < fator; i++) {
-            ElderDragon = new Chefe();
+            ElderDragon = new DragaoAnciao();
             if (ElderDragon) {
                 ElderDragon->setPosicao(
                     sf::Vector2f(
@@ -89,9 +100,9 @@ namespace Fases {
 
     }
     void Segunda_Fase::criarObstDificeis() {
-        Obstaculos::Obstaculo_Dificil* Pinstouro = NULL;
+        Obstaculos::Pinstouro* Pinstouro = NULL;
         for (int i = 1; i <= 3; i++) {
-            Pinstouro = new Obstaculos::Obstaculo_Dificil();
+            Pinstouro = new Obstaculos::Pinstouro();
             if (Pinstouro) {
                 Pinstouro->setPosicao(sf::Vector2f(300 * i, (rand() % tamanhoJanela.y - 300) + 300));
                 gerenciadorColisao->incluirEntidade(Pinstouro);

@@ -2,14 +2,14 @@
 // Created by Henrique on 06/05/2026.
 //
 
-#include "Obstaculo_Medio.h"
+#include "Portal.h"
 #include <iostream>
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Obstaculos {
 
-	Obstaculo_Medio::Obstaculo_Medio() :
+	Portal::Portal() :
 		Obstaculo(),
 		altura(2002),
 		largura(1548)
@@ -28,13 +28,13 @@ namespace Obstaculos {
 		getSprite().setScale(0.0775f, 0.09f);
 	}
 
-	Obstaculo_Medio::~Obstaculo_Medio() {}
+	Portal::~Portal() {}
 
-	void Obstaculo_Medio::executar() {
+	void Portal::executar() {
 
 	}
 
-	void Obstaculo_Medio::obstaculizar(Personagens::Jogador* p) {
+	void Portal::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
 			if (p->getTamanho().intersects(getTamanho())) {
 				sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();

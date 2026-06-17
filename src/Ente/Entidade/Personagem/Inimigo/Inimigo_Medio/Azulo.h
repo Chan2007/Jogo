@@ -10,12 +10,12 @@ namespace Personagens {
     class Jogador;
 }
 
-class Inimigo_Medio :public Personagens::Inimigo {
+class Azulo :public Personagens::Inimigo {
 private:
     int tamanho;
 public:
-    Inimigo_Medio();
-    ~Inimigo_Medio();
+    Azulo();
+    ~Azulo();
     void danificar(Personagens::Jogador* J);
     void atualizar();
     void executar();

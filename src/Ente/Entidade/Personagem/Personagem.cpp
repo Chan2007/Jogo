@@ -53,13 +53,6 @@ namespace Personagens {
         );
     }
 
-
-    float Personagem::getVidaPercentual() const {
-        if (vidaMaxima <= 0)
-            return 0.0f;
-        return (static_cast<float>(vida) / static_cast<float>(vidaMaxima)) * 100.0f;
-    }
-
     void Personagem::setVidaMaxima(int valor) {
         if (valor <= 0)
             return;
@@ -94,8 +87,8 @@ namespace Personagens {
         return rand() % 101 < chanceCritica ? poder * (1 + chanceCritica) : poder;
     }
 
-    void Personagem::curar(int valor) {
-        if (valor > 0) vida += valor;
+    void Personagem::curar(float valor) {
+        if (valor > 0 && valor + vida < vidaMaxima) vida += valor;
     }
 
     void Personagem::regenerarVida(float dt) {

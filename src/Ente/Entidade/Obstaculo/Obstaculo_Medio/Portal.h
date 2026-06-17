@@ -2,8 +2,8 @@
 // Created by Henrique on 06/05/2026.
 //
 
-#ifndef JOGO_OBSTACULO_DIFICIL_H
-#define JOGO_OBSTACULO_DIFICIL_H
+#ifndef JOGO_OBSTACULO_MEDIO_H
+#define JOGO_OBSTACULO_MEDIO_H
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 
 namespace Personagens {
@@ -11,25 +11,24 @@ namespace Personagens {
 }
 
 namespace Obstaculos {
-    class Obstaculo_Dificil: public Obstaculo {
+    class Portal: public Obstaculo {
         private:
-            float impulso;
-            short int danosidade;
+            float altura;
+            float largura;
         public:
-            Obstaculo_Dificil();
-            ~Obstaculo_Dificil();
-
+            Portal();
+            ~Portal();
             void executar();
             void mover() {
                 // Não se move
-            }
+            };
             void salvar() {
                 // TODO
             }
-
-            float getDano() { return danosidade; }
+            float getAltura() { return altura; }
+            float getLargura() { return largura; }
             void obstaculizar(Personagens::Jogador* p);
     };
 } // Obstaculo
 
-#endif //JOGO_OBSTACULO_DIFICIL_H
+#endif //JOGO_OBSTACULO_MEDIO_H

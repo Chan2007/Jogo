@@ -12,13 +12,13 @@ namespace Personagens {
     class Jogador;
 }
 
-class Inimigo_Facil : public Personagens::Inimigo {
+class Minion : public Personagens::Inimigo {
     private:
         float raio;
         Entidades::Projetil* tiro;
     public:
-        Inimigo_Facil();
-        ~Inimigo_Facil();
+        Minion();
+        ~Minion();
         void danificar(Personagens::Jogador* J);
 
         sf::FloatRect getTamanho() const;

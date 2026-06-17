@@ -19,13 +19,15 @@ namespace Personagens {
     {
         velocidadeMax = 300.f;
 
-        fundoVida.setSize(sf::Vector2f(200.0f, 20.0f));
-        fundoVida.setPosition(posicao);
+        fundoVida.setSize(sf::Vector2f(750.0f, 70.0f));
+        fundoVida.setPosition(posicao.x - 20.f, posicao.y - 10.0f);
         fundoVida.setFillColor(sf::Color(100, 100, 100));
 
-        barraVida.setSize(sf::Vector2f(200.0f, 20.0f));
+        barraVida.setSize(sf::Vector2f(700.0f, 50.0f));
         barraVida.setPosition(posicao);
         barraVida.setFillColor(corBarra);
+
+        desenharBarra();
     }
 
     Jogador::~Jogador() {}
@@ -89,6 +91,7 @@ namespace Personagens {
 
     void Jogador::executar() {
 
+        atualizarBarra();
         if (tempoDano > 0.f) {
             tempoDano -= clockDano.restart().asSeconds();
             if (tempoDano <= 0.f) {
@@ -97,7 +100,7 @@ namespace Personagens {
             }
         }
 
-        regenerarVida(1.0f);
+        regenerarVida(0.1f);
         mover();
 
         if (estado == static_cast<int>(ESTADO_MOVIMENTO)) {
@@ -203,6 +206,14 @@ namespace Personagens {
         else if (acao == "desacelerar") {
             // Botão LB
         }
+    }
+    void Jogador::desenharBarra() {
+        gerenciadorGrafico->getJanela().draw(fundoVida);
+        gerenciadorGrafico->getJanela().draw(barraVida);
+    }
+    void Jogador::atualizarBarra() {
+        float proporcaoVida = static_cast<float>(getVida()) / static_cast<float>(getVidaMaxima());
+        barraVida.setSize(sf::Vector2f(700.0f * proporcaoVida, 50.0f));
     }
 }
 

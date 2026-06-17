@@ -248,6 +248,21 @@ namespace Gerenciadores {
             }
         }
     }
+    void Gerenciador_Colisao::tratarColisoesObst() const {
+        std::vector<Obstaculos::Obstaculo*>::const_iterator itObs;
+        for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
+            Obstaculos::Obstaculo* obstaculo1 = *itObs;
+            if (!obstaculo1) continue;
+
+            std::vector<Obstaculos::Obstaculo*>::const_iterator itObs2;
+            for (itObs2 = Lobstaculos.begin(); itObs2 != Lobstaculos.end(); ++itObs2) {
+                Obstaculos::Obstaculo* obstaculo2 = *itObs2;
+                if (obstaculo2)
+                    verificarColisao(obstaculo1, obstaculo2);
+            }
+        }
+
+    }
     void Gerenciador_Colisao::executar() {
 
         // Colisão entre jogadores
@@ -268,6 +283,7 @@ namespace Gerenciadores {
         // Colisão entre projéteis e outros
         tratarColisoesProj();
 
-
+        // Colisão entre obstáculos
+        tratarColisoesObst();
     }
 } // Gerenciador

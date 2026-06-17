@@ -4,7 +4,6 @@
 #define JOGO_PERSONAGEM_H
 
 #include "Ente/Entidade/Entidade.h"
-#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
 namespace Entidades {
     class Entidade;
@@ -45,11 +44,11 @@ namespace Personagens {
         int frameHeight;
 
         float velocidadeMax;
-        int vida;
-        int vidaMaxima;
-        int poder;
+        float vida;
+        float vidaMaxima;
+        float poder;
         int alcanceAtaque;
-        int chanceCritica;
+        float chanceCritica;
         float regeneracaoVida;
         int estado;
         sf::Clock clockDano;
@@ -82,7 +81,6 @@ namespace Personagens {
             if (ax != NULL) aceleracao.x = *ax;
             if (ay != NULL) aceleracao.y = *ay;
         }
-        float getVidaPercentual() const;
         int getVida() const { return vida; }
         int getVidaMaxima() const { return vidaMaxima; }
         int getPoder() const { return poder; }
@@ -94,12 +92,12 @@ namespace Personagens {
         void setVida(int valor);
         void setPoder(int valor) { if (valor >= 0) poder = valor; }
         void setAlcanceAtaque(int valor) { if (valor >= 0) alcanceAtaque = valor; }
-        void setChanceCritica(int valor) { chanceCritica = (valor < 0) ? 0 : ((valor > 100) ? 100 : valor); }
+        void setChanceCritica(int valor) { chanceCritica = gerar_num_norm(50, 15.0f, 0.0f, 100.0f); }
         void setRegeneracaoVida(float valor) { regeneracaoVida = (valor < 0.0f) ? 0.0f : valor; }
         void setEstado(EstadoCombate novoEstado) { estado = static_cast<int>(novoEstado); }
         int receberDano(int dano);
         int causarDanoBasico() const;
-        void curar(int valor);
+        void curar(float valor);
         void regenerarVida(float dt);
         void moverHorizontal(float direcao);
         void resetarCombate();

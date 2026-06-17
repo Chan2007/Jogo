@@ -62,6 +62,8 @@ namespace Personagens {
         void registrarAbate();
 
         void aceitar(VisitorColisao *visitor);
+        void desenharBarra();
+        void atualizarBarra();
 
     };
 } // Personagens

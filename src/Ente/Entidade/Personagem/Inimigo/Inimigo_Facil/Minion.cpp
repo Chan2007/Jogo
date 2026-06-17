@@ -1,4 +1,4 @@
-#include "Inimigo_Facil.h"
+#include "Minion.h"
 
 #include <iostream>
 
@@ -6,7 +6,7 @@
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 
-Inimigo_Facil::Inimigo_Facil() :
+Minion::Minion() :
     Inimigo(),
     raio(200.f),
     tiro(NULL)
@@ -16,11 +16,11 @@ Inimigo_Facil::Inimigo_Facil() :
     setNome("minion"),
     velocidadeMax = 250.f;
     nivelMaldade = 32;
-    poder = elite? 20: 60;
     setVida(170);
     alcancePerseguicao = 300;
     alcanceAtaque = 150;
     elite = rand() % 10 < 5;
+    poder = elite? 60.0 * (getVelocidade().x/velocidadeMax) + nivelMaldade: 60 + nivelMaldade;
     cooldownAtaque = 6.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 600.f;
@@ -44,18 +44,18 @@ Inimigo_Facil::Inimigo_Facil() :
     getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
 }
 
-Inimigo_Facil::~Inimigo_Facil() {
+Minion::~Minion() {
 
 }
 
-void Inimigo_Facil::danificar(Personagens::Jogador* J) {
+void Minion::danificar(Personagens::Jogador* J) {
     if (J && !J->getInvulneravel()) {
         J->receberDano(causarDanoBasico());
         std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
     }
 }
 
-sf::FloatRect Inimigo_Facil::getTamanho() const {
+sf::FloatRect Minion::getTamanho() const {
     sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
 
     float largura = 60.f;
@@ -68,7 +68,7 @@ sf::FloatRect Inimigo_Facil::getTamanho() const {
     );
 }
 
-void Inimigo_Facil::executar() {
+void Minion::executar() {
 
     if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
         frameAcumulado += clockAnimacao.restart().asSeconds();
@@ -173,8 +173,9 @@ void Inimigo_Facil::executar() {
     setPosicao(pos);
 }
 
-void Inimigo_Facil::mover() {
+
+void Minion::mover() {
 }
 
-void Inimigo_Facil::salvar() {
+void Minion::salvar() {
 }

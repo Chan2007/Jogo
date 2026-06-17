@@ -2,13 +2,13 @@
 // Created by Henrique on 05/05/2026.
 //
 
-#include "Chefe.h"
+#include "DragaoAnciao.h"
 #include <iostream>
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
-Chefe::Chefe() :
+DragaoAnciao::DragaoAnciao() :
     Inimigo(),
     forca(2),
     bolaDeFogo(NULL)
@@ -18,7 +18,7 @@ Chefe::Chefe() :
     setNome("Dragao Sabio"),
     velocidadeMax = 220.f;
     nivelMaldade = 200;
-    poder = 50;
+    poder = 80 * log(nivelMaldade * 10 * elite);
     setVidaMaxima(1200);
     setVida(1200);
     alcancePerseguicao = 400;
@@ -44,24 +44,24 @@ Chefe::Chefe() :
             getSprite().setScale(3.f, 3.f);
         }
         else {
-            std::cerr << "Erro: n�o foi possivel carregar a spritesheet do Chefe em: " << caminhoArquivoSprite << std::endl;
+            std::cerr << "Erro: n�o foi possivel carregar a spritesheet do DragaoAnciao em: " << caminhoArquivoSprite << std::endl;
         }
     }
     getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
 }
 
-Chefe::~Chefe() {
+DragaoAnciao::~DragaoAnciao() {
 
 }
 
-void Chefe::danificar(Personagens::Jogador* J) {
+void DragaoAnciao::danificar(Personagens::Jogador* J) {
     if (J) {
         J->receberDano(causarDanoBasico());
         std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
     }
 }
 
-sf::FloatRect Chefe::getTamanho() const {
+sf::FloatRect DragaoAnciao::getTamanho() const {
     sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
     float largura = 200.f;
     float altura = 180.f;
@@ -73,7 +73,7 @@ sf::FloatRect Chefe::getTamanho() const {
     );
 }
 
-void Chefe::executar() {
+void DragaoAnciao::executar() {
 
         frameAcumulado += clockAnimacao.restart().asSeconds();
 
@@ -171,5 +171,5 @@ void Chefe::executar() {
     setPosicao(pos);
 }
 
-void Chefe::salvar() {
+void DragaoAnciao::salvar() {
 }

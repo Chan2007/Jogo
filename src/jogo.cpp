@@ -8,8 +8,8 @@ Jogo* Jogo::jogo = NULL;
 bool Jogo::inicializado = false;
 
 Jogo::Jogo() : faseAtual(NULL),
-               jogador1(new Personagens::Jogador()),
-               jogador2(new Personagens::Jogador()),
+               jogador1(),
+               jogador2(),
                gerenciadorTextura(),
                gerenciadorAudio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
                gerenciadorGrafico(Gerenciadores::Gerenciador_Grafico::getGerenciador()),
@@ -17,6 +17,10 @@ Jogo::Jogo() : faseAtual(NULL),
                musicaLigada(true),
                estadoTela(TelaMenu)
 {
+    jogador1 = new Personagens::Jogador(sf::Vector2f(50.0, 50.0), sf::Color::Green);
+    jogador2 = new Personagens::Jogador(sf::Vector2f(
+            desktop.width - 800.0, 50), sf::Color::Blue);
+
 }
 
 Jogo::~Jogo() {

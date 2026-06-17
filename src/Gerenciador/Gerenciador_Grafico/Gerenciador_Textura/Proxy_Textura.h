@@ -14,17 +14,16 @@ namespace Gerenciadores {
             bool bufferReady;
             bool threadRunning;
             sf::Thread* thread;
-            Gerenciadores::Gerenciador_Textura* gerenciadorTextura;
+            Gerenciador_Textura* gerenciadorTextura;
 
             void loadThread();
-
-        public:
-            explicit Proxy_Textura(Gerenciadores::Gerenciador_Textura* ger);
-            ~Proxy_Textura();
-
             void preLoadNextFrame(const std::string& caminho);
 
-            bool isThreadRunning();
+        public:
+            explicit Proxy_Textura(Gerenciador_Textura* ger);
+            ~Proxy_Textura();
+            sf::Texture *getTexture(const std::string &caminho, bool forcarSincrono = false);
+
     };
 }
 #endif

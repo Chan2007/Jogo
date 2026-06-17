@@ -13,6 +13,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+find_package(OpenGL REQUIRED)
 # Encontra os pacotes do Qt 5 necessários para a interface
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 # Adiciona 'Svg' na lista de REQUIRED
@@ -50,11 +51,6 @@ add_executable(Jogo ${SOURCES}
         qt-material-widgets/components/resources.qrc
         ${MATERIAL_WIDGETS_SRC}
         ${MATERIAL_WIDGETS_HDR}
-        src/Ente/Menu/Menu.cpp
-        src/Gerenciador/Gerenciador_Estado/Gerenciador_Estado.cpp
-        src/Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h
-        src/Ente/Menu/Pausa.cpp
-        src/Ente/Menu/Pausa.h
 )
 
 target_include_directories(Jogo PRIVATE src
@@ -85,6 +81,7 @@ target_link_libraries(Jogo PRIVATE
         optimized "${SFML_LIBRARY_DIR}/sfml-window.lib"
         optimized "${SFML_LIBRARY_DIR}/sfml-system.lib"
         optimized "${SFML_LIBRARY_DIR}/sfml-audio.lib"
+        OpenGL::GL
 )
 
 if(WIN32)

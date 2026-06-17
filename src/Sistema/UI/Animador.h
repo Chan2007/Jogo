@@ -10,28 +10,28 @@
 class Animador {
     private:
         struct FrameData {
-            std::string  caminho_spSheet;
-            sf::IntRect  RectTextura;
+            std::string caminho_spSheet;
+            sf::IntRect RectTextura;
             sf::Texture* textura;
             FrameData();
         };
 
-        sf::Sprite    SpriteAtual;
-        sf::Sprite    ProxSprite;
-        Gerenciadores::Proxy_Textura proxy;          // ← proxy substitui thread/mutex/flags
-        mutable bool  allowLoad;
+        sf::Sprite SpriteAtual;
+        sf::Sprite ProxSprite;
+        Gerenciadores::Proxy_Textura proxy;
+        mutable bool allowLoad;
 
         std::vector<FrameData> frames_data;
         Gerenciadores::Gerenciador_Textura* gerenciadorTextura;
 
         unsigned int FrameIndexAtual;
-        sf::Clock    clock;
-        float        frameAccumulator;
-        float        frameTime;
+        sf::Clock clock;
+        float frameAccumulator;
+        float frameTime;
         sf::Vector2u frameSize;
         sf::Vector2u targetSize;
         sf::Vector2f position;
-        bool         loaded;
+        bool loaded;
 
         void updateSpriteScale();
         void updateBlend();
