@@ -30,8 +30,7 @@ namespace Entidades {
         textura(), 
         colisao(false),                           
         nome(n), 
-        ativo(true), 
-        tipo(),                                  
+        vigente(true),
         gerenciadorColisao(&Gerenciadores::Gerenciador_Colisao::getGerenciador()),
         gerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade::getGerenciador())
     {

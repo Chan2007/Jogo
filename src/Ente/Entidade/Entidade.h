@@ -29,13 +29,6 @@ class Observer_Colisao;
 namespace Entidades {
     class Projetil;
 
-    enum TipoEntidade {
-        ENTIDADE_JOGADOR,
-        ENTIDADE_INIMIGO,
-        ENTIDADE_OBSTACULO,
-        ENTIDADE_PROJETIL
-    };
-
     class Entidade : public Ente {
         private:
             sf::Sprite sprite;
@@ -43,8 +36,7 @@ namespace Entidades {
             static Listas::ListaEntidades* listaEntidades;
             bool colisao;
             std::string nome;
-            bool ativo;
-            TipoEntidade tipo;
+            bool vigente;
         protected:
             void salvarDataBuffer();
             Gerenciadores::Gerenciador_Colisao* gerenciadorColisao;
@@ -72,21 +64,21 @@ namespace Entidades {
             sf::Texture& getTextura() {return textura;}
             const sf::Texture& getTextura() const {return textura;} // Tem funções que aceitam a textura somente como sendo parâmetro constante
 
-            TipoEntidade getTipo() const {return tipo;}
 
             bool getColisao() const {return colisao;}
             std::string getNome() const {return nome;}
-            bool getAtivo() const {return ativo;}
+            bool getVigente() const {return vigente;}
 
-            Gerenciadores::Gerenciador_Colisao* getGerenciadorColisao() { return gerenciadorColisao; }
-            Gerenciadores::Gerenciador_Gravidade& getGerenciadorGravidade() { return gerenciadorGravidade; }
+            Gerenciadores::Gerenciador_Colisao* getGerenciadorColisao() const { return gerenciadorColisao; }
+            Gerenciadores::Gerenciador_Gravidade& getGerenciadorGravidade() const { return gerenciadorGravidade; }
 
             void setPosicao(sf::Vector2f pos) {sprite.setPosition(pos);}
-            void setTipo(TipoEntidade t) {tipo = t;}
             void setColisao(bool col) {colisao = col;}
             void setNome(const std::string& n) {if (!n.empty()) nome = n;}
-            void setAtivo(bool a) {ativo = a;}
-            bool estaDisponivel() const {return ativo && !colisao;}
+            void setVigente(bool a) {vigente = a;}
+
+            bool estaDisponivel() const {return vigente && !colisao;}
+
             static Listas::ListaEntidades* getListaEntidades() {return listaEntidades;}
     };
 } // Entidade

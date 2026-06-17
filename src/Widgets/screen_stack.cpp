@@ -1,44 +1,46 @@
 #include "screen_stack.h"
 
-ScreenStack::ScreenStack(QStackedWidget *container)
-    : stackedWidget(container)
-    , historico()
-{}
+namespace Widgets {
+    ScreenStack::ScreenStack(QStackedWidget *container)
+: stackedWidget(container)
+, historico()
+    {}
 
-void ScreenStack::setContainer(QStackedWidget *container) {
-    stackedWidget = container;
-    historico.clear();
-}
-
-void ScreenStack::setInitialScreen(QWidget *screen) {
-    if (!stackedWidget || !screen) return;
-
-    historico.clear();
-    historico.push_back(screen);
-    stackedWidget->setCurrentWidget(screen);
-}
-
-void ScreenStack::pushScreen(QWidget *screen) {
-    if (!stackedWidget || !screen) return;
-
-    if (!historico.isEmpty() && historico.back() == screen) {
-        stackedWidget->setCurrentWidget(screen);
-        return;
+    void ScreenStack::setContainer(QStackedWidget *container) {
+        stackedWidget = container;
+        historico.clear();
     }
 
-    historico.push_back(screen);
-    stackedWidget->setCurrentWidget(screen);
-}
+    void ScreenStack::setInitialScreen(QWidget *screen) {
+        if (!stackedWidget || !screen) return;
 
-void ScreenStack::popScreen() {
-    if (!stackedWidget || historico.size() <= 1) return;
+        historico.clear();
+        historico.push_back(screen);
+        stackedWidget->setCurrentWidget(screen);
+    }
 
-    historico.pop_back();
-    stackedWidget->setCurrentWidget(historico.back());
-}
+    void ScreenStack::pushScreen(QWidget *screen) {
+        if (!stackedWidget || !screen) return;
 
-QWidget* ScreenStack::currentScreen() const {
-    if (historico.isEmpty()) return 0;
+        if (!historico.isEmpty() && historico.back() == screen) {
+            stackedWidget->setCurrentWidget(screen);
+            return;
+        }
 
-    return historico.back();
+        historico.push_back(screen);
+        stackedWidget->setCurrentWidget(screen);
+    }
+
+    void ScreenStack::popScreen() {
+        if (!stackedWidget || historico.size() <= 1) return;
+
+        historico.pop_back();
+        stackedWidget->setCurrentWidget(historico.back());
+    }
+
+    QWidget* ScreenStack::currentScreen() const {
+        if (historico.isEmpty()) return 0;
+
+        return historico.back();
+    }
 }

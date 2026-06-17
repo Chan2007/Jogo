@@ -17,6 +17,6 @@ namespace Obstaculos {
     }
 
     void Obstaculo::aceitar(VisitorColisao* visitor) {
-        if (visitor) visitor->visitar(this);
+        if (visitor) visitor->colidir(this);
     }
 } // Obstaculo

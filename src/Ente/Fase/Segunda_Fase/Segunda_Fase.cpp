@@ -4,18 +4,18 @@
 
 #include "Segunda_Fase.h"
 
+#include "Ente/Entidade/Obstaculo/Obstaculo_Dificil/Obstaculo_Dificil.h"
 #include "Ente/Entidade/Personagem/Inimigo/Chefe/Chefe.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
+#include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 
 
 namespace Fases {
-    Segunda_Fase::Segunda_Fase() : Fase(), maxChefoes(2) {
-        // Inicializa o cenário apenas uma vez na criação da fase
+    Segunda_Fase::Segunda_Fase() : Fase(), maxChefoes(5) {
         Segunda_Fase::criarCenario();
-
         Segunda_Fase::criarObstaculos();
         Segunda_Fase::criarInimigos();
         Segunda_Fase::criarProjeteis();
@@ -45,46 +45,60 @@ namespace Fases {
         gerenciadorGrafico->updateAnimation();
 
         // Executa gerenciadores de física usando o delta time recebido do Jogo
-        gerenciadorColisao->executar();
         gerenciadorGravidade.executar();
-
-        renderizar();
+        gerenciadorColisao->executar();
         definirLimitesJanela();
     }
 
     // Cuidar apenas de mandar os elementos para a janela
-    void Segunda_Fase::renderizar() {
+    void Segunda_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
         LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
     }
     void Segunda_Fase::criarChefoes() {
         Chefe* ElderDragon = NULL;
         Entidades::Projetil* tiroInim = NULL;
-        ElderDragon = new Chefe();
-        if (ElderDragon) {
-            ElderDragon->setPosicao(
-                sf::Vector2f(
-                gerar_num_norm((tamanhoJanela.x - 300)/2.0, tamanhoJanela.x/6.0,0, static_cast<int>(tamanhoJanela.x - 300)),
-                gerar_num_norm(tamanhoJanela.y/2.0, tamanhoJanela.y/6.0, 0, static_cast<int>(tamanhoJanela.y))
-                )
-            );
-            gerenciadorColisao->incluirEntidade(ElderDragon);
-            gerenciadorGravidade.aplicarGravidade(ElderDragon, true);
-            LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(ElderDragon));
-            tiroInim = new Entidades::Projetil();
-            if (tiroInim) {
-                tiroInim->setDoJogador(false);
-                tiroInim->setAtivo(false);
-                ElderDragon->setProjetil(tiroInim);
-                gerenciadorColisao->incluirEntidade(tiroInim);
-                gerenciadorGravidade.aplicarGravidade(tiroInim, true);
-                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(tiroInim));
+        const int fator = gerar_num_exp(3, maxChefoes, 0.5);
+        for (int i = 0; i < fator; i++) {
+            ElderDragon = new Chefe();
+            if (ElderDragon) {
+                ElderDragon->setPosicao(
+                    sf::Vector2f(
+                    gerar_num_norm((tamanhoJanela.x - 300)/2.0, tamanhoJanela.x/6.0,0, static_cast<int>(tamanhoJanela.x - 300)),
+                    gerar_num_norm(tamanhoJanela.y/2.0, tamanhoJanela.y/6.0, 0, static_cast<int>(tamanhoJanela.y))
+                    )
+                );
+                gerenciadorColisao->incluirEntidade(ElderDragon);
+                gerenciadorGravidade.aplicarGravidade(ElderDragon, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(ElderDragon));
+                tiroInim = new Entidades::Projetil();
+                if (tiroInim) {
+                    tiroInim->setDoJogador(false);
+                    tiroInim->setVigente(false);
+                    ElderDragon->setProjetil(tiroInim);
+                    gerenciadorColisao->incluirEntidade(tiroInim);
+                    gerenciadorGravidade.aplicarGravidade(tiroInim, true);
+                    LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(tiroInim));
+                }
             }
+            ElderDragon = NULL;
         }
-        ElderDragon = NULL;
     }
 
     void Segunda_Fase::criarProjeteis() {
 
+    }
+    void Segunda_Fase::criarObstDificeis() {
+        Obstaculos::Obstaculo_Dificil* Pinstouro = NULL;
+        for (int i = 1; i <= 3; i++) {
+            Pinstouro = new Obstaculos::Obstaculo_Dificil();
+            if (Pinstouro) {
+                Pinstouro->setPosicao(sf::Vector2f(300 * i, (rand() % tamanhoJanela.y - 300) + 300));
+                gerenciadorColisao->incluirEntidade(Pinstouro);
+                gerenciadorGravidade.aplicarGravidade(Pinstouro, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(Pinstouro));
+            }
+            Pinstouro = NULL;
+        }
     }
 } // Fases

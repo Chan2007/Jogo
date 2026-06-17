@@ -1,23 +1,44 @@
+/* ── Fonte base de todos os labels de texto ─────────────────────────────── */
 #topBarLabel,
 #heroTitleLabel,
 #heroSubtitleLabel,
 #statusLabel,
 #settingLabelMusic,
 #settingLabelVolume,
-#volumeValueLabel{
+#volumeValueLabel,
+#phase1SelectPagePlayer1Label,
+#phase1SelectPagePlayer2Label,
+#phase2SelectPagePlayer1Label,
+#phase2SelectPagePlayer2Label {
     font-family: "Segoe UI", "Arial", "Helvetica";
     color: #000000;
     font-weight: bold;
 }
-#settingsTitleLabel {
-    font-size: 27px;        /* <--- Aumente aqui (Ex: 22px) */
-    color:#000000;
+
+/* ── Títulos principais de cada painel ──────────────────────────────────── */
+#settingsTitleLabel,
+#loadGameTitleLabel,
+#rankingTitleLabel,
+#phase1SelectPageTitleLabel,
+#phase2SelectPageTitleLabel {
+    font-size: 27px;
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    font-weight: bold;
+    color: #000000;
 }
 
-#settingsSubtitleLabel {
+/* ── Subtítulos ─────────────────────────────────────────────────────────── */
+#settingsSubtitleLabel,
+#loadGameSubtitleLabel,
+#rankingSubtitleLabel,
+#phase1SelectPageSubtitleLabel,
+#phase2SelectPageSubtitleLabel {
     color: #000000;
-    font-size: 20px;        /* <--- Aumente aqui (Ex: 13px) */
+    font-size: 14px;
+    font-family: "Segoe UI", "Arial", "Helvetica";
 }
+
+/* ── Label de seção de áudio ────────────────────────────────────────────── */
 #sectionTitleLabel {
     border-bottom: 2px solid black;
     font-size: 15px;
@@ -25,68 +46,88 @@
     padding-bottom: 8px;
     padding-top: 4px;
 }
+
+/* ── Labels de seção dos jogadores ─────────────────────────────────────── */
+#phase1SelectPagePlayer1Label,
+#phase1SelectPagePlayer2Label,
+#phase2SelectPagePlayer1Label,
+#phase2SelectPagePlayer2Label {
+    font-size: 13px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    padding-bottom: 4px;
+}
+
+/* ── Barra do topo ──────────────────────────────────────────────────────── */
 #topBarLabel {
     font-size: 21px;
 }
 
+/* ── Hero labels do menu principal ─────────────────────────────────────── */
 #heroTitleLabel {
     font-size: 56px;
     letter-spacing: 1px;
 }
-
 #heroSubtitleLabel {
     font-size: 14px;
 }
-
 #statusLabel {
     font-size: 11px;
     padding-top: 20px;
 }
 
-#settingsPanel,
-#loadGamePanel,
-#rankingPanel {
-    border: none;
-    padding: 52px 52px 36px 52px;
-    min-width: 1000px;
-    min-height: 700px;
-}
-QWidget #settingsPage,
-QWidget #loadGamePage,
-QWidget #rankingPage {
-    background: transparent;
-}
-
-QWidget #settingsPanel,
-QWidget #loadGamePanel,
-QWidget #rankingPanel {
-    border-image: url("../assets/bg_frames/bg_derived.jpg") 0 0 0 0 stretch stretch;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    /* Define o raio dos cantos arredondados */
-    border-radius: 20px;
-
-    /* Garante que o Qt aplique o limite visual da borda */
-    border: 1px solid transparent;
-}
-
+/* ── Labels de controle de áudio ────────────────────────────────────────── */
 #settingLabelMusic,
 #settingLabelVolume {
     font-size: 17px;
-
 }
-
 #volumeValueLabel {
     font-size: 17px;
     letter-spacing: 1px;
     min-width: 38px;
 }
 
+/* ── Padding/tamanho dos painéis ────────────────────────────────────────── */
+#settingsPanel,
+#loadGamePanel,
+#rankingPanel,
+#phase1SelectPanel,
+#phase2SelectPanel {
+    border: none;
+    padding: 52px 52px 36px 52px;
+    min-width: 1000px;
+    min-height: 700px;
+}
+
+/* ── Fundo transparente das páginas ────────────────────────────────────── */
+QWidget #settingsPage,
+QWidget #loadGamePage,
+QWidget #rankingPage,
+QWidget #phase1SelectPage,
+QWidget #phase2SelectPage {
+    background: transparent;
+}
+
+/* ── Imagem de fundo + bordas arredondadas dos painéis ─────────────────── */
+QWidget #settingsPanel,
+QWidget #loadGamePanel,
+QWidget #rankingPanel,
+QWidget #phase1SelectPanel,
+QWidget #phase2SelectPanel {
+    border-image: url("../assets/bg_frames/bg_derived.jpg") 0 0 0 0 stretch stretch;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+/* ── Botões do menu principal ───────────────────────────────────────────── */
 #mainMenuPanel MenuButton,
 #settingsPanel MenuButton,
 #loadGamePanel MenuButton,
-#rankingPanel MenuButton {
+#rankingPanel MenuButton,
+#phase1SelectPanel MenuButton,
+#phase2SelectPanel MenuButton {
     font-family: "Segoe UI", "Arial", "Helvetica";
     font-size: 25px;
     font-weight: 900;
@@ -95,13 +136,21 @@ QWidget #rankingPanel {
     padding: 0px 0px 0px 200px;
     margin: 0px;
 }
+
+/* ── Tamanho dos botões nos painéis secundários ─────────────────────────── */
 #settingsPanel MenuButton,
 #loadGamePanel MenuButton,
-#rankingPanel MenuButton {
+#rankingPanel MenuButton,
+#phase1SelectPanel MenuButton,
+#phase2SelectPanel MenuButton {
     min-width: 500px;
-    max-height: 100px;
+    min-height: 48px;
+    max-height: 64px;
     text-align: center;
+    padding: 0px;
 }
-#mainMenuPanel{
+
+/* ── Largura máxima do painel do menu principal ─────────────────────────── */
+#mainMenuPanel {
     max-width: 400px;
 }

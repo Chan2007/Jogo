@@ -11,6 +11,7 @@ namespace Entidades {
     class Projetil : public Entidade {
     protected:
         int dano;
+        bool ativo;
         sf::Vector2f velocidade;
         bool doJogador;
         float tempoUltimoAtaque;
@@ -22,12 +23,22 @@ namespace Entidades {
         void atualizar();
         void salvar();
         void executar();
-        void setVelocidade(sf::Vector2f v) { velocidade.x = v.x; velocidade.y = v.y; }
+        void setVelocidade(sf::Vector2f v) {
+            velocidade.x = v.x;
+            velocidade.y = v.y;
+        }
+        void setVelocidade(const float* vx = NULL, const float* vy = NULL) {
+            if (vx != NULL) velocidade.x = *vx;
+            if (vy != NULL) velocidade.y = *vy;
+        }
         sf::Vector2f getVelocidade() const { return velocidade; }
-        void setVy(float vy) { velocidade.y = vy; }
-        void setVx(float vx) { velocidade.x = vx; }
+        void setAtivo(bool a) {
+            ativo = a;
+            setVigente(ativo);
+        }
         int getDano() const { return dano; }
         void setDano(int valor) { if (valor >= 0) dano = valor; }
+
         sf::FloatRect getTamanho() const;
 
         void aceitar(VisitorColisao *visitor);

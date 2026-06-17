@@ -6,6 +6,8 @@
 #include "Elemento.h"
 #include "Lista.h"
 #include "Ente/Entidade/Entidade.h"
+#include "Ente/Entidade/Projetil/Projetil.h"
+
 namespace Listas {
     ListaEntidades::ListaEntidades() {
         LEntidade = new Lista <Entidades::Entidade>();
@@ -40,7 +42,14 @@ namespace Listas {
         while (pAux != NULL) {
             Entidades::Entidade* pEntidade = pAux->getInfo();
             if (pEntidade) {
-                pEntidade->desenhar();
+                if (pEntidade->getVigente()) {
+                    Entidades::Projetil* proj = dynamic_cast<Entidades::Projetil*>(pEntidade);
+                    if (proj) {
+                        if (proj->getVigente()) {}
+                            proj->desenhar();
+                    }
+                    else pEntidade->desenhar();
+                }
             }
             pAux = pAux->getProximo();
         }
@@ -54,7 +63,9 @@ namespace Listas {
         while (pAux != NULL) {
             Entidades::Entidade* pEntidade = pAux->getInfo();
             if (pEntidade) {
-                pEntidade->executar();
+                if (pEntidade->getVigente()) {
+                    pEntidade->executar();
+                }
             }
             pAux = pAux->getProximo();
         }

@@ -11,7 +11,7 @@
 VisitorColisaoJogador::VisitorColisaoJogador(Personagens::Jogador* J) : jogador(J) {}
 VisitorColisaoJogador::~VisitorColisaoJogador() {}
 
-void VisitorColisaoJogador::visitar(Personagens::Jogador* J)  {
+void VisitorColisaoJogador::colidir(Personagens::Jogador* J)  {
     // Se o jogador colidido for um SEGUNDO jogador diferente do que disparou a colisão
     if (J && jogador && J != jogador) {
         jogador->setColisao(true);
@@ -19,30 +19,19 @@ void VisitorColisaoJogador::visitar(Personagens::Jogador* J)  {
     }
 }
 
-void VisitorColisaoJogador::visitar(Personagens::Inimigo* I) {
+void VisitorColisaoJogador::colidir(Personagens::Inimigo* I) {
     if (!I || !jogador) return;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
         I->receberDano(jogador->getPoder());
 }
 
-void VisitorColisaoJogador::visitar(Obstaculos::Obstaculo* O) {
+void VisitorColisaoJogador::colidir(Obstaculos::Obstaculo* O) {
     if (!O || !jogador) return;
-
-    sf::FloatRect hitboxJogador = jogador->getTamanho();
-    sf::FloatRect hitboxObs = O->getTamanho();
-
-    float peDoJogador = hitboxJogador.top + hitboxJogador.height;
-    float topoPlataforma = hitboxObs.top;
-
-    // Verifica se o jogador pousou em cima (margem de tolerância)
-    if (peDoJogador <= topoPlataforma + 10.f) {
-        Gerenciadores::Gerenciador_Gravidade& gerenciadorGravidade = jogador->getGerenciadorGravidade();
-        gerenciadorGravidade.aoTocarChao(jogador, sf::Vector2f(0.f, -1.f));
-    }
+    O->obstaculizar(jogador);
 }
 
-void VisitorColisaoJogador::visitar(Entidades::Projetil* p)  {
-    if (!jogador || !p->getAtivo()) return;
+void VisitorColisaoJogador::colidir(Entidades::Projetil* p)  {
+    if (!jogador || !p->getVigente()) return;
 
     // Verifica se o tiro foi do jogador para causar dano
     if (!p->getDoJogador()) {

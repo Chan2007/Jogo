@@ -51,11 +51,16 @@ add_executable(Jogo ${SOURCES}
         ${MATERIAL_WIDGETS_SRC}
         ${MATERIAL_WIDGETS_HDR}
         src/Ente/Menu/Menu.cpp
+        src/Gerenciador/Gerenciador_Estado/Gerenciador_Estado.cpp
+        src/Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h
+        src/Ente/Menu/Pausa.cpp
+        src/Ente/Menu/Pausa.h
 )
 
 target_include_directories(Jogo PRIVATE src
         "${SFML_INCLUDE_DIR}"
         "${CMAKE_CURRENT_BINARY_DIR}"
+        ${CMAKE_CURRENT_SOURCE_DIR}/qt-material-widgets
         ${CMAKE_CURRENT_SOURCE_DIR}/qt-material-widgets/components
         ${CMAKE_CURRENT_SOURCE_DIR}/qt-material-widgets/components/lib
 )

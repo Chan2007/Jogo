@@ -16,7 +16,6 @@ namespace Obstaculos {
 		tipoPlataforma(tipo),
 		altura(60)
 	{
-		setTipo(Entidades::ENTIDADE_OBSTACULO);
 		perigoso = false;
 
 		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";

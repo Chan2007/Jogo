@@ -1,26 +1,25 @@
-
-
 #include "Inimigo_Facil.h"
+
 #include <iostream>
+
 #include "Ente/Entidade/Entidade.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
-#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
 Inimigo_Facil::Inimigo_Facil() :
     Inimigo(),
     raio(200.f),
     tiro(NULL)
 {
-    Ente::sementear();
+    sementear();
 
     setNome("minion"),
     velocidadeMax = 250.f;
     nivelMaldade = 32;
-    poder = 20;
+    poder = elite? 20: 60;
     setVida(170);
     alcancePerseguicao = 300;
-    alcanceAtaque = 250;
+    alcanceAtaque = 150;
     elite = rand() % 10 < 5;
     cooldownAtaque = 6.5f;
     tempoUltimoAtaque = 0.0f;
@@ -39,7 +38,7 @@ Inimigo_Facil::Inimigo_Facil() :
             getSprite().setTextureRect(rectAtual);
         }
         else {
-            std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo facil em: " << caminhoArquivoSprite << std::endl;
+            std::cerr << "Erro: nÃ£o foi possivel carregar a spritesheet do inimigo facil em: " << caminhoArquivoSprite << std::endl;
         }
     }
     getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
@@ -50,7 +49,7 @@ Inimigo_Facil::~Inimigo_Facil() {
 }
 
 void Inimigo_Facil::danificar(Personagens::Jogador* J) {
-    if (J) {
+    if (J && !J->getInvulneravel()) {
         J->receberDano(causarDanoBasico());
         std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
     }
@@ -87,7 +86,7 @@ void Inimigo_Facil::executar() {
             getSprite().setTextureRect(rectAtual);
 
             frameAcumulado -= tempoPorFrame;
-        }   
+        }
     }
     else {
 
@@ -139,21 +138,7 @@ void Inimigo_Facil::executar() {
             interagindo = true;
 
             if (tempoUltimoAtaque >= cooldownAtaque) {
-
-                if (tiro) {
-                    tiro->setPosicao(sf::Vector2f(posInimigo.x, posInimigo.y - getTamanho().height));
-                    tiro->setAtivo(true);
-                    tiro->setDoJogador(false);
-                    tiro->setDano(poder);
-                    tiro->setVelocidade(sf::Vector2f(140.f, 140.f));
-                    Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(tiro);
-
-                    float dirX = dx / menorDistancia;
-                    float dirY = dy / menorDistancia;
-
-                    const float velocidadeTiro = 140.f;
-                    tiro->setVelocidade(sf::Vector2f(dirX * velocidadeTiro, dirY * velocidadeTiro));
-                }
+                danificar(alvoMaisProximo);
                 tempoUltimoAtaque = 0.0f;
             }
         }

@@ -42,7 +42,7 @@ namespace Obstaculos {
 				const int rangeY = janela.getSize().y - p->getTamanho().height;
 
 				if (rangeX > 0 && rangeY > 0) {
-					Ente::sementear();
+					sementear();
 					float randomX = static_cast<float>(rand() % rangeX) + (p->getTamanho().width / 2.f);
 					float randomY = static_cast<float>(rand() % rangeY) + (p->getTamanho().height / 2.f);
 					p->setPosicao(sf::Vector2f(randomX, randomY));

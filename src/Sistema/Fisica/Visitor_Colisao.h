@@ -20,10 +20,10 @@ class VisitorColisao {
     public:
         virtual ~VisitorColisao(){};
 
-        virtual void visitar(Personagens::Jogador* j) = 0;
-        virtual void visitar(Personagens::Inimigo* i) = 0;
-        virtual void visitar(Obstaculos::Obstaculo* o) = 0;
-        virtual void visitar(Entidades::Projetil* p) = 0;
+        virtual void colidir(Personagens::Jogador* j) = 0;
+        virtual void colidir(Personagens::Inimigo* i) = 0;
+        virtual void colidir(Obstaculos::Obstaculo* o) = 0;
+        virtual void colidir(Entidades::Projetil* p) = 0;
 };
 
 #endif //JOGO_VISITOR_COLISAO_H

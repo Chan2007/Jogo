@@ -20,11 +20,14 @@ namespace Obstaculos {
             ~Obstaculo_Dificil();
 
             void executar();
-            void mover() {}
-            void salvar() {}
+            void mover() {
+                // Não se move
+            }
+            void salvar() {
+                // TODO
+            }
 
             float getDano() { return danosidade; }
-            void setPlataforma(Personagens::Jogador* J){}
             void obstaculizar(Personagens::Jogador* p);
     };
 } // Obstaculo

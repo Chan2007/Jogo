@@ -11,10 +11,12 @@
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
-    Jogador::Jogador() : Personagem(), movendoEsquerda(false), movendoDireita(false), pulando(false),
-    atacando(false), usandoHabilidade(false), pontos(0.0f), abates(0)
+    Jogador::Jogador(sf::Vector2f posicao, sf::Color corBarra) :
+    Personagem(),
+    movendoEsquerda(false), movendoDireita(false),
+    pulando(false), atacando(false), usandoHabilidade(false),
+    pontos(0.0f), abates(0), fundoVida(), barraVida()
     {
-        setTipo(Entidades::ENTIDADE_JOGADOR);
         velocidadeMax = 300.f;
     }
 
@@ -22,31 +24,31 @@ namespace Personagens {
 
     void Jogador::setCampeao(EscolhaCampeao campeao) {
         switch (campeao) {
-        case CAMPEAO_NAAFIRI:
-            setNome("Naafiri");
-            setVidaMaxima(620);
-            setVida(620);
-            setPoder(999);
+            case CAMPEAO_NAAFIRI:
+                setNome("Naafiri");
+                setVidaMaxima(620);
+                setVida(620);
+                setPoder(999);
 
 
-            totalFramesAnimacao = 8;
-            colunasSpritesheet = 4;
-            frameWidth = 230;
-            frameHeight = 120;
-            tempoPorFrame = 0.12f;
-            caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
-            caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
-            break;
-        default:
-            setNome("Campeao Generico");
-            setVidaMaxima(500);
-            setVida(500);
-            totalFramesAnimacao = 1;
-            colunasSpritesheet = 1;
-            frameWidth = 32;
-            frameHeight = 32;
-            tempoPorFrame = 0.1f;
-            break;
+                totalFramesAnimacao = 8;
+                colunasSpritesheet = 4;
+                frameWidth = 230;
+                frameHeight = 120;
+                tempoPorFrame = 0.12f;
+                caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+                caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
+                break;
+            default:
+                setNome("Campeao Generico");
+                setVidaMaxima(500);
+                setVida(500);
+                totalFramesAnimacao = 1;
+                colunasSpritesheet = 1;
+                frameWidth = 32;
+                frameHeight = 32;
+                tempoPorFrame = 0.1f;
+                break;
         }
         if (!caminhoArquivoSprite.empty()) {
 
@@ -164,7 +166,7 @@ namespace Personagens {
         adicionarPontos(150.0f);
     }
     void Jogador::aceitar(VisitorColisao* visitor) {
-        if (visitor) visitor->visitar(this);
+        if (visitor) visitor->colidir(this);
     }
     void Jogador::aoApertarTecla(const Gerenciadores::Tecla& evento) {
         std::string prefixo = "j" + std::to_string(idJogador) + "_";

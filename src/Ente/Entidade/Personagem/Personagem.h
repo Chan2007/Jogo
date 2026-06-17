@@ -62,10 +62,26 @@ namespace Personagens {
         virtual sf::FloatRect getTamanho() const;
         sf::Vector2f getVelocidade() const { return velocidade; }
         sf::Vector2f getAceleracao() const { return aceleracao; }
-        void setVelocidade(sf::Vector2f v) { velocidade.x = v.x; velocidade.y = v.y; }
-        void setAceleracao(sf::Vector2f a) { aceleracao.x = a.x; aceleracao.y = a.y; }
+
         // void setVy(float vy) {velocidade.y = vy;}
         // void setVx(float vx) {velocidade.x = vx;}
+
+        void setVelocidade(sf::Vector2f v) {
+            velocidade.x = v.x;
+            velocidade.y = v.y;
+        }
+        void setAceleracao(sf::Vector2f a) {
+            aceleracao.x = a.x;
+            aceleracao.y = a.y;
+        }
+        void setVelocidade(const float* vx = NULL, const float* vy = NULL) {
+            if (vx != NULL) velocidade.x = *vx;
+            if (vy != NULL) velocidade.y = *vy;
+        }
+        void setAceleracao(const float* ax = NULL, const float* ay = NULL) {
+            if (ax != NULL) aceleracao.x = *ax;
+            if (ay != NULL) aceleracao.y = *ay;
+        }
         float getVidaPercentual() const;
         int getVida() const { return vida; }
         int getVidaMaxima() const { return vidaMaxima; }

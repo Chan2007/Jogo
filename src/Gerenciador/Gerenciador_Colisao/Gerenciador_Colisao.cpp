@@ -126,7 +126,7 @@ namespace Gerenciadores {
             std::vector<Obstaculos::Obstaculo *>::const_iterator itObs;
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
-                if (obstaculo && verificarColisao(jogador, obstaculo)) {
+                if (obstaculo && verificarColisao(obstaculo, jogador)) {
                     VisitorColisaoJogador visitor(jogador);
                     obstaculo->aceitar(&visitor);
                 }
@@ -162,7 +162,7 @@ namespace Gerenciadores {
             std::list<Personagens::Inimigo *>::const_iterator itInim;
             for (itInim = Linimigos.begin(); itInim != Linimigos.end(); ++itInim) {
                 Personagens::Inimigo* inimigo = *itInim;
-                if (inimigo && verificarColisao(jogador, inimigo)) {
+                if (inimigo && verificarColisao(inimigo, jogador)) {
                     VisitorColisaoJogador visitor(jogador);
                     inimigo->aceitar(&visitor);
                 }
@@ -197,7 +197,7 @@ namespace Gerenciadores {
             // Inimigo x Obstáculos
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
-                if (obstaculo && verificarColisao(inimigo1, obstaculo)) {
+                if (obstaculo && verificarColisao(obstaculo, inimigo1)) {
                     VisitorColisaoInimigo visitor(inimigo1);
                     obstaculo->aceitar(&visitor);
                 }
@@ -205,7 +205,7 @@ namespace Gerenciadores {
             // Inimigo x Projétil
             for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
                 Entidades::Projetil* projetil= *itProj;
-                if (projetil && verificarColisao(inimigo1, projetil)) {
+                if (projetil && verificarColisao(projetil, inimigo1)) {
                     VisitorColisaoInimigo visitor(inimigo1);
                     projetil->aceitar(&visitor);
                 }
@@ -233,8 +233,8 @@ namespace Gerenciadores {
             // Projétil x Obstáculos
             for (itObs = Lobstaculos.begin(); itObs != Lobstaculos.end(); ++itObs) {
                 Obstaculos::Obstaculo* obstaculo = *itObs;
-                if (obstaculo && verificarColisao(projetil1, obstaculo)) {
-                    projetil1->setAtivo(false);
+                if (obstaculo && verificarColisao(obstaculo, projetil1)) {
+                    projetil1->setVigente(false);
                 }
             }
             // Projétil x Projétil
@@ -242,8 +242,8 @@ namespace Gerenciadores {
             for (itProj2 = Lprojetil.begin(); itProj2 != Lprojetil.end(); ++itProj2) {
                 Entidades::Projetil* projetil2 = *itProj2;
                 if (projetil2 && projetil1 != projetil2 && verificarColisao(projetil1, projetil2)) {
-                    projetil1->setAtivo(false);
-                    projetil2->setAtivo(false);
+                    projetil1->setVigente(false);
+                    projetil2->setVigente(false);
                 }
             }
         }

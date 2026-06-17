@@ -23,7 +23,6 @@ namespace Personagens {
         limiteDeslocamento(120.f)
     {
         setNome("Inimigo");
-        setTipo(Entidades::ENTIDADE_INIMIGO);
         setVidaMaxima(450);
         setVida(450);
         setPoder(45);
@@ -54,6 +53,6 @@ namespace Personagens {
     }
 
     void Inimigo::aceitar(VisitorColisao* visitor) {
-        if (visitor) visitor->visitar(this);
+        if (visitor) visitor->colidir(this);
     }
 }

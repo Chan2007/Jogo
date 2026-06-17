@@ -12,6 +12,10 @@
 #include "Widgets/menu_button.h"
 #include "Widgets/particlewidget.h"
 
+#include "qtmaterialtextfield.h"
+#include "qtmaterialautocomplete.h"
+#include "qtmaterialflatbutton.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
     class Menu;
@@ -46,6 +50,12 @@ class Menu: public QMainWindow, public Ente {
         void on_backFromLoadButton_clicked();
         void on_backFromRankingButton_clicked();
 
+        void on_backFromPhase1SelectButton_clicked();
+        void on_startPhase1Button_clicked();
+
+        void on_backFromPhase2SelectButton_clicked();
+        void on_startPhase2Button_clicked();
+
         void onFadeOutFinished();
 
     private:
@@ -56,16 +66,28 @@ class Menu: public QMainWindow, public Ente {
         void update_Stack();
         void update_VolumeText(float value);
 
+        void init_MaterialInputs(QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
+                                 QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
+
+        void apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
+                               QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
+
+        void launch_Phase(Jogo::EstadoTela fase,
+                          QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
+                          QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
 
         Ui::Menu *ui;
         QTimer gameTimer;
         Jogo* jogo;
         bool jogoInicializado;
-        ScreenStack telas;
-        ParticleWidget* particulas;
+        Widgets::ScreenStack telas;
+        Widgets::ParticleWidget* particulas;
 
         QWidget* m_destino;
         QGraphicsOpacityEffect* m_efeitoOrigem;
         QGraphicsOpacityEffect* m_efeitoDestino;
+
+        // Lista de campeões compartilhada entre todas as páginas de seleção
+        static const QStringList LISTA_CAMPEOES;
 };
 #endif // MENU_H

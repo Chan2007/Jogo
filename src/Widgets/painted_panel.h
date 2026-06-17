@@ -3,13 +3,15 @@
 
 #include <QFrame>
 
-class PaintedPanel : public QFrame {
-    Q_OBJECT
+namespace Widgets {
+    class PaintedPanel : public QFrame {
+        Q_OBJECT
 
-public:
-    explicit PaintedPanel(QWidget *parent = NULL);
-protected:
-    virtual void paintEvent(QPaintEvent *event);
-};
+    public:
+        explicit PaintedPanel(QWidget *parent = NULL);
+    protected:
+        virtual void paintEvent(QPaintEvent *event);
+    };
+}
 
 #endif // PAINTED_PANEL_H

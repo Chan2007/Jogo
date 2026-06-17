@@ -13,18 +13,21 @@ namespace Fases {
             const int maxChefoes;
 
             void processarEventos(const sf::Event &evento);
-            void renderizar();
+            void desenhar();
 
             std::string diretorio_Frames_Fase;
         protected:
-            void criarObstaculos(){}
+            void criarObstaculos() {
+                criarObstDificeis();
+
+            }
             void criarInimigos() {
                 criarChefoes();
             }
             void criarProjeteis();
             void criarCenario();
 
-            void criarObstMedios(){}
+            void criarObstDificeis();
             void criarChefoes();
         public:
             Segunda_Fase();

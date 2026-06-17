@@ -11,7 +11,7 @@ Gerenciadores::Gerenciador_Grafico* Ente::gerenciadorGrafico = &Gerenciadores::G
 Ente::Ente(): id(contId++){}
 
 double Ente::gerar_num_norm(double media, double desvpad, int a, int b) {
-    std::mt19937 gerador(static_cast<unsigned int>(std::time(0)));
+    static std::mt19937 gerador(static_cast<unsigned int>(std::time(0)));
     std::normal_distribution<double> distribuicao(media, desvpad);
 
     // Gera o primeiro número
@@ -26,7 +26,7 @@ double Ente::gerar_num_norm(double media, double desvpad, int a, int b) {
 }
 double Ente::gerar_num_exp(double a, double b, double lambda) {
     if (a >= b) (a = b - 1.0);
-    std::mt19937 gerador(static_cast<unsigned int>(std::time(0)));
+    static std::mt19937 gerador(static_cast<unsigned int>(std::time(0)));
     std::exponential_distribution<double> distribuicao(lambda);
 
     double exp = distribuicao(gerador);
@@ -44,7 +44,7 @@ double Ente::gerar_num_binom(double a, double b, int numero_tentativas, double p
     if (a >= b) (a = b - 1.0);
     if (numero_tentativas <= 0) numero_tentativas = 1;
 
-    std::mt19937 gerador(static_cast<unsigned int>(std::time(0)));
+    static std::mt19937 gerador(static_cast<unsigned int>(std::time(0)));
 
     // Configura a distribuição binomial padrão do C++11
     std::binomial_distribution<int> distribuicao(numero_tentativas, p_sucesso);

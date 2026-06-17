@@ -148,7 +148,7 @@ void Chefe::executar() {
             if (bolaDeFogo && tempoUltimoAtaque >= cooldownAtaque) {
                 if (dx > 0) { bolaDeFogo->setPosicao(sf::Vector2f(posInimigo.x + getTamanho().width / 2, posInimigo.y - getTamanho().height/2)); }
                 else { bolaDeFogo->setPosicao(sf::Vector2f(posInimigo.x - getTamanho().width / 2, posInimigo.y - getTamanho().height/2)); }
-                bolaDeFogo->setAtivo(true);
+                bolaDeFogo->setVigente(true);
                 bolaDeFogo->setDoJogador(false);
                 bolaDeFogo->setDano(poder);
                 Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(bolaDeFogo);

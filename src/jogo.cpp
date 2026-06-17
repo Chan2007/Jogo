@@ -13,9 +13,11 @@ Jogo::Jogo() : faseAtual(NULL),
                gerenciadorTextura(),
                gerenciadorAudio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
                gerenciadorGrafico(Gerenciadores::Gerenciador_Grafico::getGerenciador()),
+               multiplayer(false),
                musicaLigada(true),
                estadoTela(TelaMenu)
-{}
+{
+}
 
 Jogo::~Jogo() {
     if (gerenciadorGrafico.getJanela().isOpen()) {
@@ -60,11 +62,11 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
     switch (novoEstado) {
         case TelaFase1:
             // Garante que a janela SFML exista e esteja configurada
-            this->inicializar();
+            inicializar();
             faseAtual = new Fases::Primeira_Fase();
             break;
         case TelaFase2:
-            this->inicializar();
+            inicializar();
             faseAtual = new Fases::Segunda_Fase();
             break;
         default:
@@ -91,7 +93,7 @@ void Jogo::executar() {
 
         // Renderização
         janela.clear();
-        if (faseAtual) faseAtual->renderizar();
+        if (faseAtual) faseAtual->desenhar();
         janela.display();
     }
     gerenciadorAudio.stop();
@@ -117,9 +119,3 @@ void Jogo::setVolume(const float volume) const {
     if (inicializado && faseAtual)
         faseAtual->setVolume(volume);
 }
-/*
-bool Jogo::trocarMusica(const int fase) const {
-    if (!faseAtual) return false;
-    return faseAtual->trocarMusica(fase);
-}
-*/

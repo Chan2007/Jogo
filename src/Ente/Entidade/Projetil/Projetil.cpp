@@ -19,7 +19,6 @@ namespace Entidades {
         velocidade(140.f, 140.f),
         doJogador(false)
     {
-        setTipo(ENTIDADE_PROJETIL);
         setVelocidade(velocidade);
         setPosicao(sf::Vector2f(0.f, 1080.f));
 
@@ -30,7 +29,7 @@ namespace Entidades {
                 getSprite().setTextureRect(sf::IntRect(0, 0, 96, 91));
             }
             else {
-                std::cerr << "Erro: n�o foi possivel carregar a spritesheet do inimigo facil em: " << arquivosprite << std::endl;
+                std::cerr << "Erro: não foi possível carregar a imagem do projétil em: " << arquivosprite << std::endl;
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
@@ -40,7 +39,7 @@ namespace Entidades {
     Projetil::~Projetil() {}
 
     void Projetil::mover() {
-        if (getAtivo()) {
+        if (getVigente()) {
             const float dt = 0.016f;
             sf::Vector2f posicao = getPosicao();
             posicao.x += velocidade.x * (dt + 0.02);
@@ -73,6 +72,6 @@ namespace Entidades {
         );
     }
     void Projetil::aceitar(VisitorColisao* visitor) {
-        if (visitor) visitor->visitar(this);
+        if (visitor) visitor->colidir(this);
     }
 }

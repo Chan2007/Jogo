@@ -13,14 +13,15 @@
 VisitorColisaoInimigo::VisitorColisaoInimigo(Personagens::Inimigo* i) : inimigo(i) {}
 VisitorColisaoInimigo::~VisitorColisaoInimigo() {}
 
-void VisitorColisaoInimigo::visitar(Personagens::Inimigo* I) {
+void VisitorColisaoInimigo::colidir(Personagens::Inimigo* I) {
     if (I && inimigo && I != inimigo) {
         inimigo->setColisao(true);
-        I->setColisao(true);
+        inimigo->inverterPatrulha();
+        I->inverterPatrulha();
     }
 }
 
-void VisitorColisaoInimigo::visitar(Obstaculos::Obstaculo* O) {
+void VisitorColisaoInimigo::colidir(Obstaculos::Obstaculo* O) {
     if (!O || !inimigo) return;
     inimigo->setColisao(true);
 
@@ -47,10 +48,10 @@ void VisitorColisaoInimigo::visitar(Obstaculos::Obstaculo* O) {
     }
 }
 
-void VisitorColisaoInimigo::visitar(Entidades::Projetil* P) {
-    if (!inimigo || !P->getAtivo()) return;
+void VisitorColisaoInimigo::colidir(Entidades::Projetil* P) {
+    if (!inimigo || !P->getVigente()) return;
     if (P->getDoJogador()) {
         inimigo->receberDano(P->getDano());
-        P->setAtivo(false);
+        P->setVigente(false);
     }
 }

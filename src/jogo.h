@@ -1,6 +1,7 @@
 #ifndef JOGO_H
 #define JOGO_H
 
+#include "Ente/Fase/Fase.h"
 #include "Gerenciador/Gerenciador_Audio/Gerenciador_Audio.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
@@ -28,6 +29,8 @@ class Jogo {
         sf::Clock relogio;
 
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+
+        bool multiplayer;
         static bool inicializado;
         bool musicaLigada;
 
@@ -49,10 +52,16 @@ class Jogo {
 
         void setMusica(bool ligada);
         void setVolume(float volume) const;
-        bool trocarMusica(int fase) const;
 
         void setJogador1(Personagens::Jogador* j1) {jogador1 = j1;}
         void setJogador2(Personagens::Jogador* j2) {jogador2 = j2;}
+        void setJogador2Ativo(bool ativo) {
+            if (ativo) multiplayer = true;
+            else multiplayer = false;
+        }
+        int getJogador2Ativo() {
+            return multiplayer;
+        }
         Personagens::Jogador* getJogador1() const { return jogador1; }
         Personagens::Jogador* getJogador2() const { return jogador2; }
 

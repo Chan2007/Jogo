@@ -26,10 +26,10 @@ class VisitorColisaoInimigo : public VisitorColisao {
         VisitorColisaoInimigo(Personagens::Inimigo* i);
         ~VisitorColisaoInimigo();
 
-        void visitar(Personagens::Jogador* J){};
-        void visitar(Personagens::Inimigo* I);
-        void visitar(Obstaculos::Obstaculo* O);
-        void visitar(Entidades::Projetil* P);
+        void colidir(Personagens::Jogador* J){};
+        void colidir(Personagens::Inimigo* I);
+        void colidir(Obstaculos::Obstaculo* O);
+        void colidir(Entidades::Projetil* P);
 };
 
 

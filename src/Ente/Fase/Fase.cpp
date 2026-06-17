@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+#include "jogo.h"
 #include "Listas/ListaEntidades.h"
 #include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo_Facil/Inimigo_Facil.h"
@@ -12,13 +13,14 @@
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
+#include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 
 namespace Fases {
     Fase::Fase() : gerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade::getGerenciador()),
                    gerenciadorColisao(&Gerenciadores::Gerenciador_Colisao::getGerenciador()),
-                   audio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
+                   gerenciadorAudio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
                    gerenciadorInput(Gerenciadores::Gerenciador_Input::getGerenciador()) {
         jogo = Jogo::getJogo();
         tamanhoJanela = gerenciadorGrafico->getJanela().getSize();
@@ -39,18 +41,16 @@ namespace Fases {
 
         Obstaculos::Plataforma* novaPlat;
         sementear();
-        const int fator = rand() % 10 + 3;
+        const int fator = rand() % 3 + 3;
         for (int i = 0; i < fator; i++) {
-            double media = 5;
+            double media = 3;
             double desvio_padrao = 2;
             if (std::fabs(gerar_num_norm(media, desvio_padrao) - media) < desvio_padrao)
                 novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1);
-            else if (std::fabs(gerar_num_norm(media, desvio_padrao) - media) > 1.25 * desvio_padrao)
+            else if (std::fabs(gerar_num_norm(media, desvio_padrao) - media) > 1.5 * desvio_padrao)
                 novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL2);
-            else if ( std::fabs(gerar_num_norm(media, desvio_padrao) - media) > 1.5 * desvio_padrao)
-                novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3);
             else
-                novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL1);
+                novaPlat = new Obstaculos::Plataforma(Obstaculos::Plataforma::NORMAL3);
 
             if (!novaPlat) { std::cerr << "Falha ao criar nova plataforma." << std::endl; }
 
@@ -88,6 +88,10 @@ namespace Fases {
         // Limpa as referências de ponteiros nos gerenciadores para o próximo estado
         gerenciadorColisao->limpar();
         gerenciadorGravidade.limpar();
+        gerenciadorInput.desinscrever(jogo->getJogador1());
+        if (jogo->getJogador2())
+            gerenciadorInput.desinscrever(jogo->getJogador2());
+        LEntidades.limparLista();
 
     }
 
@@ -96,7 +100,7 @@ namespace Fases {
             std::cerr << "Sem música disponível! " << std::endl;
             return false;
         }
-        audio.stop();
+        gerenciadorAudio.stop();
         std::string nomeArquivo = "";
         if (fase == 1)
             nomeArquivo = "Aurora_s-Theme.ogg";
@@ -106,10 +110,10 @@ namespace Fases {
         const std::string caminho_musica = Encontrar_Caminho::concatenarEnderecos(diretorio_Audio, nomeArquivo);
 
         // Carrega e configura através do gerenciador de áudio
-        audio.loadMusic(caminho_musica);
+        gerenciadorAudio.loadMusic(caminho_musica);
 
         // O próprio méthodo play() do Gerenciador já deve checar internamente se a música está ligada
-        audio.play();
+        gerenciadorAudio.play();
         return true;
     }
     void Fase::criarInimFaceis(){
@@ -128,7 +132,7 @@ namespace Fases {
                 tiroInim1 = new Entidades::Projetil();
                 if (tiroInim1) {
                     tiroInim1->setDoJogador(false);
-                    tiroInim1->setAtivo(false);
+                    tiroInim1->setVigente(false);
                     minion->setProjetil(tiroInim1);
                     gerenciadorColisao->incluirEntidade(tiroInim1);
                     gerenciadorGravidade.aplicarGravidade(tiroInim1, true);
@@ -206,7 +210,7 @@ namespace Fases {
             Personagens::Inimigo::incluirJogador(jogo->getJogador1());
         }
         else std::cout << "Erro: Jogador 1 não alocado!" << std::endl;
-        if (jogo->getJogador2()) {
+        if (jogo->getJogador2() && jogo->getJogador2Ativo()) {
             jogo->getJogador2()->setCampeao(Personagens::CAMPEAO_NAAFIRI);
             jogo->getJogador2()->setPosicao(sf::Vector2f(
                 (jogo->getJogador2()->getTamanho().width) * 2,
@@ -221,6 +225,5 @@ namespace Fases {
             LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(jogo->getJogador2()));
             Personagens::Inimigo::incluirJogador(jogo->getJogador2());
         }
-        else std::cout << "Erro: Jogador 2 não alocado!" << std::endl;
     }
 } // Fases

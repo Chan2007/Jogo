@@ -18,7 +18,7 @@ namespace Personagens {
     class Inimigo;
 
     enum EscolhaCampeao {
-        CAMPEAO_NAAFIRI = 0,
+        CAMPEAO_NAAFIRI,
         CAMPEAO_JHIN,
         CAMPEAO_LUX,
         CAMPEAO_EVELYNN,
@@ -40,8 +40,11 @@ namespace Personagens {
         float pontos;
         int abates;
         int idJogador;
+        sf::RectangleShape fundoVida;
+        sf::RectangleShape barraVida;
     public:
-        Jogador();
+        Jogador(sf::Vector2f posicao = sf::Vector2f(20.0f, 40.0f),
+        sf::Color corBarra = sf::Color(0, 255, 0));
         ~Jogador();
 
         void aoApertarTecla(const Gerenciadores::Tecla& evento);
