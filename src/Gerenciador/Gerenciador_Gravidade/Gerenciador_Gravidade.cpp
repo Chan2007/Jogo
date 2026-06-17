@@ -106,7 +106,7 @@ namespace Gerenciadores {
         Entidades::Projetil* Projetil = dynamic_cast<Entidades::Projetil*>(entidade);
         if (Personagem) return Personagem->getVelocidade().y;
         if (Projetil) return Projetil->getVelocidade().y;
-        return 0.0f;
+        return 140.f;
     }
     void Gerenciador_Gravidade::setVy(Entidades::Entidade* entidade, float velocidade) {
         if (!entidade) return;

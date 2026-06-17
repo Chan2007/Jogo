@@ -211,15 +211,7 @@ namespace Gerenciadores {
                 }
             }
 
-            // Inimigo x Inimigo
-            std::list<Personagens::Inimigo *>::const_iterator itInim2;
-            for (itInim2 = Linimigos.begin(); itInim2 != Linimigos.end(); ++itInim2) {
-                Personagens::Inimigo* inimigo2 = *itInim2;
-                if (inimigo2 && inimigo1 != inimigo2 && verificarColisao(inimigo1, inimigo2)) {
-                    VisitorColisaoInimigo visitor(inimigo1);
-                    inimigo2->aceitar(&visitor);
-                }
-            }
+
         }
     }
     void Gerenciador_Colisao::tratarColisoesProj() const{

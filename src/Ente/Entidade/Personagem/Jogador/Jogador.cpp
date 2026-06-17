@@ -38,7 +38,7 @@ namespace Personagens {
                 setNome("Naafiri");
                 setVidaMaxima(620);
                 setVida(620);
-                setPoder(999);
+                setPoder(1999);
 
 
                 totalFramesAnimacao = 8;

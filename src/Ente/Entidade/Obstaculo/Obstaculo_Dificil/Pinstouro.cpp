@@ -27,7 +27,7 @@ namespace Obstaculos {
 
 		getSprite().setOrigin(1225.f, 1122.f);
 		getSprite().setTextureRect(sf::IntRect(0, 0, 2450, 2244));
-		getSprite().setScale(0.0775f, 0.09f);
+		getSprite().setScale(0.04f, 0.045f);
 	}
 
 	Pinstouro::~Pinstouro(){}
@@ -38,7 +38,6 @@ namespace Obstaculos {
 
 	void Pinstouro::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
-			if (p->getTamanho().intersects(getTamanho())) {
 				p->receberDano(static_cast<int>(danosidade));
 
 				sf::Vector2f posJog = p->getPosicao();
@@ -67,7 +66,6 @@ namespace Obstaculos {
 					float randomY = static_cast<float>(rand() % rangeY) + (tamObs.height / 2.f);
 					setPosicao(sf::Vector2f(randomX, randomY));
 				}
-			}
 		}
 	}
 } // Obstaculo

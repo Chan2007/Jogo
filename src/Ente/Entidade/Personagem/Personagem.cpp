@@ -68,8 +68,11 @@ namespace Personagens {
             vida = vidaMaxima;
         else
             vida = valor;
-        if (vida <= 0)
+        if (vida <= 0) {
             estado = static_cast<int>(ESTADO_MORTO);
+            setVigente(false);
+        }
+        
     }
 
     int Personagem::receberDano(int dano) {
@@ -99,7 +102,10 @@ namespace Personagens {
 
     void Personagem::moverHorizontal(float direcao) {
         sf::Vector2f velAtual = getVelocidade();
-        velAtual.x = direcao * velocidadeMax;
+
+        if (velAtual.x > velocidadeMax) { velAtual.x *= 0.95f; }
+        else { velAtual.x = direcao * velocidadeMax; }
+
         setVelocidade(velAtual);
         estado = (direcao == 0.0f) ? static_cast<int>(ESTADO_OCIOSO) : static_cast<int>(ESTADO_MOVIMENTO);
     }

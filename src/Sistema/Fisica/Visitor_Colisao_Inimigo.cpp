@@ -7,7 +7,7 @@
 #include "Visitor_Colisao_Jogador.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Ente/Entidade/Obstaculo/Obstaculo.h"
+#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 
 VisitorColisaoInimigo::VisitorColisaoInimigo(Personagens::Inimigo* i) : inimigo(i) {}
@@ -36,14 +36,17 @@ void VisitorColisaoInimigo::colidir(Obstaculos::Obstaculo* O) {
     if (bateuNaParede)
         inimigo->inverterPatrulha();
     else {
-        float margem = 5.0f;
-        if (inimigo->getDirecaoPatrulha() > 0.0f) {
-            if (centroXInimigo >= (hitboxObs.left + hitboxObs.width) - margem)
-                inimigo->inverterPatrulha();
-        }
-        else if (inimigo->getDirecaoPatrulha() <= 0.0f) {
-            if (centroXInimigo <= hitboxObs.left + margem)
-                inimigo->inverterPatrulha();
+        Obstaculos::Plataforma* p = dynamic_cast<Obstaculos::Plataforma*>(O);
+        if (p) {
+            float margem = 5.0f;
+            if (inimigo->getDirecaoPatrulha() > 0.0f) {
+                if (centroXInimigo >= (hitboxObs.left + hitboxObs.width) - margem)
+                    inimigo->inverterPatrulha();
+            }
+            else if (inimigo->getDirecaoPatrulha() <= 0.0f) {
+                if (centroXInimigo <= hitboxObs.left + margem)
+                    inimigo->inverterPatrulha();
+            }
         }
     }
 }

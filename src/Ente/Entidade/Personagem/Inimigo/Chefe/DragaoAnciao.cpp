@@ -18,7 +18,7 @@ DragaoAnciao::DragaoAnciao() :
     setNome("Dragao Sabio"),
     velocidadeMax = 220.f;
     nivelMaldade = 200;
-    poder = 80 * log(nivelMaldade * 10 * elite);
+    poder = 80 * log(nivelMaldade * 10);
     setVidaMaxima(1200);
     setVida(1200);
     alcancePerseguicao = 400;

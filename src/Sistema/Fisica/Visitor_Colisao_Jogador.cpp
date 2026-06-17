@@ -43,7 +43,7 @@ void VisitorColisaoJogador::colidir(Entidades::Projetil* p)  {
     if (!p->getDoJogador()) {
         if (!jogador->getInvulneravel()) {
             jogador->receberDano(p->getDano());
-            std::cout << "Jogador foi atingido por um projétil." << std::endl;
+            std::cout << "Jogador foi atingido por um projetil." << std::endl;
         }
         p->setAtivo(false);
     }
