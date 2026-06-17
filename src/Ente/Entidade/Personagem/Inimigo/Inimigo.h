@@ -22,6 +22,7 @@ namespace Personagens {
             float limiteDeslocamento;
             float tempoPatrulha;
             bool elite;
+            bool interagindo;
             static std::vector<Jogador*> listaJogadores;
         public:
             Inimigo();

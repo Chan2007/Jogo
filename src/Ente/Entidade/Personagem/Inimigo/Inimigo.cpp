@@ -20,7 +20,8 @@ namespace Personagens {
         elite(false),
         direcaoPatrulha(1.f),
         deslocamentoPatrulha(0.f),
-        limiteDeslocamento(120.f)
+        limiteDeslocamento(120.f),
+        interagindo(false)
     {
         setNome("Inimigo");
         setVidaMaxima(450);

@@ -49,9 +49,16 @@ Minion::~Minion() {
 }
 
 void Minion::danificar(Personagens::Jogador* J) {
-    if (J && !J->getInvulneravel()) {
-        J->receberDano(causarDanoBasico());
-        std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
+    setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
+    setEstado(Personagens::ESTADO_OCIOSO);
+    interagindo = true;
+
+    if (tempoUltimoAtaque >= cooldownAtaque) {
+        if (J && !J->getInvulneravel()) {
+            J->receberDano(causarDanoBasico());
+            std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
+        }
+        tempoUltimoAtaque = 0.0f;
     }
 }
 
@@ -123,7 +130,7 @@ void Minion::executar() {
             }
         }
     }
-    bool interagindo = false;
+    interagindo = false;
 
     if (alvoMaisProximo != NULL) {
         sf::Vector2f posAlvo = alvoMaisProximo->getSprite().getPosition();
@@ -133,14 +140,8 @@ void Minion::executar() {
         // Comportamento de Atacar
         if (menorDistancia <= getAlcanceAtaque()) {
 
-            setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
-            setEstado(Personagens::ESTADO_OCIOSO);
-            interagindo = true;
-
-            if (tempoUltimoAtaque >= cooldownAtaque) {
-                danificar(alvoMaisProximo);
-                tempoUltimoAtaque = 0.0f;
-            }
+            danificar(alvoMaisProximo);
+            
         }
 
         // Comportamento de Perseguir

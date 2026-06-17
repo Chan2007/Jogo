@@ -13,7 +13,7 @@ namespace Obstaculos {
 
 	Pinstouro::Pinstouro() :
 	Obstaculo(),
-	impulso(800.f),
+	impulso(1100.f),
 	danosidade(60)
 	{
 		perigoso = true;
@@ -54,8 +54,8 @@ namespace Obstaculos {
 				float multx = std::abs(dx/tamx);
 				float multy = std::abs(dy/tamy);
 
-				if (dx > 0) { p->setVelocidade(sf::Vector2f(-(multx * impulso), -(multy * impulso))); }
-				else { p->setVelocidade(sf::Vector2f(multx * impulso, -(multy * impulso))); }
+				if (dx > 0) { p->setVelocidade(sf::Vector2f(-(multx * impulso * 2), -(multy * impulso))); }
+				else { p->setVelocidade(sf::Vector2f(multx * impulso * 2, -(multy * impulso))); }
 
 				sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
 				const int rangeX = janela.getSize().x - static_cast<int>(tamObs.width);

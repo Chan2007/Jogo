@@ -14,7 +14,7 @@ Azulo::Azulo() :
     setNome("Azulo"),
     velocidadeMax = 60.f;
     nivelMaldade = 64;
-    poder = 30.0 * pow(1 - vida/vidaMaxima, 2) + elite * nivelMaldade;
+    poder = 30.0 * pow(1 - vida / vidaMaxima, 2) + (elite? 0: 1) * nivelMaldade;
     setVida(450);
     alcancePerseguicao = 0;
     alcanceAtaque = 200;
@@ -49,6 +49,7 @@ Azulo::~Azulo() {
 void Azulo::danificar(Personagens::Jogador* J) {
     if (J) {
         J->receberDano(causarDanoBasico());
+        
         std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
     }
 }

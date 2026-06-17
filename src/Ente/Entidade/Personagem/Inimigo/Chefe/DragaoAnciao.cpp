@@ -55,9 +55,54 @@ DragaoAnciao::~DragaoAnciao() {
 }
 
 void DragaoAnciao::danificar(Personagens::Jogador* J) {
-    if (J) {
-        J->receberDano(causarDanoBasico());
-        std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
+    sf::Vector2f posJogador = J->getSprite().getPosition();
+    sf::Vector2f posInimigo = getSprite().getPosition();
+
+    float dx = posJogador.x - posInimigo.x;
+    float dy = posJogador.y - posInimigo.y;
+    float menorDistancia = std::sqrt(dx * dx + dy * dy);
+
+    // Comportamento de Atacar
+    if (menorDistancia <= getAlcanceAtaque() && !J->getInvulneravel()) {
+        setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
+        //setEstado(Personagens::ESTADO_OCIOSO);
+        interagindo = true;
+
+        if (tempoUltimoAtaque >= cooldownAtaque) {
+            J->receberDano(causarDanoBasico());
+            std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
+            tempoUltimoAtaque = 0.0f;
+        }
+    }
+    // Comportamento de Perseguir
+    else if (menorDistancia <= alcancePerseguicao) {
+        interagindo = true;
+
+        if (dx > 0) {
+            moverHorizontal(1.0f);
+            getSprite().setScale(-3.f, 3.f);
+        }
+        else {
+            moverHorizontal(-1.0f);
+            getSprite().setScale(3.f, 3.f);
+        }
+
+        if (bolaDeFogo && tempoUltimoAtaque >= cooldownAtaque) {
+            if (dx > 0) { bolaDeFogo->setPosicao(sf::Vector2f(posInimigo.x + getTamanho().width / 2, posInimigo.y - getTamanho().height / 2)); }
+            else { bolaDeFogo->setPosicao(sf::Vector2f(posInimigo.x - getTamanho().width / 2, posInimigo.y - getTamanho().height / 2)); }
+            bolaDeFogo->setVigente(true);
+            bolaDeFogo->setDoJogador(false);
+            bolaDeFogo->setDano(poder);
+            Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(bolaDeFogo);
+            bolaDeFogo->getSprite().setScale(1.f, 1.f);
+
+            float dirX = dx / menorDistancia;
+            float dirY = dy / menorDistancia;
+
+            const float velocidadeTiro = 300.f;
+            bolaDeFogo->setVelocidade(sf::Vector2f(dirX * velocidadeTiro, dirY * velocidadeTiro));
+            tempoUltimoAtaque = 0.0f;
+        }
     }
 }
 
@@ -117,51 +162,10 @@ void DragaoAnciao::executar() {
             }
         }
     }
-    bool interagindo = false;
+    interagindo = false;
 
     if (alvoMaisProximo != NULL) {
-        sf::Vector2f posAlvo = alvoMaisProximo->getSprite().getPosition();
-        float dx = posAlvo.x - posInimigo.x;
-        float dy = posAlvo.y - posInimigo.y;
-
-        // Comportamento de Atacar
-        if (menorDistancia <= getAlcanceAtaque() && !alvoMaisProximo->getInvulneravel()) {
-            setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
-            //setEstado(Personagens::ESTADO_OCIOSO);
-            interagindo = true;
-
-            if (tempoUltimoAtaque >= cooldownAtaque) {
-                danificar(alvoMaisProximo);
-            }
-        }
-        // Comportamento de Perseguir
-        else if (menorDistancia <= alcancePerseguicao) {
-            interagindo = true;
-
-            if (dx > 0) {
-                moverHorizontal(1.0f);
-            }
-            else {
-                moverHorizontal(-1.0f);
-            }
-
-            if (bolaDeFogo && tempoUltimoAtaque >= cooldownAtaque) {
-                if (dx > 0) { bolaDeFogo->setPosicao(sf::Vector2f(posInimigo.x + getTamanho().width / 2, posInimigo.y - getTamanho().height/2)); }
-                else { bolaDeFogo->setPosicao(sf::Vector2f(posInimigo.x - getTamanho().width / 2, posInimigo.y - getTamanho().height/2)); }
-                bolaDeFogo->setVigente(true);
-                bolaDeFogo->setDoJogador(false);
-                bolaDeFogo->setDano(poder);
-                Gerenciadores::Gerenciador_Colisao::getGerenciador().incluirEntidade(bolaDeFogo);
-                bolaDeFogo->getSprite().setScale(1.f, 1.f);
-
-                float dirX = dx / menorDistancia;
-                float dirY = dy / menorDistancia;
-
-                const float velocidadeTiro = 300.f;
-                bolaDeFogo->setVelocidade(sf::Vector2f(dirX * velocidadeTiro, dirY * velocidadeTiro));
-                tempoUltimoAtaque = 0.0f;
-            }
-        }
+        danificar(alvoMaisProximo);
     }
 
     if (!interagindo) { moverHorizontal(0.f); }
