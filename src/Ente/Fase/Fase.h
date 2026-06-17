@@ -5,47 +5,61 @@
 #ifndef JOGO_FASE_H
 #define JOGO_FASE_H
 
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
-#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Ente/Ente.h"
 #include "Gerenciador/Gerenciador_Audio/Gerenciador_Audio.h"
 #include "Listas/ListaEntidades.h"
+
+class Jogo;
+
+namespace Gerenciadores {
+    class Gerenciador_Input;
+    class Gerenciador_Colisao;
+    class Gerenciador_Grafico;
+    class Gerenciador_Gravidade;
+    class Gerenciador_Audio;
+}
 
 namespace Listas {
     class ListaEntidades;
 }
 namespace Fases {
     class Fase: public Ente {
+        private:
+            bool verificarLimitesJanela(Entidades::Entidade *entidade);
         protected:
             Listas::ListaEntidades LEntidades;
 
-            sf::VideoMode desktop;
+            sf::Vector2u tamanhoJanela;
 
             virtual void criarObstaculos() = 0;
             virtual void criarInimigos() = 0;
-            virtual void criarProjeteis() = 0;
             virtual void criarCenario() = 0;
 
             void criarInimFaceis();
+            void criarJogadores();
+
+            void definirLimitesJanela();
+
             void criarPlataformas();
 
-            Personagens::Jogador jogador;
+            Jogo* jogo;
             Gerenciadores::Gerenciador_Gravidade& gerenciadorGravidade;
-            Gerenciadores::Gerenciador_Colisao& gerenciadorColisao;
-            Gerenciadores::Gerenciador_Audio& audio;
+            Gerenciadores::Gerenciador_Colisao* gerenciadorColisao;
+            Gerenciadores::Gerenciador_Audio& gerenciadorAudio;
+            Gerenciadores::Gerenciador_Input& gerenciadorInput;
             std::string diretorio_Audio;
 
         public:
             explicit Fase();
             virtual ~Fase();
-            void setMusica(const bool ligada) const { audio.ativarMusica(ligada);}
-            void setVolume(const float volume) const { audio.setVolume(volume);}
-            bool tocandoMusica() const { return audio.isPlaying();}
+            void setMusica(const bool ligada) const { gerenciadorAudio.ativarMusica(ligada);}
+            void setVolume(const float volume) const { gerenciadorAudio.setVolume(volume);}
+            bool tocandoMusica() const { return gerenciadorAudio.isPlaying();}
 
             bool trocarMusica(int fase) const;
             virtual void processarEventos(const sf::Event &evento) = 0;
             virtual void executar() = 0;
-            virtual void renderizar(sf::RenderWindow &janela) = 0;
+            virtual void desenhar() = 0;
 
     };
 } // Fases

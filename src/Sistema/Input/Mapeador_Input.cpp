@@ -6,42 +6,41 @@
 
 namespace Gerenciadores {
     Mapeador_Input::Mapeador_Input() {
-        padrao();
-        padraoJoystick();
-    }
-    void Mapeador_Input::padrao() {
         mapeamento_teclas.clear();
         mapeamento_mouse.clear();
         mapeamento_joystick.clear();
         mapeamento_eixos.clear();
+        padrao();
+        padraoJoystick();
+    }
+    void Mapeador_Input::padrao() {
+        mapeamento_teclas[sf::Keyboard::W] = "j1_pular";
+        mapeamento_teclas[sf::Keyboard::I] = "j2_pular";
+        mapeamento_teclas[sf::Keyboard::A] = "j1_mover_esquerda";
+        mapeamento_teclas[sf::Keyboard::J] = "j2_mover_esquerda";
+        mapeamento_teclas[sf::Keyboard::D] = "j1_mover_direita";
+        mapeamento_teclas[sf::Keyboard::L] = "j2_mover_direita";
 
-        mapeamento_teclas[sf::Keyboard::W] = "pular";
-        mapeamento_teclas[sf::Keyboard::I] = "pular";
-        mapeamento_teclas[sf::Keyboard::A] = "mover_esquerda";
-        mapeamento_teclas[sf::Keyboard::J] = "mover_esquerda";
-        mapeamento_teclas[sf::Keyboard::D] = "mover_direita";
-        mapeamento_teclas[sf::Keyboard::L] = "mover_direita";
+        mapeamento_teclas[sf::Keyboard::LShift] = "j1_correr";
+        mapeamento_teclas[sf::Keyboard::RShift] = "j2_correr";
 
-        mapeamento_teclas[sf::Keyboard::LShift] = "correr";
-        mapeamento_teclas[sf::Keyboard::RAlt] = "correr";
+        mapeamento_teclas[sf::Keyboard::E] = "j1_atacar";
+        mapeamento_teclas[sf::Keyboard::Q] = "j1_habilidade2";
+        mapeamento_teclas[sf::Keyboard::O] = "j2_atacar";
+        mapeamento_teclas[sf::Keyboard::U] = "j2_habilidade2";
 
-        mapeamento_teclas[sf::Keyboard::E] = "habilidade1";
-        mapeamento_teclas[sf::Keyboard::Q] = "habilidade2";
-        mapeamento_teclas[sf::Keyboard::O] = "habilidade1";
-        mapeamento_teclas[sf::Keyboard::U] = "habilidade2";
-
-        mapeamento_teclas[sf::Keyboard::Escape] = "menu";
-        mapeamento_teclas[sf::Keyboard::Space] = "pause";
+        mapeamento_teclas[sf::Keyboard::Escape] = "pausar";
+        mapeamento_teclas[sf::Keyboard::Space] = "escudo";
     }
     void Mapeador_Input::padraoJoystick() {
         // Botão A (Xbox) ou X (PS)
         mapeamento_joystick[0] = "pular";
         // Botão X (Xbox) ou □ (PS)
-        mapeamento_joystick[1] = "habilidade1";
+        mapeamento_joystick[1] = "atacar";
         // Botão B (Xbox) ou O (PS)
-        mapeamento_joystick[2] = "atacar";
+        mapeamento_joystick[2] = "habilidade";
         // Botão Y (Xbox) ou △ (PS)
-        mapeamento_joystick[3] = "habilidade2";
+        mapeamento_joystick[3] = "";
         // Botão LB
         mapeamento_joystick[4] = "desacelerar";
         // Botão RB

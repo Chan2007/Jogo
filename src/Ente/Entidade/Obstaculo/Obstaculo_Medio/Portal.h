@@ -11,21 +11,23 @@ namespace Personagens {
 }
 
 namespace Obstaculos {
-    class Obstaculo_Medio: public Obstaculo {
+    class Portal: public Obstaculo {
         private:
             float altura;
             float largura;
         public:
-            Obstaculo_Medio();
-            ~Obstaculo_Medio();
+            Portal();
+            ~Portal();
             void executar();
-            void mover(){}
-            void salvar(){}
+            void mover() {
+                // Não se move
+            };
+            void salvar() {
+                // TODO
+            }
             float getAltura() { return altura; }
             float getLargura() { return largura; }
-            float getDano() { return 0; }
             void obstaculizar(Personagens::Jogador* p);
-            void setPlataforma(Personagens::Jogador* J) {}
     };
 } // Obstaculo
 

@@ -1,60 +1,64 @@
 
 #include "Jogador.h"
 
+#include <iostream>
+
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
+#include "Sistema/Fisica/Visitor_Colisao.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
-    Jogador::Jogador() :
-        Personagem(),
-        pGravidade(NULL),
-        ObserverJogador(0),
-        pontos(0.0f),
-        abates(0)
+    Jogador::Jogador(sf::Vector2f posicao, sf::Color corBarra) :
+    Personagem(),
+    movendoEsquerda(false), movendoDireita(false),
+    pulando(false), atacando(false), usandoHabilidade(false),
+    pontos(0.0f), abates(0), fundoVida(), barraVida()
     {
-        setTipo(Entidades::ENTIDADE_JOGADOR);
         velocidadeMax = 300.f;
+
+        fundoVida.setSize(sf::Vector2f(750.0f, 70.0f));
+        fundoVida.setPosition(posicao.x - 20.f, posicao.y - 10.0f);
+        fundoVida.setFillColor(sf::Color(100, 100, 100));
+
+        barraVida.setSize(sf::Vector2f(700.0f, 50.0f));
+        barraVida.setPosition(posicao);
+        barraVida.setFillColor(corBarra);
+
+        desenharBarra();
     }
 
     Jogador::~Jogador() {}
 
-    void Jogador::setGerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade* g) {
-        pGravidade = g;
-    }
-
-    Gerenciadores::Gerenciador_Gravidade* Jogador::getGerenciadorGravidade() {
-        return pGravidade;
-    }
-
     void Jogador::setCampeao(EscolhaCampeao campeao) {
         switch (campeao) {
-        case CAMPEAO_NAAFIRI:
-            setNome("Naafiri");
-            setVidaMaxima(620);
-            setVida(620);
-            setPoder(999);
+            case CAMPEAO_NAAFIRI:
+                setNome("Naafiri");
+                setVidaMaxima(620);
+                setVida(620);
+                setPoder(999);
 
 
-            totalFramesAnimacao = 8;
-            colunasSpritesheet = 4;
-            frameWidth = 230;
-            frameHeight = 120;
-            tempoPorFrame = 0.12f;
-            caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
-            caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
-            break;
-        default:
-            setNome("Campeao Generico");
-            setVidaMaxima(500);
-            setVida(500);
-            totalFramesAnimacao = 1;
-            colunasSpritesheet = 1;
-            frameWidth = 32;
-            frameHeight = 32;
-            tempoPorFrame = 0.1f;
-            break;
+                totalFramesAnimacao = 8;
+                colunasSpritesheet = 4;
+                frameWidth = 230;
+                frameHeight = 120;
+                tempoPorFrame = 0.12f;
+                caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+                caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
+                break;
+            default:
+                setNome("Campeao Generico");
+                setVidaMaxima(500);
+                setVida(500);
+                totalFramesAnimacao = 1;
+                colunasSpritesheet = 1;
+                frameWidth = 32;
+                frameHeight = 32;
+                tempoPorFrame = 0.1f;
+                break;
         }
         if (!caminhoArquivoSprite.empty()) {
 
@@ -62,17 +66,15 @@ namespace Personagens {
 
             std::string caminhoReal = buscador.acharDiretorio_Arquivo(caminhoArquivoSprite);
 
-            if (caminhoReal.empty()) {
+            if (caminhoReal.empty())
                 std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << caminhoArquivoSprite << std::endl;
-            }
             else if (getTextura().loadFromFile(caminhoReal)) {
                 getSprite().setTexture(getTextura());
                 rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
                 getSprite().setTextureRect(rectAtual);
             }
-            else {
+            else
                 std::cerr << "Erro: A textura falhou ao carregar: " << caminhoReal << std::endl;
-            }
         }
         if (!caminhoArquivoSpritePulo.empty()) {
             Encontrar_Caminho buscador;
@@ -89,6 +91,7 @@ namespace Personagens {
 
     void Jogador::executar() {
 
+        atualizarBarra();
         if (tempoDano > 0.f) {
             tempoDano -= clockDano.restart().asSeconds();
             if (tempoDano <= 0.f) {
@@ -97,7 +100,7 @@ namespace Personagens {
             }
         }
 
-        //regenerarVida(1.0f);
+        regenerarVida(0.1f);
         mover();
 
         if (estado == static_cast<int>(ESTADO_MOVIMENTO)) {
@@ -139,37 +142,29 @@ namespace Personagens {
         sf::Vector2f posicao = getPosicao();
         sf::Vector2f vel = getVelocidade();
 
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (movendoDireita)
             direcaoHorizontal = 1.0f;
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        else if (movendoEsquerda)
             direcaoHorizontal = -1.0f;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) { setInvulneravel(true); }
-        else { setInvulneravel(false); }
-        moverHorizontal(direcaoHorizontal);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-            if (pGravidade != NULL) {
-                pGravidade->pular(this);
-            }
-        }
+        // TODO -> Remover depois
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+            setInvulneravel(true);
+        else
+            setInvulneravel(false);
+
+        // Aplica a força de movimento horizontal
+        moverHorizontal(direcaoHorizontal);
 
         posicao.x += vel.x * 0.016f;
 
-        if (vel.x > 0.0f) {
-            getSprite().setScale(-1.f, 1.f); // Inverte para olhar para direita
-        }
-        else if (vel.x < 0.0f) {
-            getSprite().setScale(1.f, 1.f);  // Volta para olhar para esquerda
-        }
+        if (vel.x > 0.0f)
+            getSprite().setScale(-1.f, 1.f); // Olha para a direita
+
+        else if (vel.x < 0.0f)
+            getSprite().setScale(1.f, 1.f);  // Olha para a esquerda
 
         setPosicao(posicao);
-    }
-
-    Gerenciadores::Observador_Input* Jogador::getObserver() {
-        return ObserverJogador;
     }
 
     void Jogador::adicionarPontos(float valor) {
@@ -181,32 +176,45 @@ namespace Personagens {
         ++abates;
         adicionarPontos(150.0f);
     }
-
-    void Jogador::interagir_Colisao(Inimigo* I) {
-        if (!I) return;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) { I->receberDano(poder); }
+    void Jogador::aceitar(VisitorColisao* visitor) {
+        if (visitor) visitor->colidir(this);
     }
+    void Jogador::aoApertarTecla(const Gerenciadores::Tecla& evento) {
+        std::string prefixo = "j" + std::to_string(idJogador) + "_";
 
-    void Jogador::interagir_Colisao(Obstaculos::Obstaculo* O) {
-        if (!O) return;
-            sf::FloatRect hitboxJogador = getSprite().getGlobalBounds();
-            sf::FloatRect hitboxObs = O->getSprite().getGlobalBounds();
+        if (evento.acao.rfind(prefixo, 0) != 0) return;
 
-            float peDoJogador = hitboxJogador.top + hitboxJogador.height;
-            float topoPlataforma = hitboxObs.top;
+        std::string acao = evento.acao.substr(prefixo.length());
 
-            // Verifica se o jogador está pousando em cima (margem de tolerância)
-            if (peDoJogador <= topoPlataforma + 10.f) {
-                if (pGravidade != NULL) {
-                    pGravidade->aoTocarChao(this, sf::Vector2f(0.f, -1.f));
-                }
-            }
+        if (acao == "mover_esquerda") {
+            movendoEsquerda = evento.pressionada;
+        }
+        else if (acao == "mover_direita") {
+            movendoDireita = evento.pressionada;
+        }
+        else if (acao == "pular") {
+            if (evento.pressionada)
+                gerenciadorGravidade.pular(this);
+        }
+        else if (acao == "atacar")
+            atacando = evento.pressionada;
+        else if (acao == "habilidade")
+            usandoHabilidade = evento.pressionada;
+        else if (acao == "acelerar") {
+            // Botão RB
+        }
+        else if (acao == "desacelerar") {
+            // Botão LB
+        }
     }
-
-    void Jogador::interagir_Colisao(Entidades::Projetil* P) {
+    void Jogador::desenharBarra() {
+        gerenciadorGrafico->getJanela().draw(fundoVida);
+        gerenciadorGrafico->getJanela().draw(barraVida);
     }
-
-    void Jogador::interagir_Colisao(Jogador* J) {
-        if (J && J != this) { setColisao(true); }
+    void Jogador::atualizarBarra() {
+        float proporcaoVida = static_cast<float>(getVida()) / static_cast<float>(getVidaMaxima());
+        barraVida.setSize(sf::Vector2f(700.0f * proporcaoVida, 50.0f));
     }
 }
+
+

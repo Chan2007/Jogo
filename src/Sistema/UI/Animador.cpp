@@ -1,18 +1,18 @@
-#include "Animador.h"
-#include "Sistema/Caminho/Encontrar_Caminho.h"
 #include <algorithm>
-#include <cstdio>
-#include <cstdlib>
 #include <sstream>
 
-Animador::FrameData::FrameData(): caminho_spSheet(), RectTextura(), textura(NULL){}
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
+#include "Animador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
+#include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Proxy_Textura.h"
+
+Animador::FrameData::FrameData()
+    : caminho_spSheet(), RectTextura(), textura(NULL) {}
 
 Animador::Animador(Gerenciadores::Gerenciador_Textura* gerenciadorTextura):
     SpriteAtual(),
     ProxSprite(),
-    bufferReady(false),
-    threadRunning(false),
-    thread(NULL),
+    proxy(gerenciadorTextura),
     allowLoad(true),
     frames_data(),
     gerenciadorTextura(gerenciadorTextura),
@@ -25,88 +25,15 @@ Animador::Animador(Gerenciadores::Gerenciador_Textura* gerenciadorTextura):
     loaded(false)
 {}
 
-Animador::~Animador() {
-    if (thread) {
-        thread->wait();
-        delete thread;
-        thread = NULL;
-    }
-}
-
-void Animador::loadThread() {
-    // Carrega a textura e coloca direto no cache do gerenciador
-    gerenciadorTextura->carregarTextura(pathToLoad);
-
-    // Sinaliza que a textura está pronta
-    mutex.lock();
-    bufferReady = true;
-    threadRunning = false;
-    mutex.unlock();
-}
-
-void Animador::preLoadNextFrame(const unsigned int index) {
-    // Verifica se há thread rondando COM LOCK para evitar race condition
-    mutex.lock();
-    const bool threadEstaRodando = threadRunning;
-    mutex.unlock();
-
-    // Se thread anterior continua rodando, não dispara uma nova
-    if (threadEstaRodando) return;
-
-    // Limpa thread anterior se terminou
-    if (thread) {
-        delete thread;
-        thread = NULL;
-    }
-
-    // Prepara o caminho a carregar
-    pathToLoad = frames_data[index].caminho_spSheet;
-
-    // Sinaliza que thread vai rodar
-    mutex.lock();
-    bufferReady = false;
-    threadRunning = true;
-    mutex.unlock();
-
-    // Dispara thread para carregar a textura
-    thread = new sf::Thread(&Animador::loadThread, this);
-    thread->launch();
-}
-
-sf::Texture* Animador::findTexture(const std::string& path) const {
-    if (!gerenciadorTextura) return NULL;
-
-    // Verifica cache primeiro (padrão de projeto Proxy)
-    sf::Texture* tex = gerenciadorTextura->buscarTextura(path);
-    if (tex && tex->getSize().x > 0 && tex->getSize().y > 0)
-        return tex;
-
-    // Durante atualização (allowLoad = false), não carrega sincronicamente,
-    // pois a thread de pré-carregamento cuidará disso
-    if (!allowLoad)
-        return NULL;
-
-    // Durante inicialização, carrega conforme necessário
-    if (gerenciadorTextura->carregarTextura(path))
-        return gerenciadorTextura->buscarTextura(path);
-
-    return NULL;
-}
+Animador::~Animador() {}
 
 void Animador::applyFrame(sf::Sprite &sprite, FrameData &frameData) {
-    // Se a textura já foi carregada, usa ela
-    if (frameData.textura != NULL && frameData.textura->getSize().x > 0 && frameData.textura->getSize().y > 0) {
-        sprite.setTexture(*frameData.textura, true);
-        sprite.setTextureRect(frameData.RectTextura);
-    }
+    // Ele faz o pedido diretamente através do Proxy
+    sf::Texture* tex = proxy.getTexture(frameData.caminho_spSheet);
 
-    // Tenta carregar se ainda não foi carregada
-    if (frameData.textura == NULL)
-        frameData.textura = findTexture(frameData.caminho_spSheet);
-
-    // Se conseguiu carregar, aplica
-    if (frameData.textura != NULL && frameData.textura->getSize().x > 0 && frameData.textura->getSize().y > 0) {
-        sprite.setTexture(*frameData.textura, true);
+    // Se o Proxy retornou uma textura válida, aplica ela ao sprite
+    if (tex != NULL && tex->getSize().x > 0 && tex->getSize().y > 0) {
+        sprite.setTexture(*tex, true);
         sprite.setTextureRect(frameData.RectTextura);
     }
 }
@@ -154,7 +81,7 @@ bool Animador::loadFrames(const std::string &pathPrefix, const std::string &name
     bufferIn << name << 1 << ".png";
     const std::string primeiroSheet = Encontrar_Caminho::concatenarEnderecos(path, bufferIn.str());
 
-    sf::Texture* texturaTemplate = findTexture(primeiroSheet);
+    sf::Texture* texturaTemplate = proxy.getTexture(primeiroSheet, true);
     if (!texturaTemplate) return false;
 
     const sf::Vector2u tamanhoSheet = texturaTemplate->getSize();
@@ -180,44 +107,34 @@ bool Animador::loadFrames(const std::string &pathPrefix, const std::string &name
         frame.RectTextura = sf::IntRect(frameWidth * coluna, linha * frameHeight, frameWidth, frameHeight);
 
         // "Lazy Loading"
-        // Os demais sheets serão carregados pelo proxy na primeira exibição
-        frame.textura = spSheetIndex == 1 ? texturaTemplate : NULL;
+        frame.textura = NULL;
         frames_data.push_back(frame);
     }
 
     if (frames_data.empty()) return false;
-
-    // Aplica frame 0 e pré-carrega frame 1 (evita hitch no primeiro update)
-    applyFrame(SpriteAtual, frames_data[0]);
-
     frameSize = sf::Vector2u(frameWidth, frameHeight);
 
-    const unsigned int nextIndex = frames_data.size() > 1 ? 1 : 0;
-    applyFrame(ProxSprite, frames_data[nextIndex]);
+    sf::Texture* texInicial = proxy.getTexture(frames_data[0].caminho_spSheet);
+    if (texInicial) {
+        SpriteAtual.setTexture(*texInicial);
+        SpriteAtual.setTextureRect(frames_data[0].RectTextura);
+    }
 
     loaded = true;
     updateSpriteScale();
     updateBlend();
     clock.restart();
-    if (frames_data.size() > 1)
-        preLoadNextFrame(1);
     return true;
 }
 
+
 void Animador::update() {
     if (!loaded || frames_data.empty()) return;
-
-    // Desabilita carregamento síncrono durante update (evita travamento)
-    const bool temp = allowLoad;
-    allowLoad = false;
-
-    if (frames_data.size() == 1) {
-        allowLoad = temp;
-        return;
-    }
+    if (frames_data.size() == 1) return;
 
     const float delta = clock.getElapsedTime().asSeconds();
     frameAccumulator += std::min(delta, frameTime * 4.0f);
+    clock.restart();
 
     if (frameAccumulator >= frameTime) {
         clock.restart(); // só reinicia quando vai avançar
@@ -231,19 +148,17 @@ void Animador::update() {
         applyFrame(ProxSprite,  frames_data[nextIndex]);
 
 
-        FrameIndexAtual  = newIndex;
+        FrameIndexAtual = newIndex;
         frameAccumulator -= frameTime * static_cast<float>(framesSaltados);
         updateBlend(); // só chama quando o frame realmente mudou
-
-        // Pré-carrega o frame seguinte
-        const unsigned int temp_nextIndex = (nextIndex + 1) % total;
-        preLoadNextFrame(temp_nextIndex);
-
     }
-    // Restaura permissão de carregamento
-    allowLoad = temp;
-}
+    sf::Texture* texAtual = proxy.getTexture(frames_data[FrameIndexAtual].caminho_spSheet);
 
+    if (texAtual) {
+        SpriteAtual.setTexture(*texAtual);
+        SpriteAtual.setTextureRect(frames_data[FrameIndexAtual].RectTextura);
+    }
+}
 
 void Animador::draw(sf::RenderTarget& target) const {
     if (!loaded) return;
@@ -260,35 +175,27 @@ void Animador::setSheetTargetSize(const sf::Vector2u& size) {
     targetSize = size;
     if (loaded) updateSpriteScale();
 }
+
 void Animador::atualizarSpriteEntidade(
-    sf::Sprite& sprite,
-    sf::IntRect& rectAtual,
-    int numFrames,
-    unsigned int cols,
-    unsigned int rows,
-    float tempoPorFrame,
-    float dt,
-    float& tempoAcumulado,
-    int& indexFrameAtual
-)
+    sf::Sprite& sprite, sf::IntRect& rectAtual,
+    int numFrames, unsigned int cols, unsigned int rows,
+    float tempoPorFrame, float dt,
+    float& tempoAcumulado, int& indexFrameAtual)
 {
     if (numFrames <= 0 || cols <= 0 || rows <= 0) return;
     const sf::Texture* textura = sprite.getTexture();
-    if (!textura) return; // Se a entidade ainda não carregou textura
+    if (!textura) return;
 
-    // Largura e altura do frame
     const int frameW = textura->getSize().x / cols;
     const int frameH = textura->getSize().y / rows;
 
     tempoAcumulado += dt;
-
     if (tempoAcumulado >= tempoPorFrame) {
         tempoAcumulado = 0.0f;
-
         indexFrameAtual = (indexFrameAtual + 1) % numFrames;
 
-        int tu = indexFrameAtual % cols;
-        int tv = indexFrameAtual / cols;
+        const int tu = indexFrameAtual % cols;
+        const int tv = indexFrameAtual / cols;
 
         rectAtual.left = tu * frameW;
         rectAtual.top = tv * frameH;

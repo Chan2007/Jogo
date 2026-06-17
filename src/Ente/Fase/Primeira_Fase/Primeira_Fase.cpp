@@ -2,33 +2,26 @@
 
 #include <iostream>
 
-#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Inimigo_Medio.h"
-#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
+#include "Ente/Entidade/Obstaculo/Obstaculo_Medio/Portal.h"
+#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Azulo.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Fases {
-    Primeira_Fase::Primeira_Fase() : Fase(), maxInimigos(5) {
+    Primeira_Fase::Primeira_Fase() : Fase(), maxInimMedios(5) {
         Primeira_Fase::criarCenario();
         Primeira_Fase::criarObstaculos();
         Primeira_Fase::criarInimigos();
-        Primeira_Fase::criarProjeteis();
-        criarJogadores();
-        criarInimMedios();
-        Primeira_Fase::executar();
     }
 
     void Primeira_Fase::criarCenario() {
-        const sf::RenderWindow& janela = gerenciadorGrafico->getJanela();
-        const sf::VideoMode tamanhoJanela = sf::VideoMode(janela.getSize().x, janela.getSize().y);
 
         diretorio_Frames_Fase = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/fase1");
         diretorio_Audio = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_audios/bg_music");
 
         if (!diretorio_Frames_Fase.empty())
-            Gerenciadores::Gerenciador_Grafico::getGerenciador().loadAnimation(diretorio_Frames_Fase,"bg_fase1_",376,2,4,3);
-
-        if (!diretorio_Frames_Fase.empty())
-            gerenciadorGrafico->loadAnimation(diretorio_Frames_Fase, "bg_fase1_", 376, 1, 4, 3);
+            gerenciadorGrafico->loadAnimation(diretorio_Frames_Fase,"bg_fase1_",376,2,4,3);
 
         if (!diretorio_Audio.empty())
             trocarMusica(1);
@@ -36,70 +29,69 @@ namespace Fases {
 
     // Inputs específicos da Fase 1
     void Primeira_Fase::processarEventos(const sf::Event& evento) {
-        if (evento.type == sf::Event::KeyPressed) {
-            // TODO -> Ex.: Se pressionar ESC, o Jogo pausa
-        }
+        gerenciadorInput.notificarObservadores(evento);
     }
 
     // Evolução da física/lógica no frame atual
     void Primeira_Fase::executar() {
-        const float dt = 0.016f;
-
         LEntidades.executarTodas();
 
         gerenciadorGrafico->updateAnimation();
 
-        sf::Vector2u tamanhoAtual(desktop.width, desktop.height);
-
-        gerenciadorGravidade.executar(dt);
-        gerenciadorColisao.executar(tamanhoAtual, &gerenciadorGravidade);
-
-        renderizar(Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela());
+        gerenciadorGravidade.executar();
+        gerenciadorColisao->executar();
+        definirLimitesJanela();
     }
 
     // Renderiza para a janela
-    void Primeira_Fase::renderizar(sf::RenderWindow& janela) {
+    void Primeira_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
-        LEntidades.desenharTodas(janela);
+        LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
+        if (jogo->getJogador1()) {
+            jogo->getJogador1()->desenharBarra();
+            jogo->getJogador1()->atualizarBarra();
+        }
 
-    }
-
-    void Primeira_Fase::criarJogadores() {
-
-        jogador.setCampeao(Personagens::CAMPEAO_NAAFIRI);
-        jogador.setPosicao(sf::Vector2f((jogador.getTamanho().width)/2, desktop.height - (jogador.getTamanho().height)/2));
-        std::cout << "Jogador criado: " << jogador.getNome() << std::endl;
-
-        jogador.setGerenciadorGravidade(&gerenciadorGravidade);
-        gerenciadorColisao.incluirEntidade(&jogador);
-        gerenciadorGravidade.aplicarGravidade(&jogador, true);
-        LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(&jogador));
-        Personagens::Inimigo::incluirJogador(&jogador);
+        // JOGADOR 2: Fixo no Canto Superior Direito
+        if (jogo->getJogador2() && jogo->getJogador2Ativo()) {
+            jogo->getJogador2()->desenharBarra();
+            jogo->getJogador2()->atualizarBarra();
+        }
     }
     
     void Primeira_Fase::criarInimMedios() {
-        Inimigo_Medio* azulo = NULL;
-        for (int i = 0; i < 3; i++) {
-            azulo = new Inimigo_Medio();
-            if (azulo) {
-                azulo->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
-                gerenciadorColisao.incluirEntidade(azulo);
-                gerenciadorGravidade.aplicarGravidade(azulo, true);
-                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
-            }
-        }
-        azulo = NULL;
-        Ente::sementear();
-        const int fator = rand() % 3;
+        Azulo* azulo = NULL;
+        sementear();
+        const int fator = static_cast<int>(gerar_num_exp(1, maxInimMedios, 2));
         for (int i = 0; i < fator; i++) {
-            azulo = new Inimigo_Medio();
+            azulo = new Azulo();
             if (azulo) {
-                azulo->setPosicao(sf::Vector2f((rand() % (desktop.width - 300)) + 300, rand() % desktop.height));
-                gerenciadorColisao.incluirEntidade(azulo);
+                azulo->setPosicao(sf::Vector2f(rand() % tamanhoJanela.y, rand() % tamanhoJanela.y));
+                gerenciadorColisao->incluirEntidade(azulo);
                 gerenciadorGravidade.aplicarGravidade(azulo, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
             }
         }
         azulo = NULL;
     }
+    void Primeira_Fase::criarObstMedios() {
+
+        Obstaculos::Portal* portal = NULL;
+        sementear();
+
+        const int fator = gerar_num_norm(3, 0.75, 0, 5);
+
+        for (int i = 0; i <= fator; i++) {
+            portal = new Obstaculos::Portal();
+            if (portal) {
+
+                portal->setPosicao(sf::Vector2f(350 * i, (rand() % tamanhoJanela.y - 300) + 300));
+                gerenciadorColisao->incluirEntidade(portal);
+                gerenciadorGravidade.aplicarGravidade(portal, true);
+                LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(portal));
+            }
+        }
+        portal = NULL;
+    }
+
 }

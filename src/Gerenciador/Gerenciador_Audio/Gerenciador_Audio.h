@@ -1,6 +1,6 @@
 // Audio.h
-#ifndef JOGO_AUDIO_H
-#define JOGO_AUDIO_H
+#ifndef JOGO_GERENCIADOR_AUDIO_H
+#define JOGO_GERENCIADOR_AUDIO_H
 
 #include <string>
 #include "SFML/Audio/Music.hpp"
@@ -37,4 +37,4 @@ namespace Gerenciadores{
     };
 }
 
-#endif //JOGO_AUDIO_H
+#endif //JOGO_GERENCIADOR_AUDIO_H

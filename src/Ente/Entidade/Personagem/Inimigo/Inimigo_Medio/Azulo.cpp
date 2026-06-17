@@ -1,21 +1,24 @@
 
-#include "Inimigo_Medio.h"
+#include "Azulo.h"
+#include <iostream>
+#include <cmath>
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
-Inimigo_Medio::Inimigo_Medio() :
+Azulo::Azulo() :
     Inimigo(),
     tamanho(40)
 {
-    Ente::sementear();
+    sementear();
 
     setNome("Azulo"),
     velocidadeMax = 60.f;
     nivelMaldade = 64;
-    poder = 65;
+    poder = 30.0 * pow(1 - vida/vidaMaxima, 2) + elite * nivelMaldade;
     setVida(450);
     alcancePerseguicao = 0;
     alcanceAtaque = 200;
-    elite = rand() % 10 < 3;
+    elite = gerar_num_binom(0.0, 0.0, 20) > 5;
     cooldownAtaque = 4.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 250.f;
@@ -34,23 +37,23 @@ Inimigo_Medio::Inimigo_Medio() :
             getSprite().setScale(2.5f, 2.5f);
         }
         else {
-            std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo médio em: " << caminhoArquivoSprite << std::endl;
+            std::cerr << "Erro: nÃ£o foi possivel carregar a spritesheet do azulo em: " << caminhoArquivoSprite << std::endl;
         }
     }
     getSprite().setOrigin(static_cast<float>(frameWidth) / 2.f, static_cast<float>(frameHeight) / 2.f);
 }
 
-Inimigo_Medio::~Inimigo_Medio() {
+Azulo::~Azulo() {
 }
 
-void Inimigo_Medio::danificar(Personagens::Jogador* J) {
+void Azulo::danificar(Personagens::Jogador* J) {
     if (J) {
         J->receberDano(causarDanoBasico());
         std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
     }
 }
 
-sf::FloatRect Inimigo_Medio::getTamanho() const {
+sf::FloatRect Azulo::getTamanho() const {
     sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
     // sprite: 128*2.5 = 320x320, origin no centro
     // hitbox menor e centralizada verticalmente no personagem
@@ -64,7 +67,7 @@ sf::FloatRect Inimigo_Medio::getTamanho() const {
     );
 }
 
-void Inimigo_Medio::atualizar() {
+void Azulo::atualizar() {
 
     float dt = 0.016f;
     tempoUltimoAtaque += dt;
@@ -132,7 +135,7 @@ void Inimigo_Medio::atualizar() {
     setPosicao(pos);
 }
 
-void Inimigo_Medio::executar() {
+void Azulo::executar() {
 
     if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
         frameAcumulado += clockAnimacao.restart().asSeconds();
@@ -165,9 +168,9 @@ void Inimigo_Medio::executar() {
     atualizar();
 }
 
-void Inimigo_Medio::mover() {
+void Azulo::mover() {
 
 }
 
-void Inimigo_Medio::salvar() {
+void Azulo::salvar() {
 }

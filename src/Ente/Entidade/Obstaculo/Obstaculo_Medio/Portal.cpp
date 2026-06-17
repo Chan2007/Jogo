@@ -2,19 +2,21 @@
 // Created by Henrique on 06/05/2026.
 //
 
-#include "Obstaculo_Medio.h"
+#include "Portal.h"
+#include <iostream>
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Obstaculos {
 
-	Obstaculo_Medio::Obstaculo_Medio() :
+	Portal::Portal() :
 		Obstaculo(),
 		altura(2002),
 		largura(1548)
 	{
 		setNome("Portal");
 		perigoso = false;
-		
+
 		std::string caminhoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("/assets/sprites/Obstaculos/hex_gate.png");
 
 		if(caminhoSprite.empty()) { std::cerr << "Erro: Arquivo não encontrado! Verifique o nome: " << caminhoSprite << std::endl; }
@@ -26,13 +28,13 @@ namespace Obstaculos {
 		getSprite().setScale(0.0775f, 0.09f);
 	}
 
-	Obstaculo_Medio::~Obstaculo_Medio() {}
+	Portal::~Portal() {}
 
-	void Obstaculo_Medio::executar() {
+	void Portal::executar() {
 
 	}
 
-	void Obstaculo_Medio::obstaculizar(Personagens::Jogador* p) {
+	void Portal::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
 			if (p->getTamanho().intersects(getTamanho())) {
 				sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
@@ -40,7 +42,7 @@ namespace Obstaculos {
 				const int rangeY = janela.getSize().y - p->getTamanho().height;
 
 				if (rangeX > 0 && rangeY > 0) {
-					Ente::sementear();
+					sementear();
 					float randomX = static_cast<float>(rand() % rangeX) + (p->getTamanho().width / 2.f);
 					float randomY = static_cast<float>(rand() % rangeY) + (p->getTamanho().height / 2.f);
 					p->setPosicao(sf::Vector2f(randomX, randomY));

@@ -29,8 +29,7 @@ namespace Obstaculos{
                 void executar(){};
                 void salvar(){};
                 void mover(){};
-                void setPlataforma(Personagens::Jogador* J);
-                void obstaculizar(Personagens::Jogador* p) {}
+                void obstaculizar(Personagens::Jogador* J);
         };
 } // Obstaculo
 

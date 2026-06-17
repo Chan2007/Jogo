@@ -40,8 +40,8 @@ namespace Gerenciadores {
             void close() {window.close();}
 
             // Animações (fundo, ‘sprites’, etc)
-            bool loadAnimation(const std::string& prefix, const std::string& name, int numFrames,
-                            int frameStep, unsigned int cols, unsigned int rows);
+            void loadAnimation(const std::string &prefix, const std::string &name, int numFrames,
+                               int frameStep, unsigned int cols, unsigned int rows);
             void updateAnimation();
             void drawAnimation();
 

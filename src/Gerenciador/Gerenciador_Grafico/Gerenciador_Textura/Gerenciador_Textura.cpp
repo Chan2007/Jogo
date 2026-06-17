@@ -15,23 +15,28 @@ namespace Gerenciadores {
     }
 
     bool Gerenciador_Textura::carregarTextura(const std::string& caminho) {
+        {
+            sf::Lock lock(texturaMutex);
+            if (texturas.find(caminho) != texturas.end())
+                return true;
+        }
+
         sf::Texture* textura = new sf::Texture();
         if (!textura->loadFromFile(caminho)) {
             delete textura;
             return false;
         }
-
         textura->setSmooth(true);
-
+        // Inserção no cache
         {
             sf::Lock lock(texturaMutex);
             if (texturas.find(caminho) != texturas.end()) {
+                // Outra thread carregou o mesmo arquivo enquanto esta thread estava carregando
                 delete textura;
                 return true;
             }
             texturas[caminho] = textura;
         }
-
         return true;
     }
 

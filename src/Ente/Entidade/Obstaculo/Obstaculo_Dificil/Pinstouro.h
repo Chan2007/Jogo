@@ -11,20 +11,23 @@ namespace Personagens {
 }
 
 namespace Obstaculos {
-    class Obstaculo_Dificil: public Obstaculo {
+    class Pinstouro: public Obstaculo {
         private:
             float impulso;
             short int danosidade;
         public:
-            Obstaculo_Dificil();
-            ~Obstaculo_Dificil();
+            Pinstouro();
+            ~Pinstouro();
 
             void executar();
-            void mover() {}
-            void salvar() {}
+            void mover() {
+                // Não se move
+            }
+            void salvar() {
+                // TODO
+            }
 
             float getDano() { return danosidade; }
-            void setPlataforma(Personagens::Jogador* J){}
             void obstaculizar(Personagens::Jogador* p);
     };
 } // Obstaculo

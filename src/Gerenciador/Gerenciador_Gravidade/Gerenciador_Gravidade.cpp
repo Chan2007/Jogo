@@ -5,6 +5,7 @@
 #include "Gerenciador_Gravidade.h"
 #include <cmath>
 #include "Ente/Entidade/Entidade.h"
+#include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
 #include "Ente/Entidade/Personagem/Personagem.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 
@@ -61,8 +62,17 @@ namespace Gerenciadores {
         posicao.y += vy * dt;
         entidade->setPosicao(posicao);
         setVy(entidade, vy);
+        Obstaculos::Obstaculo* obs = dynamic_cast<Obstaculos::Obstaculo*>(entidade);
+        if (obs) {
+            Obstaculos::Plataforma* plat = dynamic_cast<Obstaculos::Plataforma*>(obs);
+            if (plat) {
+                posicao.y -= vy * dt;
+                plat->setPosicao(posicao);
+            }
+        }
     }
-    void Gerenciador_Gravidade::executar(float dt) {
+    void Gerenciador_Gravidade::executar() {
+        float dt = 0.016f;
         for (int i = 0; i < static_cast<int>(entidadesAfetadas.size()); ++i)
             atualizarGravidade(entidadesAfetadas[i], dt);
     }

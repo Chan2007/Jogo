@@ -16,7 +16,6 @@ namespace Obstaculos {
 		tipoPlataforma(tipo),
 		altura(60)
 	{
-		setTipo(Entidades::ENTIDADE_OBSTACULO);
 		perigoso = false;
 
 		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
@@ -61,7 +60,7 @@ namespace Obstaculos {
 		}
 	}
 
-    void Plataforma::setPlataforma(Personagens::Jogador* J) {
+    void Plataforma::obstaculizar(Personagens::Jogador* J) {
         if (!J) return;
 		gerenciadorGravidade.aoTocarChao(J, sf::Vector2f(0.f, -1.f));
     }

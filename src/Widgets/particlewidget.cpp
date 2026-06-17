@@ -5,146 +5,148 @@
 #include <cmath>
 #include <QResizeEvent>
 
-ParticleWidget::ParticleWidget(QWidget *parent)
+namespace Widgets {
+    ParticleWidget::ParticleWidget(QWidget *parent)
     : QWidget(parent)
     , m_quantidade(160)
     , m_distanciaConexao(150.0f)
     , m_tamanhoAnterior()
-{
-    // Faz os cliques do mouse "atravessarem" as partículas
-    // e atingirem os botões do seu menu que estão atrás/na frente delas
-    setAttribute(Qt::WA_TransparentForMouseEvents);
-    
-    // Deixa o fundo desse widget transparente
-    setAttribute(Qt::WA_TranslucentBackground);
+    {
+        // Faz os cliques do mouse "atravessarem" as partículas
+        // e atingirem os botões do seu menu que estão atrás/na frente delas
+        setAttribute(Qt::WA_TransparentForMouseEvents);
 
-    QRandomGenerator(static_cast<uint>(QTime::currentTime().msec()));
-    iniciarParticulas();
+        // Deixa o fundo desse widget transparente
+        setAttribute(Qt::WA_TranslucentBackground);
 
-    connect(&m_timer, SIGNAL(timeout()), this, SLOT(atualizarParticulas()));
-    m_timer.start(1);
-}
+        QRandomGenerator(static_cast<uint>(QTime::currentTime().msec()));
+        iniciarParticulas();
 
-void ParticleWidget::iniciarParticulas() {
-    if (width() <= 0 || height() <= 0)
-        return;
-
-    m_particulas.clear();
-    for (int i = 0; i < m_quantidade; ++i) {
-        Particle p{};
-        // Iniciar partículas numa área levemente maior para evitar bordas visíveis de cara
-        p.x = static_cast<float>(qrand() % qMax(1, width() + 200)) - 100.0f;
-        p.y = static_cast<float>(qrand() % qMax(1, height() + 200)) - 100.0f;
-
-        // Movimento mais leve para ficar mais suave visualmente
-        p.vx = (qrand() % 100 / 100.0f - 0.5f) * 0.65f;
-        p.vy = (qrand() % 100 / 100.0f - 0.5f) * 0.65f;
-
-        m_particulas.push_back(p);
+        connect(&m_timer, SIGNAL(timeout()), this, SLOT(atualizarParticulas()));
+        m_timer.start(1);
     }
-}
 
-void ParticleWidget::resizeEvent(QResizeEvent *event) {
-    if (event) {
-        const QSize tamanhoNovo = event->size();
-        if (tamanhoNovo != m_tamanhoAnterior && tamanhoNovo.width() > 0 && tamanhoNovo.height() > 0) {
-            m_tamanhoAnterior = tamanhoNovo;
-            iniciarParticulas();
+    void ParticleWidget::iniciarParticulas() {
+        if (width() <= 0 || height() <= 0)
+            return;
+
+        m_particulas.clear();
+        for (int i = 0; i < m_quantidade; ++i) {
+            Particle p{};
+            // Iniciar partículas numa área levemente maior para evitar bordas visíveis de cara
+            p.x = static_cast<float>(qrand() % qMax(1, width() + 200)) - 100.0f;
+            p.y = static_cast<float>(qrand() % qMax(1, height() + 200)) - 100.0f;
+
+            // Movimento mais leve para ficar mais suave visualmente
+            p.vx = (qrand() % 100 / 100.0f - 0.5f) * 0.65f;
+            p.vy = (qrand() % 100 / 100.0f - 0.5f) * 0.65f;
+
+            m_particulas.push_back(p);
         }
     }
-}
 
-void ParticleWidget::atualizarParticulas() {
-    if (width() <= 0 || height() <= 0) return;
-
-    for (int i = 0; i < m_particulas.size(); ++i) {
-        m_particulas[i].x += m_particulas[i].vx;
-        m_particulas[i].y += m_particulas[i].vy;
-
-        // Em vez de rebater na parede, faz a partícula reaparecer do outro lado
-        // usando uma margem confortável para fora da tela, assim elas entram suavemente
-        const float margem = 100.0f;
-
-        if (m_particulas[i].x < -margem)
-            m_particulas[i].x = width() + margem;
-        else if (m_particulas[i].x > width() + margem)
-            m_particulas[i].x = -margem;
-
-
-        if (m_particulas[i].y < -margem)
-            m_particulas[i].y = height() + margem;
-        else if (m_particulas[i].y > height() + margem)
-            m_particulas[i].y = -margem;
-    }
-    update();
-}
-
-float ParticleWidget::getFade(float x, float y) const {
-    const float marginX = 100.0f;
-    const float marginY = 100.0f;
-    float fadeX = 1.0f;
-    float fadeY = 1.0f;
-
-    if (x < marginX)
-        fadeX = qMax(0.0f, x / marginX);
-    else if (x > width() - marginX)
-        fadeX = qMax(0.0f, (width() - x) / marginX);
-
-    if (y < marginY)
-        fadeY = qMax(0.0f, y / marginY);
-    else if (y > height() - marginY)
-        fadeY = qMax(0.0f, (height() - y) / marginY);
-
-    return fadeX * fadeY;
-}
-
-void ParticleWidget::paintEvent(QPaintEvent *event) {
-    Q_UNUSED(event);
-
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    const int corR = 0;
-    const int corG = 0;
-    const int corB = 0;
-
-    // Desenha as linhas de conexão primeiro
-    for (int i = 0; i < m_particulas.size(); ++i) {
-        for (int j = i + 1; j < m_particulas.size(); ++j) {
-
-            const float dx = m_particulas[i].x - m_particulas[j].x;
-            const float dy = m_particulas[i].y - m_particulas[j].y;
-            const float distancia = std::sqrt(dx * dx + dy * dy);
-
-            if (distancia < m_distanciaConexao) {
-                // Chama o méthodo auxiliar
-                const float fadeI = getFade(m_particulas[i].x, m_particulas[i].y);
-                const float fadeJ = getFade(m_particulas[j].x, m_particulas[j].y);
-                const float baseFade = (fadeI + fadeJ) * 0.5f;
-
-                // Opacidade suave
-                const float opacidade = 1.0f - distancia / m_distanciaConexao;
-                const int alpha = static_cast<int>(opacidade * 120.0f * baseFade);
-
-                if (alpha > 0) {
-                    painter.setPen(QPen(QColor(corR, corG, corB, alpha), 1));
-                    painter.drawLine(QPointF(m_particulas[i].x, m_particulas[i].y),
-                                     QPointF(m_particulas[j].x, m_particulas[j].y));
-                }
+    void ParticleWidget::resizeEvent(QResizeEvent *event) {
+        if (event) {
+            const QSize tamanhoNovo = event->size();
+            if (tamanhoNovo != m_tamanhoAnterior && tamanhoNovo.width() > 0 && tamanhoNovo.height() > 0) {
+                m_tamanhoAnterior = tamanhoNovo;
+                iniciarParticulas();
             }
         }
     }
 
-    // Desenha os nós
-    painter.setPen(Qt::NoPen);
+    void ParticleWidget::atualizarParticulas() {
+        if (width() <= 0 || height() <= 0) return;
 
-    for (int i = 0; i < m_particulas.size(); ++i) {
-        // Chama o méthodo auxiliar
-        const float fade = getFade(m_particulas[i].x, m_particulas[i].y);
-        const int alpha = static_cast<int>(225 * fade);
-        if (alpha > 0) {
-            painter.setBrush(QColor(corR, corG, corB, alpha));
-            painter.drawEllipse(QPointF(m_particulas[i].x, m_particulas[i].y), 3.2, 3.2);
+        for (int i = 0; i < m_particulas.size(); ++i) {
+            m_particulas[i].x += m_particulas[i].vx;
+            m_particulas[i].y += m_particulas[i].vy;
+
+            // Em vez de rebater na parede, faz a partícula reaparecer do outro lado
+            // usando uma margem confortável para fora da tela, assim elas entram suavemente
+            const float margem = 100.0f;
+
+            if (m_particulas[i].x < -margem)
+                m_particulas[i].x = width() + margem;
+            else if (m_particulas[i].x > width() + margem)
+                m_particulas[i].x = -margem;
+
+
+            if (m_particulas[i].y < -margem)
+                m_particulas[i].y = height() + margem;
+            else if (m_particulas[i].y > height() + margem)
+                m_particulas[i].y = -margem;
+        }
+        update();
+    }
+
+    float ParticleWidget::getFade(float x, float y) const {
+        const float marginX = 100.0f;
+        const float marginY = 100.0f;
+        float fadeX = 1.0f;
+        float fadeY = 1.0f;
+
+        if (x < marginX)
+            fadeX = qMax(0.0f, x / marginX);
+        else if (x > width() - marginX)
+            fadeX = qMax(0.0f, (width() - x) / marginX);
+
+        if (y < marginY)
+            fadeY = qMax(0.0f, y / marginY);
+        else if (y > height() - marginY)
+            fadeY = qMax(0.0f, (height() - y) / marginY);
+
+        return fadeX * fadeY;
+    }
+
+    void ParticleWidget::paintEvent(QPaintEvent *event) {
+        Q_UNUSED(event);
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        const int corR = 0;
+        const int corG = 0;
+        const int corB = 0;
+
+        // Desenha as linhas de conexão primeiro
+        for (int i = 0; i < m_particulas.size(); ++i) {
+            for (int j = i + 1; j < m_particulas.size(); ++j) {
+
+                const float dx = m_particulas[i].x - m_particulas[j].x;
+                const float dy = m_particulas[i].y - m_particulas[j].y;
+                const float distancia = std::sqrt(dx * dx + dy * dy);
+
+                if (distancia < m_distanciaConexao) {
+                    // Chama o méthodo auxiliar
+                    const float fadeI = getFade(m_particulas[i].x, m_particulas[i].y);
+                    const float fadeJ = getFade(m_particulas[j].x, m_particulas[j].y);
+                    const float baseFade = (fadeI + fadeJ) * 0.5f;
+
+                    // Opacidade suave
+                    const float opacidade = 1.0f - distancia / m_distanciaConexao;
+                    const int alpha = static_cast<int>(opacidade * 120.0f * baseFade);
+
+                    if (alpha > 0) {
+                        painter.setPen(QPen(QColor(corR, corG, corB, alpha), 1));
+                        painter.drawLine(QPointF(m_particulas[i].x, m_particulas[i].y),
+                                         QPointF(m_particulas[j].x, m_particulas[j].y));
+                    }
+                }
+            }
+        }
+
+        // Desenha os nós
+        painter.setPen(Qt::NoPen);
+
+        for (int i = 0; i < m_particulas.size(); ++i) {
+            // Chama o méthodo auxiliar
+            const float fade = getFade(m_particulas[i].x, m_particulas[i].y);
+            const int alpha = static_cast<int>(225 * fade);
+            if (alpha > 0) {
+                painter.setBrush(QColor(corR, corG, corB, alpha));
+                painter.drawEllipse(QPointF(m_particulas[i].x, m_particulas[i].y), 3.2, 3.2);
+            }
         }
     }
 }

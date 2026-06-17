@@ -1,0 +1,139 @@
+#topBarLabel,
+#heroTitleLabel,
+#heroSubtitleLabel,
+#statusLabel,
+#settingLabelMusic,
+#settingLabelVolume,
+#volumeValueLabel,
+#phase1SelectPagePlayer1Label,
+#phase1SelectPagePlayer2Label,
+#phase2SelectPagePlayer1Label,
+#phase2SelectPagePlayer2Label {
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    color: #000000;
+    font-weight: bold;
+}
+
+#settingsTitleLabel,
+#loadGameTitleLabel,
+#rankingTitleLabel,
+#phase1SelectPageTitleLabel,
+#phase2SelectPageTitleLabel {
+    font-size: 27px;
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    font-weight: bold;
+    color: #000000;
+}
+
+#settingsSubtitleLabel,
+#loadGameSubtitleLabel,
+#rankingSubtitleLabel,
+#phase1SelectPageSubtitleLabel,
+#phase2SelectPageSubtitleLabel {
+    color: #000000;
+    font-size: 14px;
+    font-family: "Segoe UI", "Arial", "Helvetica";
+}
+
+#sectionTitleLabel {
+    border-bottom: 2px solid black;
+    font-size: 15px;
+    letter-spacing: 3px;
+    padding-bottom: 8px;
+    padding-top: 4px;
+}
+
+#phase1SelectPagePlayer1Label,
+#phase1SelectPagePlayer2Label,
+#phase2SelectPagePlayer1Label,
+#phase2SelectPagePlayer2Label {
+    font-size: 13px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    padding-bottom: 4px;
+}
+
+#topBarLabel {
+    font-size: 21px;
+}
+
+#heroTitleLabel {
+    font-size: 56px;
+    letter-spacing: 1px;
+}
+#heroSubtitleLabel {
+    font-size: 14px;
+}
+#statusLabel {
+    font-size: 11px;
+    padding-top: 20px;
+}
+
+#settingLabelMusic,
+#settingLabelVolume {
+    font-size: 17px;
+}
+#volumeValueLabel {
+    font-size: 17px;
+    letter-spacing: 1px;
+    min-width: 38px;
+}
+
+#settingsPanel,
+#loadGamePanel,
+#rankingPanel,
+#phase1SelectPanel,
+#phase2SelectPanel {
+    border: none;
+    padding: 52px 52px 36px 52px;
+    min-width: 1000px;
+    min-height: 700px;
+}
+
+QWidget #settingsPage,
+QWidget #loadGamePage,
+QWidget #rankingPage,
+QWidget #phase1SelectPage,
+QWidget #phase2SelectPage {
+    background: transparent;
+}
+
+QWidget #settingsPanel,
+QWidget #loadGamePanel,
+QWidget #rankingPanel,
+QWidget #phase1SelectPanel,
+QWidget #phase2SelectPanel {
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+#mainMenuPanel MenuButton,
+#settingsPanel MenuButton,
+#loadGamePanel MenuButton,
+#rankingPanel MenuButton,
+#phase1SelectPanel MenuButton,
+#phase2SelectPanel MenuButton {
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    font-size: 25px;
+    font-weight: 900;
+    color: transparent;
+    background-color: transparent;
+    padding: 0px 0px 0px 200px;
+    margin: 0px;
+}
+
+#settingsPanel MenuButton,
+#loadGamePanel MenuButton,
+#rankingPanel MenuButton,
+#phase1SelectPanel MenuButton,
+#phase2SelectPanel MenuButton {
+    min-width: 500px;
+    min-height: 48px;
+    max-height: 64px;
+    text-align: center;
+    padding: 0px;
+}
+
+#mainMenuPanel {
+    max-width: 400px;
+}

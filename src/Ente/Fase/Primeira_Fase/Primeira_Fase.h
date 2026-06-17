@@ -11,12 +11,10 @@ class Encontrar_Caminho;
 namespace Fases {
     class Primeira_Fase: public Fase {
         private:
-            const int maxInimigos;
+            const int maxInimMedios;
 
             void processarEventos(const sf::Event &evento);
-            void renderizar(sf::RenderWindow &janela);
-
-            Gerenciadores::Gerenciador_Textura gerenciadorTextura;
+            void desenhar();
 
             std::string diretorio_Frames_Fase;
         protected:
@@ -27,12 +25,11 @@ namespace Fases {
             void criarInimigos() {
                 criarInimMedios();
             }
-            void criarProjeteis(){}
             void criarCenario();
 
             void criarInimMedios();
-            void criarObstMedios() {}
-            void criarJogadores();
+            void criarObstMedios();
+
         public:
             Primeira_Fase();
             ~Primeira_Fase(){};

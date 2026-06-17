@@ -12,13 +12,13 @@ namespace Personagens {
 
         caminhoArquivoSprite(""),
         caminhoArquivoSpritePulo(""),
-        tempoPorFrame(0.12f),
+        tempoPorFrame(0.06f),
         frameAcumulado(0.0f),
         indexFrameAtual(0),
-        totalFramesAnimacao(8),
-        colunasSpritesheet(1),
-        frameWidth(32),
-        frameHeight(32),
+        totalFramesAnimacao(0),
+        colunasSpritesheet(0),
+        frameWidth(0),
+        frameHeight(0),
 
         velocidadeMax(0.f),
         vida(100),
@@ -28,7 +28,8 @@ namespace Personagens {
         chanceCritica(0),
         regeneracaoVida(2.0f),
         estado(static_cast<int>(ESTADO_OCIOSO)),
-        invulneravel(false)
+        invulneravel(false),
+        tempoDano(0)
     {
     }
 
@@ -50,13 +51,6 @@ namespace Personagens {
             larguraHitbox,
             alturaHitbox
         );
-    }
-
-
-    float Personagem::getVidaPercentual() const {
-        if (vidaMaxima <= 0)
-            return 0.0f;
-        return (static_cast<float>(vida) / static_cast<float>(vidaMaxima)) * 100.0f;
     }
 
     void Personagem::setVidaMaxima(int valor) {
@@ -83,34 +77,30 @@ namespace Personagens {
         setVida(vida - dano);
         std::cout << getNome() << " recebeu " << dano << " de dano. Vida: " << vida << std::endl;
         getSprite().setColor(sf::Color(255, 80, 80, 255));
-        tempoDano = 0.2f;
+        tempoDano = 0.5f;
         clockDano.restart();
-
         return dano;
     }
 
 
     int Personagem::causarDanoBasico() const {
-        return (rand() % 101 < chanceCritica) ? (poder * (1 + chanceCritica)) : poder;
-
+        return rand() % 101 < chanceCritica ? poder * (1 + chanceCritica) : poder;
     }
 
-    void Personagem::curar(int valor) {
-        if (valor > 0)
-            setVida(vida + valor);
+    void Personagem::curar(float valor) {
+        if (valor > 0 && valor + vida < vidaMaxima) vida += valor;
     }
 
-    void Personagem::regenerarVida(float deltaTempo) {
-        if (deltaTempo <= 0.0f || !estaVivo())
+    void Personagem::regenerarVida(float dt) {
+        if (dt <= 0.0f || !estaVivo())
             return;
-        curar(static_cast<int>(regeneracaoVida * deltaTempo));
+        curar(static_cast<int>(regeneracaoVida * dt));
     }
 
     void Personagem::moverHorizontal(float direcao) {
         sf::Vector2f velAtual = getVelocidade();
         velAtual.x = direcao * velocidadeMax;
         setVelocidade(velAtual);
-
         estado = (direcao == 0.0f) ? static_cast<int>(ESTADO_OCIOSO) : static_cast<int>(ESTADO_MOVIMENTO);
     }
 

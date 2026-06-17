@@ -1,23 +1,44 @@
 #include "jogo.h"
-#include "Ente/Fase/Fase.h"
+
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Ente/Fase/Primeira_Fase/Primeira_Fase.h"
 #include "Ente/Fase/Segunda_Fase/Segunda_Fase.h"
 
+Jogo* Jogo::jogo = NULL;
+bool Jogo::inicializado = false;
+
 Jogo::Jogo() : faseAtual(NULL),
-               jogador(),
+               jogador1(),
+               jogador2(),
                gerenciadorTextura(),
                gerenciadorAudio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
                gerenciadorGrafico(Gerenciadores::Gerenciador_Grafico::getGerenciador()),
-               opcoesMenu(),
-               inicializado(false),
+               multiplayer(false),
                musicaLigada(true),
-               opcaoSelecionada(0),
                estadoTela(TelaMenu)
-{}
+{
+    jogador1 = new Personagens::Jogador(sf::Vector2f(50.0, 50.0), sf::Color::Green);
+    jogador2 = new Personagens::Jogador(sf::Vector2f(
+            desktop.width - 800.0, 50), sf::Color::Blue);
+
+}
 
 Jogo::~Jogo() {
-    if (gerenciadorGrafico.isOpen()) gerenciadorGrafico.close();
-    if (faseAtual) delete faseAtual;
+    if (gerenciadorGrafico.getJanela().isOpen()) {
+        gerenciadorGrafico.getJanela().close();
+    }
+    if (faseAtual) {
+        delete faseAtual;
+        faseAtual = NULL;
+    }
+    if (jogador1) {
+        delete jogador1;
+        jogador1 = NULL;
+    }
+    if (jogador2) {
+        delete jogador2;
+        jogador2 = NULL;
+    }
     inicializado = false;
 }
 
@@ -32,7 +53,6 @@ void Jogo::inicializar() {
     gerenciadorGrafico.getJanela().setFramerateLimit(60);
 
     inicializado = true;
-    estadoTela = TelaFase1;
     relogio.restart();
 }
 void Jogo::mudarEstado(const EstadoTela novoEstado) {
@@ -45,51 +65,39 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
 
     switch (novoEstado) {
         case TelaFase1:
+            // Garante que a janela SFML exista e esteja configurada
+            inicializar();
             faseAtual = new Fases::Primeira_Fase();
-            faseAtual->executar();
             break;
         case TelaFase2:
+            inicializar();
             faseAtual = new Fases::Segunda_Fase();
             break;
         default:
             break;
     }
 }
-
 void Jogo::executar() {
     sf::RenderWindow& janela = gerenciadorGrafico.getJanela();
 
     while (janela.isOpen()) {
-        // Calcula dt (tempo que levou o frame anterior)
-        float dt = relogio.restart().asSeconds();
-        if (dt > 0.1f) dt = 0.1f; // Proteção contra travamentos abruptos
-
         // Capturar eventos
         sf::Event evento;
         while (janela.pollEvent(evento)) {
-            if (evento.type == sf::Event::Closed) {
-                janela.close();
-            }
+            if (evento.type == sf::Event::Closed) janela.close();
 
-            // Se estivermos em uma fase, repassa os eventos para ela (ex: inputs)
-            if (estadoTela == TelaFase1 && faseAtual != NULL)
-                faseAtual->processarEventos(evento);
+            // Se estiver em uma fase, repassa os eventos para ela (ex: inputs)
+            if (faseAtual) faseAtual->processarEventos(evento);
         }
 
         // Atualização da lógica da janela
-        if (estadoTela == TelaFase1 && faseAtual != NULL) {
-            faseAtual->executar();
-            // IMPORTANTE!!! Se o(s) jogador(es) mudou(aram) de fase, o Jogo que tem que decidir o que fazer
-        }
-        else if (estadoTela == TelaMenu)
-            executarOpcaoMenu();
+
+        // IMPORTANTE!!! Se o(s) jogador(es) mudou(aram) de fase, o Jogo que tem que decidir o que fazer
+        if (faseAtual) faseAtual->executar();
 
         // Renderização
         janela.clear();
-
-        if (estadoTela == TelaFase1 && faseAtual != NULL) {
-            faseAtual->renderizar(janela);
-        }
+        if (faseAtual) faseAtual->desenhar();
         janela.display();
     }
     gerenciadorAudio.stop();
@@ -97,42 +105,6 @@ void Jogo::executar() {
     if (faseAtual) {
         delete faseAtual;
         faseAtual = NULL;
-    }
-}
-
-void Jogo::processarEventos() {
-    sf::Event evento;
-
-    sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
-
-    while (janela.pollEvent(evento)) {
-
-        if (evento.type == sf::Event::Closed) {
-            janela.close();
-        }
-
-        if (evento.type == sf::Event::Resized) {
-
-            sf::FloatRect areaVisivel(0.f, 0.f, sf::VideoMode().getDesktopMode().width, sf::VideoMode().getDesktopMode().height);
-            janela.setView(sf::View(areaVisivel));
-        }
-
-    }
-}
-
-void Jogo::executarOpcaoMenu() {
-    switch (opcaoSelecionada) {
-        case 0: // Iniciar jogo
-            mudarEstado(TelaFase1);
-            break;
-        case 1: // Configurações
-            // Tela de configurações
-            break;
-        case 2: // Sair
-            estadoTela = TelaPausa;
-            break;
-        default:
-            break;
     }
 }
 
@@ -150,9 +122,4 @@ void Jogo::setVolume(const float volume) const {
 
     if (inicializado && faseAtual)
         faseAtual->setVolume(volume);
-}
-
-bool Jogo::trocarMusica(const int fase) const {
-    if (!faseAtual) return false;
-    return faseAtual->trocarMusica(fase);
 }

@@ -10,6 +10,8 @@
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 #include <iostream>
 
+#include "Sistema/Fisica/Visitor_Colisao.h"
+
 namespace Entidades {
     Projetil::Projetil() :
         Entidade("Projetil"),
@@ -17,7 +19,6 @@ namespace Entidades {
         velocidade(140.f, 140.f),
         doJogador(false)
     {
-        setTipo(ENTIDADE_PROJETIL);
         setVelocidade(velocidade);
         setPosicao(sf::Vector2f(0.f, 1080.f));
 
@@ -28,7 +29,7 @@ namespace Entidades {
                 getSprite().setTextureRect(sf::IntRect(0, 0, 96, 91));
             }
             else {
-                std::cerr << "Erro: não foi possivel carregar a spritesheet do inimigo facil em: " << arquivosprite << std::endl;
+                std::cerr << "Erro: nÃ£o foi possÃ­vel carregar a imagem do projÃ©til em: " << arquivosprite << std::endl;
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
@@ -38,7 +39,7 @@ namespace Entidades {
     Projetil::~Projetil() {}
 
     void Projetil::mover() {
-        if (getAtivo()) {
+        if (getVigente()) {
             const float dt = 0.016f;
             sf::Vector2f posicao = getPosicao();
             posicao.x += velocidade.x * (dt + 0.02);
@@ -59,38 +60,6 @@ namespace Entidades {
         atualizar();
     }
 
-    void Projetil::interagir_Colisao(Personagens::Inimigo* I) {
-        if (!I || !getAtivo()) return;
-        if (doJogador) {
-            I->receberDano(dano);
-            setAtivo(false);
-        }
-    }
-
-    void Projetil::interagir_Colisao(Obstaculos::Obstaculo* O) {
-        if (O) { setAtivo(false); }
-    }
-
-    void Projetil::interagir_Colisao(Projetil* P) {
-        if (P && P != this) {
-            setAtivo(false);
-            P->setAtivo(false);
-        }
-    }
-
-    void Projetil::interagir_Colisao(Personagens::Jogador* J) {
-        if (!J || !getAtivo()) return;
-
-        // Verifica se o tiro é inimigo para causar dano
-        if (!doJogador) {
-            if (!J->getInvulneravel()) {
-                J->receberDano(dano);
-                std::cout << "Jogador foi atingido por um projetil." << std::endl;
-            }
-            setAtivo(false);
-        }
-    }
-
     sf::FloatRect Projetil::getTamanho() const {
         sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
         float largura = 90.f;
@@ -101,5 +70,8 @@ namespace Entidades {
             largura,
             altura
         );
+    }
+    void Projetil::aceitar(VisitorColisao* visitor) {
+        if (visitor) visitor->colidir(this);
     }
 }

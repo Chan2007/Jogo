@@ -2,12 +2,16 @@
 // Created by Henrique on 06/05/2026.
 //
 
-#include "Obstaculo_Dificil.h"
+#include "Pinstouro.h"
+
+#include <iostream>
+
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Obstaculos {
 
-	Obstaculo_Dificil::Obstaculo_Dificil() : 
+	Pinstouro::Pinstouro() :
 	Obstaculo(),
 	impulso(800.f),
 	danosidade(60)
@@ -26,13 +30,13 @@ namespace Obstaculos {
 		getSprite().setScale(0.0775f, 0.09f);
 	}
 
-	Obstaculo_Dificil::~Obstaculo_Dificil(){}
+	Pinstouro::~Pinstouro(){}
 
-	void Obstaculo_Dificil::executar() {
+	void Pinstouro::executar() {
 
 	}
 
-	void Obstaculo_Dificil::obstaculizar(Personagens::Jogador* p) {
+	void Pinstouro::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
 			if (p->getTamanho().intersects(getTamanho())) {
 				p->receberDano(static_cast<int>(danosidade));

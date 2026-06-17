@@ -10,13 +10,13 @@ namespace Personagens {
     class Jogador;
 }
 
-class Chefe : public Personagens::Inimigo {
+class DragaoAnciao : public Personagens::Inimigo {
 private:
     short int forca;
     Entidades::Projetil* bolaDeFogo;
 public:
-    Chefe();
-    ~Chefe();
+    DragaoAnciao();
+    ~DragaoAnciao();
     void danificar(Personagens::Jogador* J);
     void executar();
     void salvar();
