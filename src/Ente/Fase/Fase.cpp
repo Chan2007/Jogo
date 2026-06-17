@@ -121,11 +121,11 @@ namespace Fases {
         Minion* minion = NULL;
         Entidades::Projetil* tiroInim1 = NULL;
         sementear();
-        const int fator = rand() % 3 + 3;
-        for (int i = 0; i < fator; i++) {
+        const int fator = rand() % 8 + 3;
+        for (int i = 1; i <= fator; i++) {
             minion = new Minion();
             if (minion) {
-                minion->setPosicao(sf::Vector2f((rand() % (tamanhoJanela.x - 300)) + 300, rand() % tamanhoJanela.y));
+                minion->setPosicao(sf::Vector2f(150 * i, rand() % tamanhoJanela.y));
                 gerenciadorColisao->incluirEntidade(minion);
                 gerenciadorGravidade.aplicarGravidade(minion, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));

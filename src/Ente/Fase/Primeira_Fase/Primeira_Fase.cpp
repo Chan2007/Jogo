@@ -63,10 +63,10 @@ namespace Fases {
         Azulo* azulo = NULL;
         sementear();
         const int fator = static_cast<int>(gerar_num_exp(1, maxInimMedios, 2));
-        for (int i = 0; i < fator; i++) {
+        for (int i = 1; i <= fator; i++) {
             azulo = new Azulo();
             if (azulo) {
-                azulo->setPosicao(sf::Vector2f(rand() % tamanhoJanela.y, rand() % tamanhoJanela.y));
+                azulo->setPosicao(sf::Vector2f(250*i, rand() % tamanhoJanela.y));
                 gerenciadorColisao->incluirEntidade(azulo);
                 gerenciadorGravidade.aplicarGravidade(azulo, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));
@@ -79,9 +79,9 @@ namespace Fases {
         Obstaculos::Portal* portal = NULL;
         sementear();
 
-        const int fator = gerar_num_norm(3, 0.75, 0, 5);
+        const int fator = gerar_num_norm(3, 0.75, 0, 6);
 
-        for (int i = 0; i <= fator; i++) {
+        for (int i = 1; i <= fator; i++) {
             portal = new Obstaculos::Portal();
             if (portal) {
 
