@@ -26,7 +26,7 @@ DragaoAnciao::DragaoAnciao() :
     elite = rand() % 10 < 1;
     cooldownAtaque = 4.f;
     tempoUltimoAtaque = 0.0f;
-    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/eldersheet2.png");
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/eldersheet2.png"); // obtido em: https://modelviewer.lol/
 
     if (gerar_num_binom() > 5) { poder *= forca; }
 

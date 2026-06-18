@@ -20,7 +20,6 @@ public:
     void danificar(Personagens::Jogador* J);
     void executar();
     void salvar();
-    void mover(){}
     sf::FloatRect getTamanho() const;
     void setProjetil(Entidades::Projetil* p) { if (p) { bolaDeFogo = p; } }
     Entidades::Projetil* getProjetil() { return bolaDeFogo; }

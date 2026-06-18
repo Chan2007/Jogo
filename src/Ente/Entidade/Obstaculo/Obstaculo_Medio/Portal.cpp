@@ -17,7 +17,7 @@ namespace Obstaculos {
 		setNome("Portal");
 		perigoso = false;
 
-		std::string caminhoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("/assets/sprites/Obstaculos/hex_gate.png");
+		std::string caminhoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("/assets/sprites/Obstaculos/hex_gate.png"); // obtido em: https://modelviewer.lol/
 
 		if(caminhoSprite.empty()) { std::cerr << "Erro: Arquivo não encontrado! Verifique o nome: " << caminhoSprite << std::endl; }
 		else if (getTextura().loadFromFile(caminhoSprite)) { getSprite().setTexture(getTextura()); }

@@ -18,7 +18,7 @@ namespace Obstaculos {
 	{
 		perigoso = false;
 
-		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
+		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png"; // obtido em https://itch.io/
 		arquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo(arquivoSprite);
 
 		if (arquivoSprite.empty()) { std::cerr << "Erro: Arquivo não encontrado! Verifique o nome: " << arquivoSprite << std::endl; }

@@ -46,8 +46,8 @@ namespace Personagens {
                 frameWidth = 230;
                 frameHeight = 120;
                 tempoPorFrame = 0.12f;
-                caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
-                caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png";
+                caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png"; // obtido em: https://leagueoflegends.fandom.com/wiki/Category:Naafiri
+                caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png"; // obtido em: https://leagueoflegends.fandom.com/wiki/Category:Naafiri
                 break;
             default:
                 setNome("Campeao Generico");

@@ -23,7 +23,6 @@ class Minion : public Personagens::Inimigo {
 
         sf::FloatRect getTamanho() const;
         void executar();
-        void mover();
         void salvar();
         void setProjetil(Entidades::Projetil* p) { if (p) { tiro = p; } }
         Entidades::Projetil* getProjetil() { return tiro; }

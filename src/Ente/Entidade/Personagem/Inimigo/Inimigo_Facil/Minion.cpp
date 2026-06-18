@@ -24,7 +24,7 @@ Minion::Minion() :
     cooldownAtaque = 6.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 600.f;
-    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet2.png");
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/minionrangedsheet2.png"); // obtido em: https://modelviewer.lol/
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
             getSprite().setTexture(getTextura());
@@ -172,10 +172,6 @@ void Minion::executar() {
     sf::Vector2f pos = getPosicao();
     pos.x += getVelocidade().x * dt;
     setPosicao(pos);
-}
-
-
-void Minion::mover() {
 }
 
 void Minion::salvar() {

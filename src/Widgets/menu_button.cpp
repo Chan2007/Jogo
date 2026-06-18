@@ -150,7 +150,7 @@ namespace Widgets {
         painter.save();
         painter.setPen(Qt::NoPen);
 
-        // 1. Criação do Gradiente Horizontal (Esquerda para a Direita)
+        // Criação do Gradiente Horizontal (Esquerda para a Direita)
         QLinearGradient fundoGradiente(strokeRect.left(), 0, strokeRect.right(), 0);
 
         fundoGradiente.setColorAt(1.00, QColor(255, 255, 255, 0)); // Borda Esquerda: Transparente
@@ -163,7 +163,7 @@ namespace Widgets {
         painter.setBrush(QBrush(fundoGradiente));
         painter.drawRoundedRect(strokeRect, 8, 8);
 
-        // 2. Borda Preta Superior e Inferior (Apenas quando NÃO está em Hover/Pressionado)
+        // Borda Preta Superior e Inferior (Apenas quando NÃO está em Hover/Pressionado)
         int alphaBorda = static_cast<int>(220.0 * (1.0 - hoverProgress));
 
         // Se o botão for clicado (isDown), a borda desaparece
@@ -182,7 +182,7 @@ namespace Widgets {
                              QPoint(strokeRect.right(), strokeRect.bottom()));
         }
 
-        // 3. Feedback visual do Hover
+        // Feedback visual do Hover
         if (hoverProgress > 0.01 || isDown()) {
             painter.setPen(Qt::NoPen);
             const int hoverAlpha = static_cast<int>(40.0 * hoverProgress);

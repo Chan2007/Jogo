@@ -22,7 +22,7 @@ Azulo::Azulo() :
     cooldownAtaque = 4.5f;
     tempoUltimoAtaque = 0.0f;
     limiteDeslocamento = 250.f;
-    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/bluesheet2.png");
+    caminhoArquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/bluesheet2.png"); // obtido em: https://modelviewer.lol/
 
     if (!caminhoArquivoSprite.empty()) {
         if (getTextura().loadFromFile(caminhoArquivoSprite)) {
@@ -51,7 +51,7 @@ void Azulo::danificar(Personagens::Jogador* J) {
         J->receberDano(causarDanoBasico());
         std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
         J->adicionarPontos(-50);
-        std::cout << J->getNome() << " perdeu 50 pontos" << std::endl;
+        std::cout << J->getNome() << " perdeu 50 pontos. Pontuacao atual: " << J->getPontos() << std::endl;
     }
 }
 
@@ -69,8 +69,37 @@ sf::FloatRect Azulo::getTamanho() const {
     );
 }
 
-void Azulo::atualizar() {
+void Azulo::executar() {
 
+    if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
+        frameAcumulado += clockAnimacao.restart().asSeconds();
+
+        if (frameAcumulado >= tempoPorFrame) {
+
+            indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
+
+            int coluna = indexFrameAtual % colunasSpritesheet;
+            int linha = indexFrameAtual / colunasSpritesheet;
+
+            rectAtual.left = coluna * frameWidth;
+            rectAtual.top = linha * frameHeight;
+
+            getSprite().setTextureRect(rectAtual);
+
+            frameAcumulado -= tempoPorFrame;
+        }
+    }
+    else {
+
+        indexFrameAtual = 0;
+        rectAtual.left = 0;
+        rectAtual.top = 0;
+        getSprite().setTextureRect(rectAtual);
+
+        clockAnimacao.restart();
+        frameAcumulado = 0.0f;
+    }
+    
     float dt = 0.016f;
     tempoUltimoAtaque += dt;
 
@@ -135,43 +164,6 @@ void Azulo::atualizar() {
     sf::Vector2f pos = getPosicao();
     pos.x += getVelocidade().x * dt;
     setPosicao(pos);
-}
-
-void Azulo::executar() {
-
-    if (estado == static_cast<int>(Personagens::ESTADO_MOVIMENTO)) {
-        frameAcumulado += clockAnimacao.restart().asSeconds();
-
-        if (frameAcumulado >= tempoPorFrame) {
-
-            indexFrameAtual = (indexFrameAtual + 1) % totalFramesAnimacao;
-
-            int coluna = indexFrameAtual % colunasSpritesheet;
-            int linha = indexFrameAtual / colunasSpritesheet;
-
-            rectAtual.left = coluna * frameWidth;
-            rectAtual.top = linha * frameHeight;
-
-            getSprite().setTextureRect(rectAtual);
-
-            frameAcumulado -= tempoPorFrame;
-        }
-    }
-    else {
-
-        indexFrameAtual = 0;
-        rectAtual.left = 0;
-        rectAtual.top = 0;
-        getSprite().setTextureRect(rectAtual);
-
-        clockAnimacao.restart();
-        frameAcumulado = 0.0f;
-    }
-    atualizar();
-}
-
-void Azulo::mover() {
-
 }
 
 void Azulo::salvar() {

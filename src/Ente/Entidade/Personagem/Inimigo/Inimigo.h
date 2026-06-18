@@ -38,7 +38,7 @@ namespace Personagens {
 
             virtual void executar() = 0;
             virtual void salvar() = 0;
-            virtual void mover() = 0;
+            void mover();
             virtual void danificar(Jogador* J) = 0;
 
             static void incluirJogador(Jogador* J) { listaJogadores.push_back(J); }

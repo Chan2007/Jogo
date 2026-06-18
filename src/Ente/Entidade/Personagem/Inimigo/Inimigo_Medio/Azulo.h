@@ -17,10 +17,8 @@ public:
     Azulo();
     ~Azulo();
     void danificar(Personagens::Jogador* J);
-    void atualizar();
     void executar();
     void salvar();
-    void mover();
     sf::FloatRect getTamanho() const;
     int gettamanho() { return tamanho; };
 };

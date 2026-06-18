@@ -22,7 +22,7 @@ namespace Entidades {
         setVelocidade(velocidade);
         setPosicao(sf::Vector2f(0.f, 1080.f));
 
-        std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png");
+        std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png"); // obtido em: https://www.pinterest.com/pin/550424385709405186/
         if (!arquivosprite.empty()) {
             if (getTextura().loadFromFile(arquivosprite)) {
                 getSprite().setTexture(getTextura());

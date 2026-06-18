@@ -81,7 +81,7 @@ void Jogo::executar() {
     sf::RenderWindow& janela = gerenciadorGrafico.getJanela();
 
     while (janela.isOpen()) {
-        // Capturar eventos
+
         sf::Event evento;
         while (janela.pollEvent(evento)) {
             if (evento.type == sf::Event::Closed) janela.close();
@@ -90,9 +90,6 @@ void Jogo::executar() {
             if (faseAtual) faseAtual->processarEventos(evento);
         }
 
-        // Atualização da lógica da janela
-
-        // IMPORTANTE!!! Se o(s) jogador(es) mudou(aram) de fase, o Jogo que tem que decidir o que fazer
         if (faseAtual) faseAtual->executar();
 
         // Renderização
@@ -112,7 +109,7 @@ void Jogo::setMusica(const bool ligada) {
     // Altera o estado diretamente no Gerenciador Global
     gerenciadorAudio.ativarMusica(ligada);
     musicaLigada = ligada;
-    // Propaga a mudança para a fase atual se ela estiver rodando
+
     if (inicializado && faseAtual) {
         faseAtual->setMusica(ligada);
     }

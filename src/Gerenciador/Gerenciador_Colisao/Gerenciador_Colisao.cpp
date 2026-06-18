@@ -179,8 +179,7 @@ namespace Gerenciadores {
                         if (inimigo->getVida() <= 0) {
                             float pontoAnt = jogador->getPontos();
                             jogador->registrarAbate();
-                            std::cout << "Inimigo abatido! Pontos ganhos: " << jogador->getPontos() - pontoAnt << std::endl;
-                            std::cout << "Pontuacao atual: " << jogador->getPontos() << std::endl;
+                            std::cout << "Inimigo abatido! Pontos ganhos: " << jogador->getPontos() - pontoAnt << " Pontuacao atual: " << jogador->getPontos() << std::endl;
                             inimigo->setVigente(false);
                         }
                     }

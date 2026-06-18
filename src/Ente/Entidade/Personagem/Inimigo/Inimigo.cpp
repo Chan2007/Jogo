@@ -40,6 +40,10 @@ namespace Personagens {
     }
 
     void Inimigo::inverterPatrulha() {
+        mover();
+    }
+
+    void Inimigo::mover() {
         direcaoPatrulha *= -1.f;
         deslocamentoPatrulha = 0.f;
 
