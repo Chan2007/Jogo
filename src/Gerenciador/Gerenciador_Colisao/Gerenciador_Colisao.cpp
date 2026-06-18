@@ -180,6 +180,7 @@ namespace Gerenciadores {
                             float pontoAnt = jogador->getPontos();
                             jogador->registrarAbate();
                             std::cout << "Inimigo abatido! Pontos ganhos: " << jogador->getPontos() - pontoAnt << std::endl;
+                            std::cout << "Pontuacao atual: " << jogador->getPontos() << std::endl;
                             inimigo->setVigente(false);
                         }
                     }
@@ -198,8 +199,12 @@ namespace Gerenciadores {
             for (itJog2 = Ljogadores.begin(); itJog2 != Ljogadores.end(); ++itJog2) {
                 Personagens::Jogador* jogador2 = *itJog2;
                 if (jogador2 && verificarColisao(jogador, jogador2) && jogador2->getVigente()) {
-                    VisitorColisaoJogador visitor(jogador);
-                    jogador2->aceitar(&visitor);
+                    /*VisitorColisaoJogador visitor(jogador);
+                    jogador2->aceitar(&visitor);*/
+                    if (jogador2 != jogador) {
+                        jogador->setColisao(true);
+                        jogador2->setColisao(true);
+                    }
                 }
             }
         }
@@ -218,8 +223,34 @@ namespace Gerenciadores {
                 Obstaculos::Plataforma* p = dynamic_cast<Obstaculos::Plataforma*>(obstaculo);
                 if (p) {
                     if (obstaculo && verificarColisao(obstaculo, inimigo1)) {
-                        VisitorColisaoInimigo visitor(inimigo1);
-                        obstaculo->aceitar(&visitor);
+                        /*VisitorColisaoInimigo visitor(inimigo1);
+                        obstaculo->aceitar(&visitor);*/
+                        inimigo1->setColisao(true);
+
+                        sf::FloatRect hitboxInimigo = inimigo1->getTamanho();
+                        sf::FloatRect hitboxObs = obstaculo->getTamanho();
+
+                        float centroYInimigo = hitboxInimigo.top + (hitboxInimigo.height / 2.f);
+                        float centroXInimigo = hitboxInimigo.left + (hitboxInimigo.width / 2.f);
+
+                        bool bateuNaParede = (centroYInimigo > hitboxObs.top) && (centroYInimigo < hitboxObs.top + hitboxObs.height);
+
+                        if (bateuNaParede)
+                            inimigo1->inverterPatrulha();
+                        else {
+                            Obstaculos::Plataforma* p = dynamic_cast<Obstaculos::Plataforma*>(obstaculo);
+                            if (p) {
+                                float margem = 5.0f;
+                                if (inimigo1->getDirecaoPatrulha() > 0.0f) {
+                                    if (centroXInimigo >= (hitboxObs.left + hitboxObs.width) - margem)
+                                        inimigo1->inverterPatrulha();
+                                }
+                                else if (inimigo1->getDirecaoPatrulha() <= 0.0f) {
+                                    if (centroXInimigo <= hitboxObs.left + margem)
+                                        inimigo1->inverterPatrulha();
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -227,8 +258,8 @@ namespace Gerenciadores {
             for (itProj = Lprojetil.begin(); itProj != Lprojetil.end(); ++itProj) {
                 Entidades::Projetil* projetil= *itProj;
                 if (projetil && verificarColisao(projetil, inimigo1)) {
-                    VisitorColisaoInimigo visitor(inimigo1);
-                    projetil->aceitar(&visitor);
+                    /*VisitorColisaoInimigo visitor(inimigo1);
+                    projetil->aceitar(&visitor);*/
                 }
             }
 
@@ -239,6 +270,8 @@ namespace Gerenciadores {
                 if (inimigo2 && inimigo1 != inimigo2 && verificarColisao(inimigo1, inimigo2)) {
                     /*VisitorColisaoInimigo visitor(inimigo1);
                     inimigo2->aceitar(&visitor);*/
+                    inimigo1->setColisao(true);
+                    inimigo2->setColisao(true);
                 }
             }
 

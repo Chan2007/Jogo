@@ -49,8 +49,9 @@ Azulo::~Azulo() {
 void Azulo::danificar(Personagens::Jogador* J) {
     if (J) {
         J->receberDano(causarDanoBasico());
-        
         std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
+        J->adicionarPontos(-50);
+        std::cout << J->getNome() << " perdeu 50 pontos" << std::endl;
     }
 }
 
