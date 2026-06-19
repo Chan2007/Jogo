@@ -30,6 +30,7 @@ namespace Obstaculos{
                 void salvar();
                 void mover(){};
                 void obstaculizar(Personagens::Jogador* J);
+                void setTipo(TipoPlataforma t) { tipoPlataforma = t; criar(t); }
         };
 } // Obstaculo
 

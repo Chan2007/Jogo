@@ -1,6 +1,8 @@
 #ifndef JOGO_H
 #define JOGO_H
 
+#include <string>
+
 #include "Ente/Fase/Fase.h"
 #include "Gerenciador/Gerenciador_Audio/Gerenciador_Audio.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Textura/Gerenciador_Textura.h"
@@ -33,6 +35,7 @@ class Jogo {
         bool multiplayer;
         static bool inicializado;
         bool musicaLigada;
+        bool carregandoSave;
 
     Jogo();
     public:
@@ -69,6 +72,12 @@ class Jogo {
             return inicializado && Gerenciadores::Gerenciador_Grafico::getGerenciador().isOpen();
         }
         void executar();
+
+        bool carregarJogo(const std::string& caminho);
+        bool salvarJogoAtual(const std::string& caminho);
+
+        void setCarregandoSave(bool carregando) { carregandoSave = carregando; }
+        bool getCarregandoSave() const { return carregandoSave; }
 
     private:
         EstadoTela estadoTela;

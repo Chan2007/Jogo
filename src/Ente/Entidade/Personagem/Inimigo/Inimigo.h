@@ -27,6 +27,11 @@ namespace Personagens {
             Inimigo();
             ~Inimigo();
 
+            void setTempoUltimoAtaque(float tempo) { tempoUltimoAtaque = tempo; }
+            void setDeslocamentoPatrulha(float deslocamento) { deslocamentoPatrulha = deslocamento; }
+            void setElite(bool e) { elite = e; }
+            void setInteragindo(bool i) { interagindo = i; }
+            void setDirecaoPatrulha(float direcao) { direcaoPatrulha = direcao; }
             float getDirecaoPatrulha() const { return direcaoPatrulha; }
 
             bool estaEmAlcance(const sf::Vector2f& alvo) const;
@@ -41,6 +46,7 @@ namespace Personagens {
             virtual void danificar(Jogador* J) = 0;
 
             static void incluirJogador(Jogador* J) { listaJogadores.push_back(J); }
+            static void limparJogadores() { listaJogadores.clear(); }
 
             void salvarInimigo();
     };

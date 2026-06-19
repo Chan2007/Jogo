@@ -1,12 +1,18 @@
-
-
 #include "Fase.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include "jogo.h"
 #include "Listas/ListaEntidades.h"
+#include "Ente/Entidade/Entidade.h"
+#include "Ente/Entidade/Personagem/Personagem.h"
 #include "Ente/Entidade/Obstaculo/Plataforma/Plataforma.h"
+#include "Ente/Entidade/Obstaculo/Obstaculo_Medio/Portal.h"
+#include "Ente/Entidade/Obstaculo/Obstaculo_Dificil/Pinstouro.h"
+#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Azulo.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo_Facil/Minion.h"
 #include "Ente/Entidade/Personagem/Inimigo/Chefe/DragaoAnciao.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
@@ -24,9 +30,11 @@ namespace Fases {
                    gerenciadorInput(Gerenciadores::Gerenciador_Input::getGerenciador()) {
         jogo = Jogo::getJogo();
         tamanhoJanela = gerenciadorGrafico->getJanela().getSize();
-        criarInimFaceis();
-        criarPlataformas();
-        criarJogadores();
+        if (!jogo->getCarregandoSave()) {
+            criarInimFaceis();
+            criarPlataformas();
+            criarJogadores();
+        }
     }
 
     void Fase::criarPlataformas() {
@@ -36,6 +44,7 @@ namespace Fases {
 
             LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
             gerenciadorColisao->incluirEntidade(chao);
+            gerenciadorGravidade.aplicarGravidade(chao, true);
         }
         else {std::cerr << "Falha ao criar chão" << std::endl;}
 
@@ -76,6 +85,7 @@ namespace Fases {
             if (posicaoValida) {
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(novaPlat));
                 gerenciadorColisao->incluirEntidade(novaPlat);
+                gerenciadorGravidade.aplicarGravidade(novaPlat, true);
             }
             else delete novaPlat;
         }
@@ -93,6 +103,9 @@ namespace Fases {
             gerenciadorInput.desinscrever(jogo->getJogador2());
         LEntidades.limparLista();
 
+        jogo->setJogador1(NULL);
+        jogo->setJogador2(NULL);
+        jogo->setJogador2Ativo(false);
     }
 
     bool Fase::trocarMusica(const int fase) const {
@@ -129,15 +142,6 @@ namespace Fases {
                 gerenciadorColisao->incluirEntidade(minion);
                 gerenciadorGravidade.aplicarGravidade(minion, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));
-                tiroInim1 = new Entidades::Projetil();
-                if (tiroInim1) {
-                    tiroInim1->setDoJogador(false);
-                    tiroInim1->setVigente(false);
-                    minion->setProjetil(tiroInim1);
-                    gerenciadorColisao->incluirEntidade(tiroInim1);
-                    gerenciadorGravidade.aplicarGravidade(tiroInim1, true);
-                    LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(tiroInim1));
-                }
             }
         }
         minion = NULL;
@@ -226,4 +230,396 @@ namespace Fases {
             Personagens::Inimigo::incluirJogador(jogo->getJogador2());
         }
     }
+
+    bool Fase::salvarJogo(const std::string& caminho, int numeroFase) {
+        std::ofstream arquivo(caminho.c_str());
+
+        if (!arquivo.is_open()) {
+            std::cerr << "Erro ao abrir arquivo para salvar: " << caminho << std::endl;
+            return false;
+        }
+
+        arquivo << "SAVE_PRIMEIRO_JOGO_V1" << '\n';
+        arquivo << "FASE " << numeroFase << '\n';
+
+        LEntidades.salvarTodas(arquivo);
+
+        arquivo.close();
+
+        std::cout << "Jogo salvo com sucesso!" << std::endl;
+        return true;
+    }
+
+    void Fase::limparJogo() {
+        gerenciadorColisao->limpar();
+        gerenciadorGravidade.limpar();
+
+        if (jogo->getJogador1() != NULL) {
+            gerenciadorInput.desinscrever(jogo->getJogador1());
+        }
+
+        if (jogo->getJogador2() != NULL) {
+            gerenciadorInput.desinscrever(jogo->getJogador2());
+        }
+
+        LEntidades.limparLista();
+
+        jogo->setJogador1(NULL);
+        jogo->setJogador2(NULL);
+        jogo->setJogador2Ativo(false);
+
+        Personagens::Inimigo::limparJogadores();
+    }
+
+    void Fase::registrarEntidade(Entidades::Entidade* e) {
+        if (e == NULL) return;
+
+        LEntidades.incluirEntidade(e);
+        gerenciadorColisao->incluirEntidade(e);
+        gerenciadorGravidade.aplicarGravidade(e, true);
+    }
+
+    void Fase::registrarJogador(Personagens::Jogador* j) {
+        if (!j) return;
+
+        if (j->getIdJogador() == 1) {
+            jogo->setJogador1(j);
+        }
+        else if (j->getIdJogador() == 2) {
+            jogo->setJogador2(j);
+            jogo->setJogador2Ativo(true);
+        }
+
+        gerenciadorInput.inscrever(j);
+        gerenciadorColisao->incluirEntidade(j);
+        gerenciadorGravidade.aplicarGravidade(j, true);
+        LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(j));
+
+        Personagens::Inimigo::incluirJogador(j);
+    }
+
+    bool Fase::lerDadosEntidade(std::istream& entrada, Entidades::Entidade* e) {
+        if (!e) return false;
+
+        std::string nome;
+        float x;
+        float y;
+        bool colisao;
+        bool vigente;
+
+        entrada >> nome >> x >> y >> colisao >> vigente;
+
+        if (entrada.fail()) return false;
+
+        e->setNome(nome);
+        e->setPosicao(sf::Vector2f(x, y));
+        e->setColisao(colisao != 0);
+        e->setVigente(vigente != 0);
+
+        return true;
+    }
+
+    bool Fase::lerDadosPersonagem(std::istream& entrada, Personagens::Personagem* p) {
+        if (!p) return false;
+
+        float vx;
+        float vy;
+        float vida;
+        float vidaMaxima;
+        int estado;
+        bool invulneravel;
+
+        entrada >> vx >> vy >> vida >> vidaMaxima >> estado >> invulneravel;
+
+        if (entrada.fail()) return false;
+
+        p->setVelocidade(sf::Vector2f(vx, vy));
+        p->setVidaMaxima(static_cast<int>(vidaMaxima));
+        p->setVida(static_cast<int>(vida));
+        p->setEstado(static_cast<Personagens::EstadoCombate>(estado));
+        p->setInvulneravel(invulneravel != 0);
+
+        return true;
+    }
+
+    bool Fase::lerDadosInimigo(std::istream& entrada, Personagens::Inimigo* i) {
+        if (!i) return false;
+
+        float poder;
+        float tempoUltimoAtaque;
+        float direcaoPatrulha;
+        float deslocamentoPatrulha;
+        bool elite;
+        bool interagindo;
+
+        entrada >> poder >> tempoUltimoAtaque >> direcaoPatrulha >> deslocamentoPatrulha >> elite >> interagindo;
+
+        if (entrada.fail())
+            return false;
+
+        i->setPoder(static_cast<int>(poder));
+        i->setTempoUltimoAtaque(tempoUltimoAtaque);
+        i->setDirecaoPatrulha(direcaoPatrulha);
+        i->setDeslocamentoPatrulha(deslocamentoPatrulha);
+        i->setElite(elite != 0);
+        i->setInteragindo(interagindo != 0);
+
+        return true;
+    }
+
+    bool Fase::carregarJogo(const std::string& caminho) {
+        std::ifstream arquivo(caminho.c_str());
+
+        if (!arquivo.is_open()) {
+            std::cerr << "Erro ao abrir arquivo de save: " << caminho << std::endl;
+            return false;
+        }
+
+        std::string linha;
+
+        std::getline(arquivo, linha);
+
+        if (linha != "SAVE_PRIMEIRO_JOGO_V1") {
+            std::cerr << "Arquivo de save invalido." << std::endl;
+            arquivo.close();
+            return false;
+        }
+
+        std::getline(arquivo, linha);
+
+        limparJogo();
+
+        bool carregouTudo = true;
+        while (std::getline(arquivo, linha)) {
+            if (linha.empty())
+                continue;
+
+            if (!carregarLinhaEntidade(linha)) {
+                std::cerr << "Erro ao carregar linha: " << linha << std::endl;
+                carregouTudo = false;
+            }
+        }
+        if (jogo->getJogador1() == NULL) {
+            std::cerr << "Erro: Jogador 1 nao foi carregado do save." << std::endl;
+            carregouTudo = false;
+        }
+
+        arquivo.close();
+
+        if (carregouTudo) { std::cout << "Jogo carregado com sucesso." << std::endl; }
+        else { std::cout << "Carregou com erros." << std::endl; }
+
+        return carregouTudo;
+    }
+
+    bool Fase::carregarLinhaEntidade(const std::string& linha) {
+        std::istringstream entrada(linha);
+
+        std::string tipo;
+        entrada >> tipo;
+
+        if (tipo == "JOGADOR" || tipo == "NAAFIRI") {
+            Personagens::Jogador* jogador = new Personagens::Jogador();
+
+            if (!lerDadosEntidade(entrada, jogador)) {
+                delete jogador;
+                return false;
+            }
+
+            if (!lerDadosPersonagem(entrada, jogador)) {
+                delete jogador;
+                return false;
+            }
+
+            float pontos;
+            int abates;
+            int idJogador;
+
+            entrada >> pontos >> abates >> idJogador;
+
+            if (entrada.fail()) {
+                delete jogador;
+                return false;
+            }
+
+            jogador->setIdJogador(idJogador);
+            jogador->setPontos(pontos);
+            jogador->setAbates(abates);
+
+            jogador->atualizarBarra();
+
+            registrarJogador(jogador);
+
+            std::cout << "Jogador carregado: " << jogador->getNome() << " ID: " << jogador->getIdJogador() << std::endl;
+
+            return true;
+        }
+
+        else if (tipo == "INIMIGO_FACIL" || tipo == "MINION") {
+            Minion* minion = new Minion();
+
+            if (!lerDadosEntidade(entrada, minion)) {
+                delete minion;
+                return false;
+            }
+
+            if (!lerDadosPersonagem(entrada, minion)) {
+                delete minion;
+                return false;
+            }
+
+            if (!lerDadosInimigo(entrada, minion)) {
+                delete minion;
+                return false;
+            }
+
+            float raio;
+            entrada >> raio;
+
+            registrarEntidade(minion);
+            return true;
+        }
+
+        else if (tipo == "INIMIGO_MEDIO" || tipo == "AZULO") {
+            Azulo* azulo = new Azulo();
+
+            if (!lerDadosEntidade(entrada, azulo)) {
+                delete azulo;
+                return false;
+            }
+
+            if (!lerDadosPersonagem(entrada, azulo)) {
+                delete azulo;
+                return false;
+            }
+
+            if (!lerDadosInimigo(entrada, azulo)) {
+                delete azulo;
+                return false;
+            }
+
+            int tamanho;
+            entrada >> tamanho;
+
+            registrarEntidade(azulo);
+            return true;
+        }
+
+        else if (tipo == "DRAGAO_ANCIAO") {
+            DragaoAnciao* dragao = new DragaoAnciao();
+
+            if (!lerDadosEntidade(entrada, dragao)) {
+                delete dragao;
+                return false;
+            }
+
+            if (!lerDadosPersonagem(entrada, dragao)) {
+                delete dragao;
+                return false;
+            }
+
+            if (!lerDadosInimigo(entrada, dragao)) {
+                delete dragao;
+                return false;
+            }
+
+            short int forca;
+            entrada >> forca;
+
+            if (entrada.fail()) {
+                delete dragao;
+                return false;
+            }
+
+            registrarEntidade(dragao);
+
+            Entidades::Projetil* p = new Entidades::Projetil();
+            if (p) {
+                p->setDoJogador(false);
+                p->setVigente(false);
+
+                dragao->setProjetil(p);
+
+                registrarEntidade(p);
+            }
+            return true;
+        }
+
+        else if (tipo == "PROJETIL") {
+            /*Entidades::Projetil* projetil = new Entidades::Projetil();
+
+            if (!lerDadosEntidade(entrada, projetil)) {
+                delete projetil;
+                return false;
+            }
+
+            int ativo;
+            float velX;
+            float velY;
+            int doJogador;
+
+            entrada >> ativo >> velX >> velY >> doJogador;
+
+            if (entrada.fail()) {
+                delete projetil;
+                return false;
+            }
+
+            projetil->setVelocidade(sf::Vector2f(velX, velY));
+            projetil->setDoJogador(doJogador != 0);
+            projetil->setAtivo(ativo != 0);
+
+            registrarEntidade(projetil);*/
+            return true;
+        }
+
+        else if (tipo == "PLATAFORMA") {
+            Obstaculos::Plataforma* plataforma = new Obstaculos::Plataforma();
+
+            if (!lerDadosEntidade(entrada, plataforma)) {
+                delete plataforma;
+                return false;
+            }
+
+            int tipoPlataforma;
+
+            entrada >> tipoPlataforma;
+
+            if (entrada.fail()) {
+                delete plataforma;
+                return false;
+            }
+
+            plataforma->setTipo(static_cast<Obstaculos::Plataforma::TipoPlataforma>(tipoPlataforma));
+            registrarEntidade(plataforma);
+            return true;
+        }
+
+        else if (tipo == "PORTAL") {
+            Obstaculos::Portal* portal = new Obstaculos::Portal();
+
+            if (!lerDadosEntidade(entrada, portal)) {
+                delete portal;
+                return false;
+            }
+
+            registrarEntidade(portal);
+            return true;
+        }
+
+        else if (tipo == "PINSTOURO") {
+            Obstaculos::Pinstouro* pinstouro = new Obstaculos::Pinstouro();
+
+            if (!lerDadosEntidade(entrada, pinstouro)) {
+                delete pinstouro;
+                return false;
+            }
+
+            registrarEntidade(pinstouro);
+            return true;
+        }
+
+        return false;
+    }
+
 } // Fases

@@ -17,9 +17,11 @@
 namespace Fases {
     Segunda_Fase::Segunda_Fase() : Fase(), maxChefoes(5) {
         Segunda_Fase::criarCenario();
-        Segunda_Fase::criarObstaculos();
-        Segunda_Fase::criarInimigos();
-        criarProjeteis();
+        if (!jogo->getCarregandoSave()) {
+            Segunda_Fase::criarObstaculos();
+            Segunda_Fase::criarInimigos();
+            Segunda_Fase::criarProjeteis();
+        }
     }
 
     Segunda_Fase::~Segunda_Fase() {}
@@ -42,7 +44,7 @@ namespace Fases {
 
     // Cuidar apenas da evolução da física/lógica
     void Segunda_Fase::executar() {
-        LEntidades.executarTodas();
+        LEntidades.percorrer();
         gerenciadorGrafico->updateAnimation();
 
         // Executa gerenciadores de física usando o delta time recebido do Jogo

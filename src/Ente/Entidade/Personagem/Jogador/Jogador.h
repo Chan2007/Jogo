@@ -56,7 +56,9 @@ namespace Personagens {
         void setIdJogador(const int id) { idJogador = id; }
 
         int getIdJogador() const { return idJogador; }
+        void setPontos(float p) { pontos = p; }
         float getPontos() const { return pontos; }
+        void setAbates(int a) { abates = a; }
         int getAbates() const { return abates; }
         void adicionarPontos(float valor);
         void registrarAbate();

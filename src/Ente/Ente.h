@@ -23,5 +23,8 @@ class Ente {
 
 		Ente();
 		virtual ~Ente(){ contId -= 1; }
+
+		void setId(int i) { id = i; }
+		int getId() { return id; }
 };
 #endif

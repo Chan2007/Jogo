@@ -11,8 +11,11 @@
 namespace Fases {
     Primeira_Fase::Primeira_Fase() : Fase(), maxInimMedios(5) {
         Primeira_Fase::criarCenario();
-        Primeira_Fase::criarObstaculos();
-        Primeira_Fase::criarInimigos();
+
+        if (!jogo->getCarregandoSave()) {
+            Primeira_Fase::criarObstaculos();
+            Primeira_Fase::criarInimigos();
+        }
     }
 
     void Primeira_Fase::criarCenario() {
@@ -34,7 +37,7 @@ namespace Fases {
 
     // Evolução da física/lógica no frame atual
     void Primeira_Fase::executar() {
-        LEntidades.executarTodas();
+        LEntidades.percorrer();
 
         gerenciadorGrafico->updateAnimation();
 
@@ -79,7 +82,7 @@ namespace Fases {
         Obstaculos::Portal* portal = NULL;
         sementear();
 
-        const int fator = gerar_num_norm(3, 0.75, 0, 6);
+        const int fator = gerar_num_norm(3, 0.75, 3, 6);
 
         for (int i = 1; i <= fator; i++) {
             portal = new Obstaculos::Portal();

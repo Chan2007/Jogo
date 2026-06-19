@@ -55,7 +55,7 @@ namespace Listas {
         }
     }
 
-    void ListaEntidades::executarTodas() const {
+    void ListaEntidades::percorrer() const {
         if (!LEntidade) return;
 
         Elemento<Entidades::Entidade>* pAux = LEntidade->getPrimeiro();
@@ -66,6 +66,20 @@ namespace Listas {
                 if (pEntidade->getVigente()) {
                     pEntidade->executar();
                 }
+            }
+            pAux = pAux->getProximo();
+        }
+    }
+
+    void ListaEntidades::salvarTodas(std::ostream& arq) const {
+        if (!LEntidade) return;
+
+        Elemento<Entidades::Entidade>* pAux = LEntidade->getPrimeiro();
+
+        while (pAux != NULL) {
+            Entidades::Entidade* pEntidade = pAux->getInfo();
+            if (pEntidade) {
+                pEntidade->salvarEm(arq);
             }
             pAux = pAux->getProximo();
         }

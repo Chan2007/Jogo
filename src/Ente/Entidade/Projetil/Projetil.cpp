@@ -53,7 +53,7 @@ namespace Entidades {
     }
 
     void Projetil::salvar() {
-        if (buffer) {
+        /*if (buffer) {
             (*buffer) << "PROJETIL ";
 
             salvarDataBuffer();
@@ -61,7 +61,7 @@ namespace Entidades {
             (*buffer) << ativo << ' '
                 << velocidade.x << ' '
                 << velocidade.y << '\n';
-        }
+        }*/
     }
 
     void Projetil::executar() {

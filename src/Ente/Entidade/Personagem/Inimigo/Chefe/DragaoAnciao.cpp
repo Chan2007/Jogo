@@ -15,7 +15,7 @@ DragaoAnciao::DragaoAnciao() :
 {
     sementear();
 
-    setNome("Dragao Sabio"),
+    setNome("Dragao_Sabio"),
     velocidadeMax = 220.f;
     nivelMaldade = 200;
     poder = 80 * log(nivelMaldade * 10);

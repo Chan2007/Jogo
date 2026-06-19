@@ -21,10 +21,11 @@ namespace Listas {
         void limparLista() const;
         Elemento<Entidades::Entidade>* getPrimeiro() const {return LEntidade->getPrimeiro();}
         void desenharTodas(sf::RenderWindow& janela) const;
-        void executarTodas() const;
+        void percorrer() const;
         Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E) const;
         Entidades::Entidade* localizarInfo(Entidades::Entidade* E) const;
         Entidades::Entidade* localizarNome(const std::string &nome) const;
+        void salvarTodas(std::ostream& arq) const;
     };
 }
 
