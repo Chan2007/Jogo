@@ -27,7 +27,7 @@ namespace Obstaculos{
                 ~Plataforma();
                 void criar(TipoPlataforma tipo = NORMAL1);
                 void executar(){};
-                void salvar(){};
+                void salvar();
                 void mover(){};
                 void obstaculizar(Personagens::Jogador* J);
         };

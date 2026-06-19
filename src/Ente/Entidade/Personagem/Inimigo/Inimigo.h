@@ -20,7 +20,6 @@ namespace Personagens {
             float direcaoPatrulha;
             float deslocamentoPatrulha;
             float limiteDeslocamento;
-            float tempoPatrulha;
             bool elite;
             bool interagindo;
             static std::vector<Jogador*> listaJogadores;
@@ -42,6 +41,8 @@ namespace Personagens {
             virtual void danificar(Jogador* J) = 0;
 
             static void incluirJogador(Jogador* J) { listaJogadores.push_back(J); }
+
+            void salvarInimigo();
     };
 }
 

@@ -28,6 +28,7 @@ namespace Obstaculos {
 
             // Padrão visitor
             void aceitar(VisitorColisao *visitor);
+            void salvarObstaculo();
     };
 } // Obstaculo
 

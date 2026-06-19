@@ -8,8 +8,7 @@
 
 Minion::Minion() :
     Inimigo(),
-    raio(200.f),
-    tiro(NULL)
+    raio(200.f)
 {
     sementear();
 
@@ -175,4 +174,13 @@ void Minion::executar() {
 }
 
 void Minion::salvar() {
+    if (buffer) {
+        (*buffer) << "MINION ";
+
+        salvarDataBuffer();
+        salvarPersonagem();
+        salvarInimigo();
+
+        (*buffer) << raio << '\n';
+    }
 }

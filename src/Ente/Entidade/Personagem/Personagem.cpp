@@ -115,4 +115,15 @@ namespace Personagens {
         aceleracao = sf::Vector2f(0.0f, 0.0f);
         estado = estaVivo() ? static_cast<int>(ESTADO_OCIOSO) : static_cast<int>(ESTADO_MORTO);
     }
+
+    void Personagem::salvarPersonagem() {
+        if (buffer) {
+            (*buffer) << velocidade.x << ' '
+                << velocidade.y << ' '
+                << vida << ' '
+                << vidaMaxima << ' '
+                << estado << ' '
+                << invulneravel << ' ';
+        }
+    }
 }

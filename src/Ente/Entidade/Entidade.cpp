@@ -6,7 +6,6 @@
 
 namespace Entidades {
 
-    void Entidade::salvarDataBuffer() {}
     void Entidade::desenhar() {
         getSprite().setPosition(getPosicao());
         gerenciadorGrafico->getJanela().draw(getSprite());
@@ -32,7 +31,8 @@ namespace Entidades {
         nome(n), 
         vigente(true),
         gerenciadorColisao(&Gerenciadores::Gerenciador_Colisao::getGerenciador()),
-        gerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade::getGerenciador())
+        gerenciadorGravidade(Gerenciadores::Gerenciador_Gravidade::getGerenciador()),
+        buffer(NULL)
     {
         if (!n.empty())
             nome = n;
@@ -40,4 +40,26 @@ namespace Entidades {
     }
 
     Entidade::~Entidade() {}
+    
+    void Entidade::salvarDataBuffer() {
+        if (buffer) {
+            sf::Vector2f pos = getPosicao();
+
+            (*buffer) << nome << ' '
+            << pos.x << ' '
+            << pos.y << ' '
+            << colisao << ' '
+            << vigente << ' ';
+        }
+    }
+
+    void Entidade::salvarEm(std::ostream& output) {
+        std::ostream* bufferAnterior = buffer;
+
+        buffer = &output;
+
+        salvar();
+
+        buffer = bufferAnterior;
+    }
 }

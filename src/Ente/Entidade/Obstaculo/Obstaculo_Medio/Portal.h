@@ -22,9 +22,7 @@ namespace Obstaculos {
             void mover() {
                 // Não se move
             };
-            void salvar() {
-                // TODO
-            }
+            void salvar();
             float getAltura() { return altura; }
             float getLargura() { return largura; }
             void obstaculizar(Personagens::Jogador* p);

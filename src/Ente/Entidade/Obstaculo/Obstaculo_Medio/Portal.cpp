@@ -53,4 +53,15 @@ namespace Obstaculos {
 		}
 	}
 
+	void Portal::salvar() {
+		if (buffer) {
+			(*buffer) << "PORTAL ";
+
+			salvarDataBuffer();
+			salvarObstaculo();
+
+			(*buffer) << '\n';
+		}
+	}
+
 } // Obstaculo

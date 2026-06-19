@@ -60,4 +60,15 @@ namespace Personagens {
     void Inimigo::aceitar(VisitorColisao* visitor) {
         if (visitor) visitor->colidir(this);
     }
+
+    void Inimigo::salvarInimigo() {
+        if (buffer) {
+            (*buffer) << poder << ' '
+                << tempoUltimoAtaque << ' '
+                << direcaoPatrulha << ' '
+                << deslocamentoPatrulha << ' '
+                << elite << ' '
+                << interagindo << ' ';
+        }
+    }
 }

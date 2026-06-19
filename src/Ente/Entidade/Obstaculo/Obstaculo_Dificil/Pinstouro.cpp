@@ -38,35 +38,48 @@ namespace Obstaculos {
 
 	void Pinstouro::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
+			if (perigoso) {
 				p->receberDano(static_cast<int>(danosidade));
 				std::cout << " Pinstouro lancou o jogador" << std::endl;
+			}
+			sf::Vector2f posJog = p->getPosicao();
+			sf::FloatRect tamJog = p->getTamanho();
+			sf::Vector2f posObs = getPosicao();
+			sf::FloatRect tamObs = getTamanho();
 
-				sf::Vector2f posJog = p->getPosicao();
-				sf::FloatRect tamJog = p->getTamanho();
-				sf::Vector2f posObs = getPosicao();
-				sf::FloatRect tamObs = getTamanho();
+			float tamx = tamJog.width / 2 + tamObs.width / 2;
+			float dx = posObs.x - posJog.x;
+			float tamy = tamJog.height / 2 + tamObs.height / 2;
+			float dy = posObs.y - posJog.y;
 
-				float tamx = tamJog.width / 2 + tamObs.width / 2;
-				float dx = posObs.x - posJog.x;
-				float tamy = tamJog.height / 2 + tamObs.height / 2;
-				float dy = posObs.y - posJog.y;
+			float multx = std::abs(dx/tamx);
+			float multy = std::abs(dy/tamy);
 
-				float multx = std::abs(dx/tamx);
-				float multy = std::abs(dy/tamy);
+			if (dx > 0) { p->setVelocidade(sf::Vector2f(-(multx * impulso * 2), -(multy * impulso))); }
+			else { p->setVelocidade(sf::Vector2f(multx * impulso * 2, -(multy * impulso))); }
 
-				if (dx > 0) { p->setVelocidade(sf::Vector2f(-(multx * impulso * 2), -(multy * impulso))); }
-				else { p->setVelocidade(sf::Vector2f(multx * impulso * 2, -(multy * impulso))); }
+			sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
+			const int rangeX = janela.getSize().x - static_cast<int>(tamObs.width);
+			const int rangeY = janela.getSize().y - static_cast<int>(tamObs.height);
 
-				sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
-				const int rangeX = janela.getSize().x - static_cast<int>(tamObs.width);
-				const int rangeY = janela.getSize().y - static_cast<int>(tamObs.height);
-
-				if (rangeX > 0 && rangeY > 0) {
-					Ente::sementear();
-					float randomX = static_cast<float>(rand() % rangeX) + (tamObs.width / 2.f);
-					float randomY = static_cast<float>(rand() % rangeY) + (tamObs.height / 2.f);
-					setPosicao(sf::Vector2f(randomX, randomY));
-				}
+			if (rangeX > 0 && rangeY > 0) {
+				Ente::sementear();
+				float randomX = static_cast<float>(rand() % rangeX) + (tamObs.width / 2.f);
+				float randomY = static_cast<float>(rand() % rangeY) + (tamObs.height / 2.f);
+				setPosicao(sf::Vector2f(randomX, randomY));
+			}
 		}
 	}
+
+	void Pinstouro::salvar() {
+		if (buffer) {
+			(*buffer) << "PINSTOURO ";
+
+			salvarDataBuffer();
+			salvarObstaculo();
+
+			(*buffer) << '\n';
+		}
+	}
+
 } // Obstaculo

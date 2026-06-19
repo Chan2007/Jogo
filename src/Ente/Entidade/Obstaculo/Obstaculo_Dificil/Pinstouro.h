@@ -23,9 +23,7 @@ namespace Obstaculos {
             void mover() {
                 // Não se move
             }
-            void salvar() {
-                // TODO
-            }
+            void salvar();
 
             float getDano() { return danosidade; }
             void obstaculizar(Personagens::Jogador* p);

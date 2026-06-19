@@ -11,6 +11,7 @@
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Listas/ListaEntidades.h"
 
+
 class VisitorColisao;
 
 namespace Obstaculos {
@@ -37,11 +38,12 @@ namespace Entidades {
             bool colisao;
             std::string nome;
             bool vigente;
+
         protected:
-            void salvarDataBuffer();
+            std::ostream* buffer;
             Gerenciadores::Gerenciador_Colisao* gerenciadorColisao;
             Gerenciadores::Gerenciador_Gravidade& gerenciadorGravidade;
-
+            void salvarDataBuffer();
         public:
 
             Entidade(const std::string &n);
@@ -52,6 +54,8 @@ namespace Entidades {
             virtual void executar() = 0;
             virtual void salvar() = 0;
             virtual void mover() = 0;
+            void setBuffer(std::ostream* stream) { buffer = stream; }
+            void salvarEm(std::ostream& output);
 
             virtual void aceitar(VisitorColisao* visitor) = 0;
 

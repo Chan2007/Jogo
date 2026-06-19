@@ -14,8 +14,6 @@ namespace Entidades {
         bool ativo;
         sf::Vector2f velocidade;
         bool doJogador;
-        float tempoUltimoAtaque;
-        float cooldownAtaque;
     public:
         Projetil();
         ~Projetil();

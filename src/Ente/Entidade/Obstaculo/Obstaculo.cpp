@@ -19,4 +19,10 @@ namespace Obstaculos {
     void Obstaculo::aceitar(VisitorColisao* visitor) {
         if (visitor) visitor->colidir(this);
     }
+
+    void Obstaculo::salvarObstaculo() {
+        if (buffer) {
+        }
+    }
+
 } // Obstaculo

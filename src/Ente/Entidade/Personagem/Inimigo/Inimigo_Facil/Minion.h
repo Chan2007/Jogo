@@ -15,7 +15,6 @@ namespace Personagens {
 class Minion : public Personagens::Inimigo {
     private:
         float raio;
-        Entidades::Projetil* tiro;
     public:
         Minion();
         ~Minion();
@@ -24,8 +23,6 @@ class Minion : public Personagens::Inimigo {
         sf::FloatRect getTamanho() const;
         void executar();
         void salvar();
-        void setProjetil(Entidades::Projetil* p) { if (p) { tiro = p; } }
-        Entidades::Projetil* getProjetil() { return tiro; }
         float getRaio() { return raio; }
 };
 

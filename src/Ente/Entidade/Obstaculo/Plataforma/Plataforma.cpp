@@ -14,7 +14,7 @@ namespace Obstaculos {
 	Plataforma::Plataforma(TipoPlataforma tipo) :
 		Obstaculo(),
 		tipoPlataforma(tipo),
-		altura(60)
+		altura(2)
 	{
 		perigoso = false;
 
@@ -25,7 +25,7 @@ namespace Obstaculos {
 		else if (getTextura().loadFromFile(arquivoSprite)) { getSprite().setTexture(getTextura()); }
 		else { std::cerr << "Erro: A textura falhou ao carregar: " << arquivoSprite << std::endl; }
 
-		getSprite().setOrigin(16.f, 16.f);
+		getSprite().setOrigin(16.f, 8.f * altura);
 		criar(tipo);
 	}
 
@@ -65,5 +65,15 @@ namespace Obstaculos {
 		gerenciadorGravidade.aoTocarChao(J, sf::Vector2f(0.f, -1.f));
     }
 
+	void Plataforma::salvar() {
+		if (buffer) {
+			(*buffer) << "PLATAFORMA ";
+
+			salvarDataBuffer();
+			salvarObstaculo();
+
+			(*buffer) << tipoPlataforma << '\n';
+		}
+	}
 
 } // namespace Obstaculos

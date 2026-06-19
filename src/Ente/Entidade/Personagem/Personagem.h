@@ -103,6 +103,7 @@ namespace Personagens {
         void resetarCombate();
         void setInvulneravel(bool i) { invulneravel = i; }
         bool getInvulneravel() { return invulneravel; }
+        void salvarPersonagem();
         virtual void executar() = 0;
         virtual void salvar() = 0;
         virtual void mover() = 0;

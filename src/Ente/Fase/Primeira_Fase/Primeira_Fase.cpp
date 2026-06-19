@@ -66,7 +66,7 @@ namespace Fases {
         for (int i = 1; i <= fator; i++) {
             azulo = new Azulo();
             if (azulo) {
-                azulo->setPosicao(sf::Vector2f(250*i, rand() % tamanhoJanela.y));
+                azulo->setPosicao(sf::Vector2f(350*i, rand() % tamanhoJanela.y));
                 gerenciadorColisao->incluirEntidade(azulo);
                 gerenciadorGravidade.aplicarGravidade(azulo, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(azulo));

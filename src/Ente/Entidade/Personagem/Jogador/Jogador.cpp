@@ -15,7 +15,7 @@ namespace Personagens {
     Personagem(),
     movendoEsquerda(false), movendoDireita(false),
     pulando(false), atacando(false), usandoHabilidade(false),
-    pontos(0.0f), abates(0), fundoVida(), barraVida()
+    pontos(0.0f), abates(0), fundoVida(), barraVida(), idJogador(-1)
     {
         velocidadeMax = 300.f;
 
@@ -134,7 +134,16 @@ namespace Personagens {
     }
 
     void Jogador::salvar() {
-        salvarDataBuffer();
+        if (buffer) {
+            (*buffer) << "JOGADOR ";
+
+            salvarDataBuffer();
+            salvarPersonagem();
+
+            (*buffer) << pontos << ' '
+                << abates << ' '
+                << idJogador << '\n';
+        }
     }
 
     void Jogador::mover() {

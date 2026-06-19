@@ -176,4 +176,13 @@ void DragaoAnciao::executar() {
 }
 
 void DragaoAnciao::salvar() {
+    if (buffer) {
+        (*buffer) << "DRAGAO_ANCIAO ";
+
+        salvarDataBuffer();
+        salvarPersonagem();
+        salvarInimigo();
+
+        (*buffer) << forca << '\n';
+    }
 }
