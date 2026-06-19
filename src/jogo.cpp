@@ -72,10 +72,12 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
         case TelaFase1:
             // Garante que a janela SFML exista e esteja configurada
             inicializar();
+            if (!carregandoSave) { conferirJogadores(); }
             faseAtual = new Fases::Primeira_Fase();
             break;
         case TelaFase2:
             inicializar();
+            if (!carregandoSave) { conferirJogadores(); }
             faseAtual = new Fases::Segunda_Fase();
             break;
         default:
@@ -222,4 +224,14 @@ bool Jogo::salvarJogoAtual(const std::string& caminho) {
     }
 
     return faseAtual->salvarJogo(caminho, numeroFase);
+}
+
+void Jogo::conferirJogadores() {
+    if (jogador1 == NULL) {
+        jogador1 = new Personagens::Jogador(sf::Vector2f(50.0f, 50.0f), sf::Color::Green);
+    }
+
+    if (jogador2 == NULL) {
+        jogador2 = new Personagens::Jogador(sf::Vector2f(desktop.width - 800.0f, 50.0f), sf::Color::Blue);
+    }
 }

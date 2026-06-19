@@ -421,6 +421,10 @@ namespace Fases {
         if (tipo == "JOGADOR" || tipo == "NAAFIRI") {
             Personagens::Jogador* jogador = new Personagens::Jogador();
 
+            if (!jogador) return false;
+
+            jogador->setCampeao(Personagens::CAMPEAO_NAAFIRI);
+
             if (!lerDadosEntidade(entrada, jogador)) {
                 delete jogador;
                 return false;

@@ -78,6 +78,7 @@ class Jogo {
 
         void setCarregandoSave(bool carregando) { carregandoSave = carregando; }
         bool getCarregandoSave() const { return carregandoSave; }
+        void conferirJogadores();
 
     private:
         EstadoTela estadoTela;

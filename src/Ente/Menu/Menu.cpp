@@ -380,6 +380,8 @@ void Menu::launch_Phase(Jogo::EstadoTela fase, QtMaterialTextField* nameInput1,
 {
     if (Jogo::estaAberto()) return;
 
+    jogo->conferirJogadores();
+
     apply_PlayerSetup(nameInput1, combo1, nameInput2, combo2);
 
     hide();
