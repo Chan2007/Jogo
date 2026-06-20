@@ -28,8 +28,9 @@ namespace Obstaculos{
                 void criar(TipoPlataforma tipo = NORMAL1);
                 void executar(){};
                 void salvar();
-                void mover(){};
                 void obstaculizar(Personagens::Jogador* J);
+                void setAltura(int a) { altura = a; }
+                int getAltura() { return altura; }
                 void setTipo(TipoPlataforma t) { tipoPlataforma = t; criar(t); }
         };
 } // Obstaculo

@@ -34,7 +34,6 @@ namespace Entidades {
         private:
             sf::Sprite sprite;
             sf::Texture textura;
-            static Listas::ListaEntidades* listaEntidades;
             bool colisao;
             std::string nome;
             bool vigente;
@@ -53,7 +52,6 @@ namespace Entidades {
             void desenhar();
             virtual void executar() = 0;
             virtual void salvar() = 0;
-            virtual void mover() = 0;
             void setBuffer(std::ostream* stream) { buffer = stream; }
             void salvarEm(std::ostream& output);
 
@@ -83,7 +81,6 @@ namespace Entidades {
 
             bool estaDisponivel() const {return vigente && !colisao;}
 
-            static Listas::ListaEntidades* getListaEntidades() {return listaEntidades;}
     };
 } // Entidade
 

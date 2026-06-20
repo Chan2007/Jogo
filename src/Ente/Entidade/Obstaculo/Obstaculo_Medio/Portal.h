@@ -19,9 +19,6 @@ namespace Obstaculos {
             Portal();
             ~Portal();
             void executar();
-            void mover() {
-                // Não se move
-            };
             void salvar();
             float getAltura() { return altura; }
             float getLargura() { return largura; }

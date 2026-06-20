@@ -22,7 +22,6 @@ namespace Entidades {
         gerenciadorGrafico->getJanela().draw(hitbox);*/
     }
 
-    Listas::ListaEntidades* Entidade::listaEntidades = NULL;
     Entidade::Entidade(const std::string &n) : 
         Ente(), 
         sprite(), 

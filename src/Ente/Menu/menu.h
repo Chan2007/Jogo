@@ -33,7 +33,7 @@ class Menu: public QMainWindow, public Ente {
     public:
         explicit Menu(QWidget *parent = NULL);
         ~Menu();
-
+        virtual void executar() {}
     protected:
         virtual void resizeEvent(QResizeEvent *event);
 

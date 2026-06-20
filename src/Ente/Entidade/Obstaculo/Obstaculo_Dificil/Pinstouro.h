@@ -20,9 +20,6 @@ namespace Obstaculos {
             ~Pinstouro();
 
             void executar();
-            void mover() {
-                // Não se move
-            }
             void salvar();
 
             float getDano() { return danosidade; }
