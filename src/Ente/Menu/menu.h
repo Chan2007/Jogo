@@ -15,6 +15,7 @@
 #include "qtmaterialtextfield.h"
 #include "qtmaterialautocomplete.h"
 #include "qtmaterialflatbutton.h"
+#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -72,9 +73,13 @@ class Menu: public QMainWindow, public Ente {
         void apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
                                QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
 
+        Personagens::EscolhaCampeao champChoice(const QString &texto);
+        Personagens::EscolhaCampeao randCharacter();
+
+
         void launch_Phase(Jogo::EstadoTela fase,
-                          QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
-                          QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
+                      QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
+                      QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
 
         Ui::Menu *ui;
         QTimer gameTimer;

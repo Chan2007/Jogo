@@ -21,7 +21,7 @@ void VisitorColisaoJogador::colidir(Personagens::Jogador* J)  {
 
 void VisitorColisaoJogador::colidir(Personagens::Inimigo* I) {
     if (!I || !jogador) return;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) || sf::Keyboard::isKeyPressed(sf::Keyboard::O)) {
         I->receberDano(jogador->getPoder());
         if (I->getVida() <= 0) {
             float pontoAnt = jogador->getPontos();

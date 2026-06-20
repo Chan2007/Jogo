@@ -157,7 +157,7 @@ namespace Personagens {
             direcaoHorizontal = -1.0f;
 
         // TODO -> Remover depois
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
             setInvulneravel(true);
         else
             setInvulneravel(false);
@@ -185,9 +185,11 @@ namespace Personagens {
         ++abates;
         adicionarPontos(150.0f);
     }
+    /*
     void Jogador::aceitar(VisitorColisao* visitor) {
         if (visitor) visitor->colidir(this);
     }
+    */
     void Jogador::aoApertarTecla(const Gerenciadores::Tecla& evento) {
         std::string prefixo = "j" + std::to_string(idJogador) + "_";
 

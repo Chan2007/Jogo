@@ -174,7 +174,7 @@ namespace Gerenciadores {
                 if (inimigo && verificarColisao(inimigo, jogador) && inimigo->getVigente()) {
                     /*VisitorColisaoJogador visitor(jogador);
                     inimigo->aceitar(&visitor);*/
-                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) || sf::Keyboard::isKeyPressed(sf::Keyboard::O)) {
                         inimigo->receberDano(jogador->getPoder());
                         if (inimigo->getVida() <= 0) {
                             float pontoAnt = jogador->getPontos();

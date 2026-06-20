@@ -191,10 +191,11 @@ namespace Fases {
         return colidiuBorda;
     }
     void Fase::definirLimitesJanela() {
-        Elemento<Entidades::Entidade>* itEntidades = LEntidades.getPrimeiro();
-        while (itEntidades != NULL) {
-            verificarLimitesJanela(itEntidades->getInfo());
-            itEntidades = itEntidades->getProximo();
+        Lista<Entidades::Entidade>::IteratorLista it = LEntidades.getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista fim(NULL);
+        while (it != fim) {
+            verificarLimitesJanela(&(*it));
+            ++it;
         }
     }
     void Fase::criarJogadores() {

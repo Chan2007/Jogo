@@ -56,7 +56,7 @@ namespace Fases {
     // Cuidar apenas de mandar os elementos para a janela
     void Segunda_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
-        LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
+        LEntidades.desenharTodas();
         if (jogo->getJogador1()) {
             jogo->getJogador1()->desenharBarra();
             jogo->getJogador1()->atualizarBarra();

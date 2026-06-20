@@ -57,7 +57,7 @@ namespace Entidades {
             void setBuffer(std::ostream* stream) { buffer = stream; }
             void salvarEm(std::ostream& output);
 
-            virtual void aceitar(VisitorColisao* visitor) = 0;
+            // virtual void aceitar(VisitorColisao* visitor) = 0;
 
             sf::Vector2f getPosicao() const {return sprite.getPosition();}
             virtual sf::FloatRect getTamanho() const { return sprite.getGlobalBounds(); }

@@ -40,7 +40,7 @@ namespace Entidades {
 
         sf::FloatRect getTamanho() const;
 
-        void aceitar(VisitorColisao *visitor);
+        // void aceitar(VisitorColisao *visitor);
 
         void setDoJogador(bool valor) { doJogador = valor; }
         bool getDoJogador() const { return doJogador; }

@@ -57,9 +57,11 @@ namespace Personagens {
             getSprite().setScale(-escalaX, escalaY);
     }
 
+    /*
     void Inimigo::aceitar(VisitorColisao* visitor) {
         if (visitor) visitor->colidir(this);
     }
+    */
 
     void Inimigo::salvarInimigo() {
         if (buffer) {

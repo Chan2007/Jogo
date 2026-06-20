@@ -27,7 +27,7 @@ namespace Obstaculos {
             virtual void obstaculizar(Personagens::Jogador* J) = 0;
 
             // Padrão visitor
-            void aceitar(VisitorColisao *visitor);
+            // void aceitar(VisitorColisao *visitor);
             void salvarObstaculo();
     };
 } // Obstaculo

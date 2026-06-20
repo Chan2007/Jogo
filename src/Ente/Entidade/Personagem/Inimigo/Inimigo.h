@@ -38,7 +38,7 @@ namespace Personagens {
             void inverterPatrulha();
 
             // Padrão visitor
-            void aceitar(VisitorColisao *visitor);
+            // void aceitar(VisitorColisao *visitor);
 
             virtual void executar() = 0;
             virtual void salvar() = 0;

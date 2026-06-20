@@ -79,7 +79,9 @@ namespace Entidades {
             altura
         );
     }
+    /*
     void Projetil::aceitar(VisitorColisao* visitor) {
         if (visitor) visitor->colidir(this);
     }
+    */
 }

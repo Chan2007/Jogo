@@ -325,23 +325,6 @@ void Menu::init_MaterialInputs(QtMaterialTextField* nameInput1, QtMaterialAutoCo
 void Menu::apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
                              QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2)
 {
-    // Mapeia o texto digitado/selecionado de volta para o enum EscolhaCampeao
-
-    auto resolverCampeao = [](const QString& texto) -> Personagens::EscolhaCampeao {
-        static const QMap<QString, Personagens::EscolhaCampeao> tabela = {
-            { "NAAFIRI", Personagens::CAMPEAO_NAAFIRI },
-            { "JHIN",Personagens::CAMPEAO_JHIN },
-            { "LUX", Personagens::CAMPEAO_LUX },
-            { "EVELYNN", Personagens::CAMPEAO_EVELYNN },
-            { "GWEN", Personagens::CAMPEAO_GWEN },
-            { "PYKE", Personagens::CAMPEAO_PYKE },
-            { "SETT", Personagens::CAMPEAO_SETT },
-            { "SHACO", Personagens::CAMPEAO_SHACO },
-            { "VIEGO", Personagens::CAMPEAO_VIEGO },
-        };
-        return tabela.value(texto.toUpper(), Personagens::CAMPEAO_NAAFIRI);
-    };
-
     // Jogador 1
     QString nomeJ1 = nameInput1 ? nameInput1->text().trimmed() : QString();
     if (nomeJ1.isEmpty()) nomeJ1 = "Anônimo";
@@ -349,7 +332,7 @@ void Menu::apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComp
     QString textoCombo1 = (combo1 && !combo1->text().trimmed().isEmpty())
                           ? combo1->text().trimmed()
                           : LISTA_CAMPEOES.first();
-    Personagens::EscolhaCampeao campeaoJ1 = resolverCampeao(textoCombo1);
+    Personagens::EscolhaCampeao campeaoJ1 = champChoice(textoCombo1);
 
     if (jogo->getJogador1()) {
         jogo->getJogador1()->setNome(nomeJ1.toStdString());
@@ -362,7 +345,7 @@ void Menu::apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComp
         QString textoCombo2 = (combo2 && !combo2->text().trimmed().isEmpty())
                               ? combo2->text().trimmed()
                               : LISTA_CAMPEOES.first();
-        Personagens::EscolhaCampeao campeaoJ2 = resolverCampeao(textoCombo2);
+        Personagens::EscolhaCampeao campeaoJ2 = champChoice(textoCombo2);
 
         if (jogo->getJogador2()) {
             jogo->getJogador2()->setNome(nomeJ2.toStdString());
@@ -373,7 +356,56 @@ void Menu::apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComp
         jogo->setJogador2Ativo(false);
     }
 }
+Personagens::EscolhaCampeao Menu::champChoice(const QString& texto) {
 
+    // Mapeia o texto digitado/selecionado de volta para o enum EscolhaCampeao
+    static QMap<QString, Personagens::EscolhaCampeao> tabela;
+
+    if (tabela.isEmpty()) {
+        tabela.insert("NAAFIRI", Personagens::CAMPEAO_NAAFIRI);
+        tabela.insert("JHIN", Personagens::CAMPEAO_JHIN);
+        tabela.insert("LUX", Personagens::CAMPEAO_LUX);
+        tabela.insert("EVELYNN", Personagens::CAMPEAO_EVELYNN);
+        tabela.insert("GWEN", Personagens::CAMPEAO_GWEN);
+        tabela.insert("PYKE", Personagens::CAMPEAO_PYKE);
+        tabela.insert("SETT", Personagens::CAMPEAO_SETT);
+        tabela.insert("SHACO", Personagens::CAMPEAO_SHACO);
+        tabela.insert("VIEGO", Personagens::CAMPEAO_VIEGO);
+    }
+
+    QString chave = texto.toUpper();
+    if (tabela.contains(chave)) return tabela[chave];
+
+    return Personagens::CAMPEAO_NAAFIRI; // Valor padrão caso o texto não corresponda a nenhum campeão
+    // return randCharacter(); -> TODO (Para depois da definição de outros personagens)
+}
+Personagens::EscolhaCampeao Menu::randCharacter()
+{
+    static bool inicializado = false;
+
+    if (!inicializado)
+    {
+        srand((unsigned int)time(NULL));
+        inicializado = true;
+    }
+
+    Personagens::EscolhaCampeao campeoes[] =
+    {
+        Personagens::CAMPEAO_NAAFIRI,
+        Personagens::CAMPEAO_JHIN,
+        Personagens::CAMPEAO_LUX,
+        Personagens::CAMPEAO_EVELYNN,
+        Personagens::CAMPEAO_GWEN,
+        Personagens::CAMPEAO_PYKE,
+        Personagens::CAMPEAO_SETT,
+        Personagens::CAMPEAO_SHACO,
+        Personagens::CAMPEAO_VIEGO
+    };
+
+    const int quantidade = sizeof(campeoes) / sizeof(campeoes[0]);
+
+    return campeoes[rand() % quantidade];
+}
 void Menu::launch_Phase(Jogo::EstadoTela fase, QtMaterialTextField* nameInput1,
                         QtMaterialAutoComplete* combo1, QtMaterialTextField* nameInput2,
                         QtMaterialAutoComplete* combo2)

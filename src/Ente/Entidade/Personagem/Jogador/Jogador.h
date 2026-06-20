@@ -44,7 +44,7 @@ namespace Personagens {
         sf::RectangleShape barraVida;
     public:
         Jogador(sf::Vector2f posicao = sf::Vector2f(20.0f, 40.0f),
-        sf::Color corBarra = sf::Color(0, 255, 0));
+                sf::Color corBarra = sf::Color(0, 255, 0));
         ~Jogador();
 
         void aoApertarTecla(const Gerenciadores::Tecla& evento);
@@ -63,7 +63,7 @@ namespace Personagens {
         void adicionarPontos(float valor);
         void registrarAbate();
 
-        void aceitar(VisitorColisao *visitor);
+        // void aceitar(VisitorColisao *visitor);
         void desenharBarra();
         void atualizarBarra();
 

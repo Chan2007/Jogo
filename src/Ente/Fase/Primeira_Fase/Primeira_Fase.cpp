@@ -49,7 +49,7 @@ namespace Fases {
     // Renderiza para a janela
     void Primeira_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
-        LEntidades.desenharTodas(gerenciadorGrafico->getJanela());
+        LEntidades.desenharTodas();
         if (jogo->getJogador1()) {
             jogo->getJogador1()->desenharBarra();
             jogo->getJogador1()->atualizarBarra();

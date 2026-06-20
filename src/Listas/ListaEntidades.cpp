@@ -3,10 +3,8 @@
 //
 
 #include "ListaEntidades.h"
-#include "Elemento.h"
 #include "Lista.h"
 #include "Ente/Entidade/Entidade.h"
-#include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Listas {
     ListaEntidades::ListaEntidades() {
@@ -15,7 +13,7 @@ namespace Listas {
 
     ListaEntidades::~ListaEntidades() {
         LEntidade->limpar();
-        if (LEntidade) delete LEntidade;
+        delete LEntidade;
         LEntidade = NULL;
     }
 
@@ -27,76 +25,69 @@ namespace Listas {
     }
 
     void ListaEntidades::limparLista() const {
-
-        if (LEntidade) {
-            LEntidade->limpar();
-        }
+        if (LEntidade) LEntidade->limpar();
     }
 
-    void ListaEntidades::desenharTodas(sf::RenderWindow& janela) const {
-
+    void ListaEntidades::desenharTodas() const {
         if (!LEntidade) return;
 
-        Elemento<Entidades::Entidade>* pAux = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista it = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista fim(NULL);
 
-        while (pAux != NULL) {
-            Entidades::Entidade* pEntidade = pAux->getInfo();
-            if (pEntidade) {
-                if (pEntidade->getVigente()) {
-                    Entidades::Projetil* proj = dynamic_cast<Entidades::Projetil*>(pEntidade);
-                    if (proj) {
-                        if (proj->getVigente()) {}
-                            proj->desenhar();
-                    }
-                    else pEntidade->desenhar();
-                }
-            }
-            pAux = pAux->getProximo();
+        while (it != fim) {
+            if (it->getVigente())
+                it->desenhar();
+            ++it;
         }
     }
 
     void ListaEntidades::percorrer() const {
         if (!LEntidade) return;
 
-        Elemento<Entidades::Entidade>* pAux = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista it = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista fim(NULL);
 
-        while (pAux != NULL) {
-            Entidades::Entidade* pEntidade = pAux->getInfo();
-            if (pEntidade) {
-                if (pEntidade->getVigente()) {
-                    pEntidade->executar();
-                }
-            }
-            pAux = pAux->getProximo();
+        while (it != fim) {
+            if (it->getVigente())
+                it->executar();
+            ++it;
         }
     }
-
     void ListaEntidades::salvarTodas(std::ostream& arq) const {
         if (!LEntidade) return;
 
-        Elemento<Entidades::Entidade>* pAux = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista it = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista fim(NULL);
 
-        while (pAux != NULL) {
-            Entidades::Entidade* pEntidade = pAux->getInfo();
-            if (pEntidade) {
-                pEntidade->salvarEm(arq);
-            }
-            pAux = pAux->getProximo();
+        while (it != fim) {
+            if (&(*it)) it->salvarEm(arq);
+            ++it;
         }
     }
 
-    Elemento<Entidades::Entidade>* ListaEntidades::localizarEntidade(Elemento <Entidades::Entidade>* E) const {
-        if (!LEntidade) return NULL;
-        return LEntidade->localizarElemento(E);
-    }
-
     Entidades::Entidade* ListaEntidades::localizarInfo(Entidades::Entidade* E) const {
-        if (!LEntidade) return NULL;
-        return LEntidade->localizarInfo(E);
+        if (!LEntidade || !E) return NULL;
+
+        Lista<Entidades::Entidade>::IteratorLista it = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista fim(NULL);
+
+        while (it != fim) {
+            if (it && &(*it) == E) return &(*it);
+            ++it;
+        }
+        return NULL;
     }
 
     Entidades::Entidade* ListaEntidades::localizarNome(const std::string& nome) const {
         if (!LEntidade) return NULL;
-        return LEntidade->localizarNome(nome);
+
+        Lista<Entidades::Entidade>::IteratorLista it = LEntidade->getPrimeiro();
+        Lista<Entidades::Entidade>::IteratorLista fim(NULL);
+
+        while (it != fim) {
+            Entidades::Entidade* pEntidade = it.proximo();
+            if (pEntidade && pEntidade->getNome() == nome) return pEntidade;
+        }
+        return NULL;
     }
 }

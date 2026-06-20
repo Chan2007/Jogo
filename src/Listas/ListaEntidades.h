@@ -12,20 +12,20 @@ namespace Entidades {
 }
 namespace Listas {
     class ListaEntidades {
-    private:
-        Lista <Entidades::Entidade>* LEntidade;
-    public:
-        ListaEntidades();
-        ~ListaEntidades();
-        bool incluirEntidade(Entidades::Entidade *E) const;
-        void limparLista() const;
-        Elemento<Entidades::Entidade>* getPrimeiro() const {return LEntidade->getPrimeiro();}
-        void desenharTodas(sf::RenderWindow& janela) const;
-        void percorrer() const;
-        Elemento <Entidades::Entidade>* localizarEntidade(Elemento <Entidades::Entidade>* E) const;
-        Entidades::Entidade* localizarInfo(Entidades::Entidade* E) const;
-        Entidades::Entidade* localizarNome(const std::string &nome) const;
-        void salvarTodas(std::ostream& arq) const;
+        private:
+            Lista <Entidades::Entidade>* LEntidade;
+        public:
+            ListaEntidades();
+            ~ListaEntidades();
+            bool incluirEntidade(Entidades::Entidade *E) const;
+            void limparLista() const;
+            void desenharTodas() const;
+            void percorrer() const;
+
+            Lista<Entidades::Entidade>::IteratorLista getPrimeiro() const { return LEntidade->getPrimeiro(); }
+            Entidades::Entidade* localizarInfo(Entidades::Entidade* E) const;
+            Entidades::Entidade* localizarNome(const std::string &nome) const;
+            void salvarTodas(std::ostream& arq) const;
     };
 }
 
