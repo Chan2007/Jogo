@@ -118,7 +118,7 @@ namespace Fases {
         if (j1) LEntidades.removerEntidade(static_cast<Entidades::Entidade*>(j1));
         if (j2) LEntidades.removerEntidade(static_cast<Entidades::Entidade*>(j2));
 
-        gerenciadorColisao->limpar();
+        if (gerenciadorColisao) gerenciadorColisao->limpar();
         gerenciadorGravidade.limpar();
 
         gerenciadorInput.desinscrever(jogo->getJogador1());
@@ -270,23 +270,29 @@ namespace Fases {
     }
 
     void Fase::limparJogo() {
-        gerenciadorColisao->limpar();
         gerenciadorGravidade.limpar();
+
+        if (gerenciadorColisao) {
+            gerenciadorColisao->limpar();
+        }
 
         if (jogo->getJogador1() != NULL) {
             gerenciadorInput.desinscrever(jogo->getJogador1());
+            LEntidades.removerEntidade(static_cast<Entidades::Entidade*>(jogo->getJogador1()));
         }
 
-        if (jogo->getJogador2() != NULL) {
+        if (jogo->getJogador2() != NULL && jogo->getJogador2Ativo()) {
             gerenciadorInput.desinscrever(jogo->getJogador2());
+            LEntidades.removerEntidade(static_cast<Entidades::Entidade*>(jogo->getJogador2()));
         }
 
         LEntidades.limparLista();
 
-        jogo->setJogador1(NULL);
-        jogo->setJogador2(NULL);
-        jogo->setJogador2Ativo(false);
+        // jogo->setJogador1(NULL);
+        // jogo->setJogador2(NULL);
+        // jogo->setJogador2Ativo(false);
 
+        // Limpa as referências estáticas que os inimigos tinham dos jogadores
         Personagens::Inimigo::limparJogadores();
     }
 
@@ -436,7 +442,8 @@ namespace Fases {
         std::string tipo;
         entrada >> tipo;
 
-        if (tipo == "JOGADOR" || tipo == "NAAFIRI") {
+        if ((tipo == "JOGADOR" || tipo == "NAAFIRI") && jogo->getJogador1() == NULL && jogo->getJogador2() == NULL && !jogo->getJogador2Ativo()) {
+
             Personagens::Jogador* jogador = new Personagens::Jogador();
 
             if (!jogador) return false;

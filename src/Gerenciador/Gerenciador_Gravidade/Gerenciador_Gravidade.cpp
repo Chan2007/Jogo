@@ -85,7 +85,8 @@ namespace Gerenciadores {
                     atualizarGravidade(entidadesAfetadas[i], dt);
                 }
             }
-        } catch (...) {
+        }
+        catch (...) {
             return;
         }
     }

@@ -32,6 +32,7 @@ class Pausa: public Ente {
 
         void ajustarPosicoes();
         void atualizarItemSelecionado(int direcao); // -1 para cima, 1 para baixo
+        virtual void executar() {}
         int cliqueMouse();
         int getIndiceSelecionado() const { return indiceSelecionado; }
 

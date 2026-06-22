@@ -34,7 +34,9 @@ namespace Personagens {
         desenharBarra();
     }
 
-    Jogador::~Jogador() {}
+    Jogador::~Jogador() {
+        std::cout << "ALERTA: JOGADOR FOI DELETADO!" << std::endl;
+    }
 
     void Jogador::setCampeao(EscolhaCampeao campeao) {
         switch (campeao) {
