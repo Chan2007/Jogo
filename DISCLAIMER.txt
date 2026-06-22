@@ -1,0 +1,51 @@
+===============================================================================
+TERMO DE ISENÇÃO DE RESPONSABILIDADE (DISCLAIMER) & AVISO LEGAL
+===============================================================================
+
+Este software de jogo é um projeto estritamente acadêmico, educacional e sem
+fins lucrativos, desenvolvido como parte de atividades avaliativas universitárias.
+
+1. ISENÇÃO DE VÍNCULO E ENDOSSO
+Este projeto é independente e não possui qualquer tipo de vínculo, associação,
+patrocínio, endosso ou autorização formal por parte das seguintes entidades,
+plataformas ou criadores:
+- Riot Games, Inc.
+- Fandom Inc. (League of Legends Wiki)
+- Desenvolvedores da plataforma ModelViewer.lol (Khada)
+- Pinterest, Inc.
+- Itch.io ou os criadores de conteúdo independentes hospedados na plataforma.
+
+2. DIREITOS AUTORAIS E PROPRIEDADE INTELECTUAL DA RIOT GAMES, INC.
+Todos os personagens, marcas registradas, nomes, logotipos, designs de armas/artes,
+sprites, modelos 3D, texturas e vídeos de fundo relacionados ao universo de
+"League of Legends" (incluindo ativos obtidos via League Displays, Fandom Wiki,
+ModelViewer.lol e Pinterest) são de propriedade exclusiva e intelectual da
+Riot Games, Inc.
+
+Este projeto foi construído de boa-fé sob a política oficial "Lenga-lenga jurídico"
+(Legal Jibber Jabber) da Riot Games, que permite o uso de sua propriedade
+intelectual para fins comunitários, criativos e não comerciais.
+
+3. ATIVOS DE TERCEIROS (ITCH.IO)
+Quaisquer outros recursos visuais, sonoros, fontes ou códigos obtidos através da
+plataforma itch.io permanecem sob os direitos autorais e licenças individuais de
+seus respectivos criadores originais, sendo utilizados aqui estritamente dentro do
+escopo permitido para uso não comercial e educacional.
+
+4. ISENÇÃO DE GARANTIA E USO DO SOFTWARE
+O software é fornecido "no estado em que se encontra" (as is), para fins de
+avaliação acadêmica, sem garantias de qualquer tipo, expressas ou implícitas,
+incluindo, mas não se limitando a, garantias de funcionamento ou adequação a um
+propósito específico. Em nenhuma circunstância o desenvolvedor deste projeto será
+responsável por quaisquer reclamações, danos ou outras responsabilidades decorrentes
+do uso ou distribuição deste código.
+
+5. REMOÇÃO DE CONTEÚDO (TAKE DOWN)
+Se você for o detentor dos direitos autorais de qualquer ativo utilizado neste
+projeto e considerar que o uso viola suas diretrizes ou termos de serviço,
+entre em contato diretamente com o desenvolvedor para que o material seja
+removido imediatamente do repositório acadêmico.
+
+===============================================================================
+Este termo de isenção de responsabilidade é parte integrante do projeto acadêmico e deve ser lido e compreendido por todos os usuários, avaliadores e partes interessadas.
+O uso deste software implica na aceitação total dos termos aqui descritos.

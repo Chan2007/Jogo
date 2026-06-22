@@ -18,9 +18,21 @@ namespace Obstaculos {
     class Obstaculo : public Entidades::Entidade {
         protected:
             bool perigoso;
+
+            class ObstaculoMemento : public EntidadeMemento {
+                private:
+                    bool perigoso;
+                protected:
+                    explicit ObstaculoMemento(const Obstaculo& o) : EntidadeMemento(o), perigoso(o.perigoso) {}
+                    friend class Obstaculo; // Permite ao pai acessar os dados privados
+            };
         public:
             Obstaculo();
             virtual ~Obstaculo();
+
+            virtual Memento* salvarMemento() const;
+            virtual void restaurarMemento(const Memento* memento);
+
             virtual void executar() = 0;
             virtual void salvar() = 0;
             virtual void mover() = 0;

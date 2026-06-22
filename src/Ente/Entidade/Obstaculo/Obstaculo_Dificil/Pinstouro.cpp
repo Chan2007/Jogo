@@ -19,11 +19,25 @@ namespace Obstaculos {
 		perigoso = true;
 		setNome("Pinstouro");
 
-		std::string caminhoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/Obstaculos/plant_blast_cone.png"); // obtido em: https://modelviewer.lol/
+		// -------------------------------------------------------------------------
+		// ATRIBUIÇÃO DE ATIVOS (MODELVIEWER.LOL / KHADA)
+		// Modelos 3D, malhas ou texturas obtidos via ModelViewer.lol.
+		// Propriedade original dos personagens e artes: © Riot Games, Inc.
+		// Uso estritamente acadêmico, educacional e não comercial.
+		// -------------------------------------------------------------------------
 
-		if (caminhoSprite.empty()) { std::cerr << "Erro: Arquivo não encontrado! Verifique o nome: " << caminhoSprite << std::endl; }
-		else if (getTextura().loadFromFile(caminhoSprite)) { getSprite().setTexture(getTextura()); }
-		else { std::cerr << "Erro: A textura falhou ao carregar: " << caminhoSprite << std::endl; }
+		std::string caminhoSprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/Obstaculos/plant_blast_cone.png"); // obtido em: https://modelviewer.lol/
+		try {
+			if (caminhoSprite.empty())
+				throw std::runtime_error("Erro: Arquivo não encontrado! Verifique o nome: " + caminhoSprite);
+			if (!getTextura().loadFromFile(caminhoSprite))
+				throw std::runtime_error("Erro: A textura falhou ao carregar: " + caminhoSprite);
+
+			getSprite().setTexture(getTextura());
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+		}
 
 		getSprite().setOrigin(1225.f, 1122.f);
 		getSprite().setTextureRect(sf::IntRect(0, 0, 2450, 2244));
@@ -32,9 +46,7 @@ namespace Obstaculos {
 
 	Pinstouro::~Pinstouro(){}
 
-	void Pinstouro::executar() {
-
-	}
+	void Pinstouro::executar() {}
 
 	void Pinstouro::obstaculizar(Personagens::Jogador* p) {
 		if (p) {
@@ -58,12 +70,12 @@ namespace Obstaculos {
 			if (dx > 0) { p->setVelocidade(sf::Vector2f(-(multx * impulso * 2), -(multy * impulso))); }
 			else { p->setVelocidade(sf::Vector2f(multx * impulso * 2, -(multy * impulso))); }
 
-			sf::RenderWindow& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador().getJanela();
-			const int rangeX = janela.getSize().x - static_cast<int>(tamObs.width);
-			const int rangeY = janela.getSize().y - static_cast<int>(tamObs.height);
+			Gerenciadores::Gerenciador_Grafico& janela = Gerenciadores::Gerenciador_Grafico::getGerenciador();
+			const int rangeX = janela.getSize().width - static_cast<int>(tamObs.width);
+			const int rangeY = janela.getSize().height - static_cast<int>(tamObs.height);
 
 			if (rangeX > 0 && rangeY > 0) {
-				Ente::sementear();
+				sementear();
 				float randomX = static_cast<float>(rand() % rangeX) + (tamObs.width / 2.f);
 				float randomY = static_cast<float>(rand() % rangeY) + (tamObs.height / 2.f);
 				setPosicao(sf::Vector2f(randomX, randomY));
@@ -79,6 +91,18 @@ namespace Obstaculos {
 			salvarObstaculo();
 
 			(*buffer) << '\n';
+		}
+	}
+	Memento* Pinstouro::salvarMemento() const {
+		return new PinstouroMemento(*this);
+	};
+	void Pinstouro::restaurarMemento(const Memento *memento) {
+		Obstaculo::restaurarMemento(memento);
+
+		const PinstouroMemento* pMemento = dynamic_cast<const PinstouroMemento*>(memento);
+		if (pMemento) {
+			impulso = pMemento->impulsoMemento;
+			danosidade = pMemento->danosidadeMemento;
 		}
 	}
 

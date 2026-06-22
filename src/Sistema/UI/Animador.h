@@ -51,10 +51,12 @@ class Animador {
         void setSheetPosition(const sf::Vector2f& pos);
         void setSheetTargetSize(const sf::Vector2u& size);
 
-        static void atualizarSpriteEntidade(sf::Sprite& sprite, sf::IntRect& rectAtual,
-                                            int numFrames, unsigned int cols, unsigned int rows,
-                                            float tempoPorFrame, float dt,
-                                            float& tempoAcumulado, int& indexFrameAtual);
+        void atualizarSpriteEntidade(
+            sf::Sprite& sprite, sf::IntRect& rectAtual,
+            int numFrames, float dt,
+            float& tempoAcumulado, int& indexFrameAtual,
+            unsigned int cols = 9, unsigned int rows = 1, float tempoPorFrame = 0.12f
+        );
 };
 
 #endif

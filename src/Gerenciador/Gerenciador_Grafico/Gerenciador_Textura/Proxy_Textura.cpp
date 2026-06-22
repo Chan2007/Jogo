@@ -25,6 +25,7 @@ namespace Gerenciadores {
             delete thread;
             thread = NULL;
         }
+        gerenciadorTextura = NULL;
     }
 
     void Proxy_Textura::preLoadNextFrame(const std::string& caminho) {
@@ -35,6 +36,7 @@ namespace Gerenciadores {
         if (rodando) return;
 
         if (thread) {
+            thread->wait();
             delete thread;
             thread = NULL;
         }

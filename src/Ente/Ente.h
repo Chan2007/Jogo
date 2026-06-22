@@ -3,6 +3,8 @@
 
 #include <ctime>
 #include <windows.h>
+
+#include "Gerenciador/Gerenciador_Estado/Memento.h"
 #include "Gerenciador/Gerenciador_Grafico/Gerenciador_Grafico.h"
 
 class Gerenciador_Grafico;
@@ -11,6 +13,14 @@ class Ente {
 		int id;
 		static int contId;
 		static Gerenciadores::Gerenciador_Grafico *gerenciadorGrafico;
+		class EnteMemento: public Memento {
+			private:
+				int idMemento;
+			protected:
+				explicit EnteMemento(const Ente& e): idMemento(e.id) {}
+				virtual ~EnteMemento() {}
+				friend class Ente; // Permite ao pai acessar os dados privados
+		};
 	public:
 		static void sementear() {
 			rand(); Sleep(100); time_t t;
@@ -23,6 +33,9 @@ class Ente {
 
 		Ente();
 		virtual ~Ente(){ contId -= 1; }
+
+		virtual Memento* salvarMemento() const;
+		virtual void restaurarMemento(const Memento* memento);
 
 		void setId(int i) { id = i; }
 		int getId() { return id; }

@@ -76,10 +76,12 @@ class Menu: public QMainWindow, public Ente {
         Personagens::EscolhaCampeao champChoice(const QString &texto);
         Personagens::EscolhaCampeao randCharacter();
 
+        static bool compararPontos(const Caretaker::DadosJogadorSalvo &a, const Caretaker::DadosJogadorSalvo &b);
+
 
         void launch_Phase(Jogo::EstadoTela fase,
-                      QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
-                      QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
+                          QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
+                          QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2);
 
         Ui::Menu *ui;
         QTimer gameTimer;

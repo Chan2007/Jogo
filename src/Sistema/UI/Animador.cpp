@@ -178,30 +178,35 @@ void Animador::setSheetTargetSize(const sf::Vector2u& size) {
 
 void Animador::atualizarSpriteEntidade(
     sf::Sprite& sprite, sf::IntRect& rectAtual,
-    int numFrames, unsigned int cols, unsigned int rows,
-    float tempoPorFrame, float dt,
-    float& tempoAcumulado, int& indexFrameAtual)
+    int numFrames, float dt,
+    float& tempoAcumulado, int& indexFrameAtual,
+    unsigned int cols, unsigned int rows, float tempoPorFrame)
 {
     if (numFrames <= 0 || cols <= 0 || rows <= 0) return;
     const sf::Texture* textura = sprite.getTexture();
     if (!textura) return;
 
-    const int frameW = textura->getSize().x / cols;
-    const int frameH = textura->getSize().y / rows;
+    if (indexFrameAtual >= numFrames) {
+        indexFrameAtual = 0;
+        tempoAcumulado = 0.0f;
+    }
 
     tempoAcumulado += dt;
     if (tempoAcumulado >= tempoPorFrame) {
         tempoAcumulado = 0.0f;
         indexFrameAtual = (indexFrameAtual + 1) % numFrames;
-
-        const int tu = indexFrameAtual % cols;
-        const int tv = indexFrameAtual / cols;
-
-        rectAtual.left = tu * frameW;
-        rectAtual.top = tv * frameH;
-        rectAtual.width = frameW;
-        rectAtual.height = frameH;
-
-        sprite.setTextureRect(rectAtual);
     }
+
+    const int frameW = textura->getSize().x / cols;
+    const int frameH = textura->getSize().y / rows;
+
+    int colunaAtual = indexFrameAtual % rows;
+    int linhaAtual = indexFrameAtual / rows;
+
+    rectAtual.width = frameW;
+    rectAtual.height = frameH;
+    rectAtual.left = colunaAtual * frameW;
+    rectAtual.top = linhaAtual * frameH;
+
+    sprite.setTextureRect(rectAtual);
 }

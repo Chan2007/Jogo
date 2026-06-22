@@ -24,12 +24,15 @@ namespace Entidades {
 
         std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png"); // obtido em: https://www.pinterest.com/pin/550424385709405186/
         if (!arquivosprite.empty()) {
-            if (getTextura().loadFromFile(arquivosprite)) {
+            try {
+                if (!getTextura().loadFromFile(arquivosprite))
+                     throw std::runtime_error("Erro: não foi possível carregar a imagem do projétil em: " + arquivosprite);
+
                 getSprite().setTexture(getTextura());
                 getSprite().setTextureRect(sf::IntRect(0, 0, 96, 91));
             }
-            else {
-                std::cerr << "Erro: não foi possível carregar a imagem do projétil em: " << arquivosprite << std::endl;
+            catch (const std::exception& e) {
+                std::cerr << e.what() << std::endl;
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
@@ -84,4 +87,17 @@ namespace Entidades {
         if (visitor) visitor->colidir(this);
     }
     */
+    Memento* Projetil::salvarMemento() const {
+        return new ProjetilMemento(*this);
+    }
+    void Projetil::restaurarMemento(const Memento* memento) {
+        Entidade::restaurarMemento(memento);
+        const ProjetilMemento* pMemento = dynamic_cast<const ProjetilMemento*>(memento);
+        if (pMemento) {
+            dano = pMemento->danoMemento;
+            ativo = pMemento->ativoMemento;
+            velocidade = pMemento->velocidadeMemento;
+            doJogador = pMemento->doJogadorMemento;
+        }
+    }
 }

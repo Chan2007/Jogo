@@ -12,19 +12,33 @@ namespace Personagens {
     class Jogador;
 }
 
-class Minion : public Personagens::Inimigo {
-    private:
-        float raio;
-    public:
-        Minion();
-        ~Minion();
-        void danificar(Personagens::Jogador* J);
+namespace Personagens {
+    class Minion : public Personagens::Inimigo {
+        private:
+            float raio;
+            class MinionMemento : public InimigoMemento {
+                private:
+                    int raioMemento;
+                    MinionMemento(const Minion& m) : InimigoMemento(m), raioMemento(m.raio) {}
 
-        sf::FloatRect getTamanho() const;
-        void executar();
-        void salvar();
-        float getRaio() { return raio; }
-};
+                    ~MinionMemento() {}
+                    friend class Minion; // Permite ao pai acessar os dados privados
+            };
+        public:
+            Minion();
+            ~Minion();
+
+            Memento* salvarMemento() const;
+            void restaurarMemento(const Memento *memento);
+
+            void executar();
+            void salvar();
+            void danificar(Jogador* J);
+
+            sf::FloatRect getTamanho() const;
+            float getRaio() { return raio; }
+    };
+}
 
 
 #endif //JOGO_INIMIGO_FACIL_H

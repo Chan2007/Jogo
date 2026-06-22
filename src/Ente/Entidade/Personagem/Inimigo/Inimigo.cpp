@@ -73,4 +73,26 @@ namespace Personagens {
                 << interagindo << ' ';
         }
     }
+    Memento* Inimigo::salvarMemento() const  {
+        return new InimigoMemento(*this);
+    }
+
+    void Inimigo::restaurarMemento(const Memento* memento) {
+        if (!memento) return;
+        Personagem::restaurarMemento(memento);
+
+        const InimigoMemento* pMemento = dynamic_cast<const InimigoMemento*>(memento);
+        if (pMemento) {
+            nivelMaldade = pMemento->nivelMaldadeMemento;
+            ataque = pMemento->ataqueMemento;
+            tempoUltimoAtaque = pMemento->tempoUltimoAtaqueMemento;
+            cooldownAtaque = pMemento->cooldownAtaqueMemento;
+            alcancePerseguicao = pMemento->alcancePerseguicaoMemento;
+            direcaoPatrulha = pMemento->direcaoPatrulhaMemento;
+            deslocamentoPatrulha = pMemento->deslocamentoPatrulhaMemento;
+            limiteDeslocamento = pMemento->limiteDeslocamentoMemento;
+            elite = pMemento->eliteMemento;
+            interagindo = pMemento->interagindoMemento;
+        }
+    }
 }

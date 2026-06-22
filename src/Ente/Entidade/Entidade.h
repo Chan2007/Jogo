@@ -7,6 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Ente/Ente.h"
+#include "../../Gerenciador/Gerenciador_Estado/Memento.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Listas/ListaEntidades.h"
@@ -34,7 +35,6 @@ namespace Entidades {
         private:
             sf::Sprite sprite;
             sf::Texture textura;
-            static Listas::ListaEntidades* listaEntidades;
             bool colisao;
             std::string nome;
             bool vigente;
@@ -44,6 +44,27 @@ namespace Entidades {
             Gerenciadores::Gerenciador_Colisao* gerenciadorColisao;
             Gerenciadores::Gerenciador_Gravidade& gerenciadorGravidade;
             void salvarDataBuffer();
+
+            class EntidadeMemento : public EnteMemento {
+                private:
+                    std::ostream* bufferMemento;
+                    sf::Sprite spriteMemento;
+                    sf::Texture texturaMemento;
+                    bool colisaoMemento;
+                    std::string nomeMemento;
+                    bool vigenteMemento;
+                protected:
+                    explicit EntidadeMemento(const Entidade& e) : EnteMemento(e),
+                        bufferMemento(e.buffer),
+                        spriteMemento(e.sprite),
+                        texturaMemento(e.textura),
+                        colisaoMemento(e.colisao),
+                        nomeMemento(e.nome),
+                        vigenteMemento(e.vigente) {}
+                    virtual ~EntidadeMemento() {}
+                    friend class Entidade;
+                    friend class Personagens::Jogador;
+            };
         public:
 
             Entidade(const std::string &n);
@@ -56,6 +77,10 @@ namespace Entidades {
             virtual void mover() = 0;
             void setBuffer(std::ostream* stream) { buffer = stream; }
             void salvarEm(std::ostream& output);
+
+
+            virtual Memento* salvarMemento() const;
+            virtual void restaurarMemento(const Memento* memento);
 
             // virtual void aceitar(VisitorColisao* visitor) = 0;
 
@@ -83,7 +108,6 @@ namespace Entidades {
 
             bool estaDisponivel() const {return vigente && !colisao;}
 
-            static Listas::ListaEntidades* getListaEntidades() {return listaEntidades;}
     };
 } // Entidade
 

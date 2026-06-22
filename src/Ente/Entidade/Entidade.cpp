@@ -8,7 +8,7 @@ namespace Entidades {
 
     void Entidade::desenhar() {
         getSprite().setPosition(getPosicao());
-        gerenciadorGrafico->getJanela().draw(getSprite());
+        gerenciadorGrafico->draw(getSprite());
 
         /*sf::RectangleShape hitbox;
         hitbox.setSize(sf::Vector2f(getTamanho().width, getTamanho().height));
@@ -19,11 +19,10 @@ namespace Entidades {
         hitbox.setOutlineThickness(2.0f);            // Espessura da linha
         hitbox.setOrigin(getTamanho().width / 2.f, getTamanho().height / 2.f);
 
-        gerenciadorGrafico->getJanela().draw(hitbox);*/
+        gerenciadorGrafico->draw(hitbox);*/
     }
 
-    Listas::ListaEntidades* Entidade::listaEntidades = NULL;
-    Entidade::Entidade(const std::string &n) : 
+    Entidade::Entidade(const std::string &n) :
         Ente(), 
         sprite(), 
         textura(), 
@@ -61,5 +60,22 @@ namespace Entidades {
         salvar();
 
         buffer = bufferAnterior;
+    }
+
+    Memento* Entidade::salvarMemento() const {
+        return new EntidadeMemento(*this);
+    }
+
+    void Entidade::restaurarMemento(const Memento* memento) {
+        Ente::restaurarMemento(memento);
+        const EntidadeMemento* pMemento = dynamic_cast<const EntidadeMemento*>(memento);
+        if (pMemento) {
+            buffer = pMemento->bufferMemento;
+            sprite = pMemento->spriteMemento;
+            textura = pMemento->texturaMemento;
+            colisao = pMemento->colisaoMemento;
+            nome = pMemento->nomeMemento;
+            vigente = pMemento->vigenteMemento;
+        }
     }
 }

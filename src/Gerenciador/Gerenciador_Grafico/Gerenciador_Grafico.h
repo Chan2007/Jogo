@@ -18,7 +18,7 @@ namespace Gerenciadores {
             sf::RenderWindow window;
 
             Gerenciador_Textura* gerenciadorTextura;
-            Animador animadorFundo;
+            Animador* animador;
             Gerenciador_Grafico();
 
             // Proibir o uso de construtora de cópia e atribuição à cópias
@@ -27,23 +27,41 @@ namespace Gerenciadores {
         public:
             static Gerenciador_Grafico& getGerenciador();
 
-            ~Gerenciador_Grafico() {window.close(); delete gerenciadorTextura;}
-            sf::RenderWindow& getJanela() {return window;}
-            bool isOpen() const {return window.isOpen();}
+            ~Gerenciador_Grafico();
 
-            void setSize(const sf::VideoMode size) {tamanho.width = size.width; tamanho.height = size.height;}
-            void setPosition(const sf::Vector2f pos) {position = pos;}
-            void draw(const sf::RectangleShape& retangulo) {window.draw(retangulo);}
-            void draw() {window.draw(sprite);}
-            void show() {window.display();}
-            void clear() {window.clear();}
-            void close() {window.close();}
+            sf::VideoMode getSize();
+            void setSize(sf::VideoMode size);
+            void setPosition(sf::Vector2f pos);
+            sf::Vector2i getMousePosition() const;
+
+            void draw();
+            void draw(const sf::Drawable& drawable);
+
+            void create(sf::VideoMode mode, std::string title, sf::Uint32 style = sf::Style::Default);
+            void setFramerateLimit(int framerateLimit);
+            bool isOpen() const;
+            void show();
+            void clear();
+            void close();
+
+            bool pollEvent(sf::Event& evento);
+
+            void setView(const sf::View& visao);
+            sf::View getView() const;
+            sf::View getDefaultView() const;
+
+            // FlyWeight
+            sf::Texture* loadTexture(const std::string& caminho);
 
             // Animações (fundo, ‘sprites’, etc)
             void loadAnimation(const std::string &prefix, const std::string &name, int numFrames,
                                int frameStep, unsigned int cols, unsigned int rows);
             void updateAnimation();
             void drawAnimation();
+            void updateAnimationSprite(sf::Sprite& Sprite, sf::IntRect& rectAtual,
+                                 int numFrames, float dt,
+                                 float& tempoAcumulado, int& indexFrameAtual,
+                                 unsigned int cols, unsigned int rows, float tempoPorFrame);
 
     };
 } // Gerenciador

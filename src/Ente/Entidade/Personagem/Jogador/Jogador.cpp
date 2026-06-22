@@ -3,18 +3,22 @@
 
 #include <iostream>
 
+#include "jogo.h"
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
+#include "Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Sistema/Fisica/Visitor_Colisao.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
     Jogador::Jogador(sf::Vector2f posicao, sf::Color corBarra) :
-    Personagem(),
-    movendoEsquerda(false), movendoDireita(false),
+    Personagem(), movendoEsquerda(false), movendoDireita(false),
     pulando(false), atacando(false), usandoHabilidade(false),
+    correndo(false), frameHeightAtaque(), frameWidthAtaque(),
+    frameHeightMovimento(), frameWidthMovimento(), frameHeightPulo(),
+    frameWidthPulo(), frameHeightOcioso(), frameWidthOcioso(),
     pontos(0.0f), abates(0), fundoVida(), barraVida(), idJogador(-1)
     {
         velocidadeMax = 300.f;
@@ -35,7 +39,6 @@ namespace Personagens {
     void Jogador::setCampeao(EscolhaCampeao campeao) {
         switch (campeao) {
             case CAMPEAO_NAAFIRI:
-                setNome("Naafiri");
                 setVidaMaxima(620);
                 setVida(620);
                 setPoder(1999);
@@ -46,8 +49,15 @@ namespace Personagens {
                 frameWidth = 230;
                 frameHeight = 120;
                 tempoPorFrame = 0.12f;
-                caminhoArquivoSprite = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png"; // obtido em: https://leagueoflegends.fandom.com/wiki/Category:Naafiri
-                caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_Jump_Sprite_Sheet1.png"; // obtido em: https://leagueoflegends.fandom.com/wiki/Category:Naafiri
+                // -------------------------------------------------------------------------
+                // ATRIBUIÇÃO DE ATIVOS (SPRITES DA NAAFIRI)
+                // Imagens, ícones e sprites obtidos via League of Legends Wiki (Fandom).
+                // Propriedade original: © Riot Games, Inc.
+                // Uso estritamente acadêmico, educacional e não comercial.
+                // -------------------------------------------------------------------------
+
+                caminhoArquivoSpriteOcioso = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
+                caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
                 break;
             default:
                 setNome("Campeao Generico");
@@ -60,32 +70,38 @@ namespace Personagens {
                 tempoPorFrame = 0.1f;
                 break;
         }
-        if (!caminhoArquivoSprite.empty()) {
+        if (!caminhoArquivoSpriteOcioso.empty()) {
 
-            Encontrar_Caminho buscador;
-
-            std::string caminhoReal = buscador.acharDiretorio_Arquivo(caminhoArquivoSprite);
+            std::string caminhoReal = Encontrar_Caminho::acharDiretorio_Arquivo(caminhoArquivoSpriteOcioso);
 
             if (caminhoReal.empty())
-                std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << caminhoArquivoSprite << std::endl;
-            else if (getTextura().loadFromFile(caminhoReal)) {
+                std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << caminhoArquivoSpriteOcioso << std::endl;
+            try {
+                if (!getTextura().loadFromFile(caminhoReal))
+                    throw std::runtime_error("Erro: A textura falhou ao carregar: " + caminhoReal);
+
                 getSprite().setTexture(getTextura());
                 rectAtual = sf::IntRect(0, 0, frameWidth, frameHeight);
                 getSprite().setTextureRect(rectAtual);
             }
-            else
-                std::cerr << "Erro: A textura falhou ao carregar: " << caminhoReal << std::endl;
-        }
-        if (!caminhoArquivoSpritePulo.empty()) {
-            Encontrar_Caminho buscador;
-            std::string caminhoRealPulo = buscador.acharDiretorio_Arquivo(caminhoArquivoSpritePulo);
-            if (!caminhoRealPulo.empty()) {
-                texturaPulo.loadFromFile(caminhoRealPulo);
+            catch (const std::exception& e) {
+                std::cerr << e.what() << std::endl;
             }
         }
-        else {
-            std::cerr << "Erro: Nao foi possivel carregar a textura de: " << getNome() << std::endl;
+        if (!caminhoArquivoSpritePulo.empty()) {
+
+            std::string caminhoRealPulo = Encontrar_Caminho::acharDiretorio_Arquivo(caminhoArquivoSpritePulo);
+            if (caminhoRealPulo.empty())
+                std::cerr << "Erro: Arquivo nao encontrado! Verifique o nome: " << caminhoArquivoSpritePulo << std::endl;
+            try {
+                if (!getTextura().loadFromFile(caminhoRealPulo))
+                    throw std::runtime_error("Erro: A textura falhou ao carregar: " + caminhoRealPulo);
+            }
+            catch (const std::exception& e) {
+                std::cerr << e.what() << std::endl;
+            }
         }
+
         getSprite().setOrigin(static_cast<float>(frameWidth) / 2.0f, static_cast<float>(frameHeight) / 2.0f);
     }
 
@@ -120,6 +136,9 @@ namespace Personagens {
 
                 frameAcumulado -= tempoPorFrame;
             }
+        }
+        else if (estado == static_cast<int>(ESTADO_MORTO)) {
+            Gerenciadores::Gerenciador_Estado::getGerenciador().notificar(Gerenciadores::EVENTO_JOGADOR_MORREU);
         }
         else {
             // Se estiver PARADO (ESTADO_OCIOSO), reseta para o frame inicial
@@ -165,6 +184,7 @@ namespace Personagens {
         // Aplica a força de movimento horizontal
         moverHorizontal(direcaoHorizontal);
 
+        if (correndo) vel.x *= 1.5f;
         posicao.x += vel.x * 0.016f;
 
         if (vel.x > 0.0f)
@@ -191,10 +211,16 @@ namespace Personagens {
     }
     */
     void Jogador::aoApertarTecla(const Gerenciadores::Tecla& evento) {
+        // Se o jogo estiver pausado, o jogador ignora comandos do teclado
+        Jogo* pJogo = Jogo::getJogo();
+        if (evento.acao == "pausar" && evento.pressionada) {
+            if (idJogador == 1 && pJogo) pJogo->solicitarPausa();
+            return;
+        }
+        if (pJogo && pJogo->getEstadoTela() == Jogo::TelaPausa) return;
+
         std::string prefixo = "j" + std::to_string(idJogador) + "_";
-
         if (evento.acao.rfind(prefixo, 0) != 0) return;
-
         std::string acao = evento.acao.substr(prefixo.length());
 
         if (acao == "mover_esquerda") {
@@ -211,21 +237,53 @@ namespace Personagens {
             atacando = evento.pressionada;
         else if (acao == "habilidade")
             usandoHabilidade = evento.pressionada;
+        else if (acao == "correr")
+            correndo = evento.pressionada;
         else if (acao == "acelerar") {
             // Botão RB
         }
         else if (acao == "desacelerar") {
             // Botão LB
         }
+
     }
     void Jogador::desenharBarra() {
-        gerenciadorGrafico->getJanela().draw(fundoVida);
-        gerenciadorGrafico->getJanela().draw(barraVida);
+        gerenciadorGrafico->draw(fundoVida);
+        gerenciadorGrafico->draw(barraVida);
     }
     void Jogador::atualizarBarra() {
         float proporcaoVida = static_cast<float>(getVida()) / static_cast<float>(getVidaMaxima());
         barraVida.setSize(sf::Vector2f(700.0f * proporcaoVida, 50.0f));
     }
+    Memento* Jogador::salvarMemento() const {
+        return new JogadorMemento(*this);
+    }
+
+    void Jogador::restaurarMemento(const Memento* memento) {
+        if (!memento) return;
+        Personagem::restaurarMemento(memento);
+
+        const JogadorMemento* pMemento = dynamic_cast<const JogadorMemento*>(memento);
+        if (pMemento) {
+            movendoEsquerda = pMemento->movendoEsquerdaMemento;
+            movendoDireita  = pMemento->movendoDireitaMemento;
+            pulando = pMemento->pulandoMemento;
+            atacando = pMemento->atacandoMemento;
+            correndo = pMemento->correndoMemento;
+            usandoHabilidade = pMemento->usandoHabilidadeMemento;
+            pontos = pMemento->pontosMemento;
+            abates = pMemento->abatesMemento;
+            idJogador = pMemento->idJogadorMemento;
+            fundoVida = pMemento->fundoVidaMemento;
+            barraVida = pMemento->barraVidaMemento;
+            frameHeightAtaque = pMemento->frameHeightAtaqueMemento;
+            frameHeightMovimento = pMemento->frameHeightMovimentoMemento;
+            frameHeightOcioso = pMemento->frameHeightOciosoMemento;
+            frameHeightPulo = pMemento->frameHeightPuloMemento;
+            frameWidthAtaque = pMemento->frameWidthAtaqueMemento;
+            frameWidthMovimento = pMemento->frameWidthMovimentoMemento;
+            frameWidthOcioso = pMemento->frameWidthOciosoMemento;
+            frameWidthPulo = pMemento->frameWidthPuloMemento;
+        }
+    }
 }
-
-

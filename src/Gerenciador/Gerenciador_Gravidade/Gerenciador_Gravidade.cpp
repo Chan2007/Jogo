@@ -72,9 +72,22 @@ namespace Gerenciadores {
         }
     }
     void Gerenciador_Gravidade::executar() {
+        if (!this) return;
+
         float dt = 0.016f;
-        for (int i = 0; i < static_cast<int>(entidadesAfetadas.size()); ++i)
-            atualizarGravidade(entidadesAfetadas[i], dt);
+
+        try {
+            int tamanho = entidadesAfetadas.size();
+            if (tamanho == 0) return;
+
+            for (int i = 0; i < tamanho; ++i) {
+                if (i < entidadesAfetadas.size() && entidadesAfetadas[i] != nullptr) {
+                    atualizarGravidade(entidadesAfetadas[i], dt);
+                }
+            }
+        } catch (...) {
+            return;
+        }
     }
     void Gerenciador_Gravidade::aoTocarChao(Entidades::Entidade* entidade, const sf::Vector2f& normal) {
         if (!entidade) return;

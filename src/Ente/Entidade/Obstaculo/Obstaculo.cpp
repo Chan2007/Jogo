@@ -27,4 +27,16 @@ namespace Obstaculos {
         }
     }
 
+    Memento* Obstaculo::salvarMemento() const {
+        return new ObstaculoMemento(*this);
+    }
+
+    void Obstaculo::restaurarMemento(const Memento *memento) {
+        Entidade::restaurarMemento(memento);
+        const ObstaculoMemento* pMemento = dynamic_cast<const ObstaculoMemento*>(memento);
+        if (pMemento) {
+            perigoso = pMemento->perigoso;
+        }
+    }
+
 } // Obstaculo

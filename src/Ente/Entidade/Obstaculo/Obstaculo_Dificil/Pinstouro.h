@@ -15,9 +15,22 @@ namespace Obstaculos {
         private:
             float impulso;
             short int danosidade;
+            class PinstouroMemento : public ObstaculoMemento {
+                private:
+                    float impulsoMemento;
+                    short int danosidadeMemento;
+
+                    explicit PinstouroMemento(const Pinstouro& p) : ObstaculoMemento(p),
+                    impulsoMemento(p.impulso), danosidadeMemento(p.danosidade){}
+
+                    friend class Pinstouro; // Permite ao pai acessar os dados privados
+            };
         public:
             Pinstouro();
             ~Pinstouro();
+
+            Memento* salvarMemento() const;
+            void restaurarMemento(const Memento *memento);
 
             void executar();
             void mover() {

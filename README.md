@@ -6,6 +6,9 @@ O projeto foi estruturado utilizando padrões estritos do **C++03 / C++98** e co
 
 ---
 
+## Aviso Legal e Licença
+Este é um projeto acadêmico e sem fins lucrativos. Para detalhes sobre o uso de ativos de terceiros (Riot Games, Itch.io, etc.) e termos de isenção de responsabilidade, consulte os arquivos [LICENSE.txt](./LICENSE.txt) e [DISCLAIMER.txt](./DISCLAIMER.txt).
+
 ## Pré-requisitos Obrigatórios
 
 Certificar-se de ter instalado:
@@ -69,6 +72,7 @@ Certificar-se de ter instalado:
        - Clique no botão de "*Run*" Verde no topo da tela para iniciar o jogo.
 
 
+<!--
 Música de fundo:
 
 - Life in Ruins (The Legend of Zelda: Breath of the Wild)
@@ -82,12 +86,12 @@ Música de fundo:
 - Dawn Winery, Happy Journey, Twilight Serenity, Dusk in Mondstadt (Genshin Impact)
 - Miquella's Haligtree (Elden Ring)
 - Ezio's Family (Assassin's Creed II)
-- 
+
+-->
 
 
 
--||-
-
+<!--
 - Character Creation (Elden Ring)
 - The Only Thing They Fear Is You (DOOM Eternal)
 - Stratospheric, Champion Select Music, Level Up (Worlds 2024) (League of Legends)
@@ -97,6 +101,9 @@ Música de fundo:
 - Aerolite - Alec Justice (LCK 2024) (League of Legends)
 - Champion Select QF T1 vs AL (Worlds 2025) (League of Legends)
 
+-->
+
+<!--
 Chefão:
 
 - Freljord | Music (League of Legends)
@@ -122,3 +129,4 @@ Chefão:
 - Unity - Chris Tilton (Assissin's Creed Unity)
 - Main Theme (Assassin's Creed IV: Black Flag)
 - Main Theme (Assassin's Creed III)
+-->

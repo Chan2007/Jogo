@@ -23,6 +23,12 @@ namespace Listas {
         }
         return false;
     }
+    bool ListaEntidades::removerEntidade(Entidades::Entidade *E) const {
+        if (LEntidade) {
+            return LEntidade->removerInfo(E);
+        }
+        return false;
+    }
 
     void ListaEntidades::limparLista() const {
         if (LEntidade) LEntidade->limpar();

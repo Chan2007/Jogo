@@ -18,6 +18,7 @@ namespace Listas {
             ListaEntidades();
             ~ListaEntidades();
             bool incluirEntidade(Entidades::Entidade *E) const;
+            bool removerEntidade(Entidades::Entidade *E) const;
             void limparLista() const;
             void desenharTodas() const;
             void percorrer() const;

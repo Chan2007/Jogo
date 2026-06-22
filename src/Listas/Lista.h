@@ -81,14 +81,14 @@ class Lista {
 
                 // Compara se dois iteradores estão em posições diferentes.
                 // Bom para criar condições de parada em loops.
-                bool operator!=(const Iterator<tipo>& it) const override {
+                bool operator!=(const Iterator<tipo>& it) const {
                     const IteratorLista* tipoCertoIt = dynamic_cast<const IteratorLista*>(&it);
                     if (tipoCertoIt) return pElemento != tipoCertoIt->pElemento;
 
                     // Se forem de tipos de iteradores diferentes, obviamente são diferentes
                     return true;
                 }
-                bool operator==(const Iterator<tipo>& it) const override {
+                bool operator==(const Iterator<tipo>& it) const {
                     const IteratorLista* tipoCertoIt = dynamic_cast<const IteratorLista*>(&it);
                     if (tipoCertoIt) return pElemento == tipoCertoIt->pElemento;
 
@@ -108,6 +108,8 @@ class Lista {
         ~Lista();
         bool incluirElemento(Elemento* E);
         bool incluirInfo(tipo* i);
+        bool removerInfo(tipo *i);
+
         void limpar();
         IteratorLista getPrimeiro() const { return IteratorLista(pPrimeiro); }
         IteratorLista getUltimo() const { return IteratorLista(pAtual); }
@@ -145,6 +147,28 @@ bool Lista<tipo>::incluirInfo(tipo* i) {
     pElemento->setInfo(i);
     incluirElemento(pElemento);
     return true;
+}
+template<class tipo>
+bool Lista<tipo>::removerInfo(tipo* i) {
+    if (!i) return false;
+    Elemento* atual = pPrimeiro;
+    while (atual) {
+        if (atual->getInfo() == i) {
+            Elemento* anterior = atual->getAnterior();
+            Elemento* proximo = atual->getProximo();
+
+            if (anterior) anterior->setProximo(proximo);
+            else pPrimeiro = proximo;
+
+            if (proximo) proximo->setAnterior(anterior);
+            else pAtual = anterior;
+
+            delete atual;
+            return true;
+        }
+        atual = atual->getProximo();
+    }
+    return false;
 }
 
 template<class tipo>

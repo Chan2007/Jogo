@@ -13,26 +13,23 @@ namespace Personagens {
     enum EstadoCombate {
         ESTADO_OCIOSO = 0,
         ESTADO_MOVIMENTO = 1,
-        ESTADO_COMBATE = 2,
-        ESTADO_MORTO = 3
-    };
-
-    enum EstadoAnimacao {
-        PARADO = 0,
-        ANDANDO = 1,
-        PULANDO = 2,
-        CAINDO = 3,
-        ATACANDO = 4
+        ESTADO_AR = 2,
+        ESTADO_COMBATE = 3,
+        ESTADO_MORTO = 4
     };
 
     class Personagem : public Entidades::Entidade {
-    private:
+    protected:
         sf::Vector2f velocidade;
         sf::Vector2f aceleracao;
-    protected:
-        std::string caminhoArquivoSprite;
+        std::string caminhoArquivoSpriteOcioso;
+        std::string caminhoArquivoSpriteMovimento;
         std::string caminhoArquivoSpritePulo;
-        sf::Texture texturaPulo;
+        std::string caminhoArquivoSpriteAtaque;
+        sf::Texture* texturaOcioso;
+        sf::Texture* texturaMovimento;
+        sf::Texture* texturaPulo;
+        sf::Texture* texturaAtaque;
         sf::IntRect rectAtual;
         sf::Clock clockAnimacao;
         float tempoPorFrame;
@@ -40,6 +37,7 @@ namespace Personagens {
         int indexFrameAtual;
         int totalFramesAnimacao;
         int colunasSpritesheet;
+        int linhasSpritesheet;
         int frameWidth;
         int frameHeight;
 
@@ -54,9 +52,69 @@ namespace Personagens {
         sf::Clock clockDano;
         float tempoDano;
         bool invulneravel;
+        class PersonagemMemento : public EntidadeMemento {
+            private:
+                sf::Vector2f velocidadeMemento;
+                sf::Vector2f aceleracaoMemento;
+                std::string caminhoArquivoSpriteOciosoMemento;
+                std::string caminhoArquivoSpriteMovimentoMemento;
+                std::string caminhoArquivoSpritePuloMemento;
+                std::string caminhoArquivoSpriteAtaqueMemento;
+                sf::Texture* texturaOciosoMemento;
+                sf::Texture* texturaMovimentoMemento;
+                sf::Texture* texturaPuloMemento;
+                sf::Texture* texturaAtaqueMemento;
+                sf::IntRect rectAtualMemento;
+                sf::Clock clockAnimacaoMemento;
+                float tempoPorFrameMemento;
+                float frameAcumuladoMemento;
+                int indexFrameAtualMemento;
+                int totalFramesAnimacaoMemento;
+                int colunasSpritesheetMemento;
+                int linhasSpritesheetMemento;
+                int frameWidthMemento;
+                int frameHeightMemento;
+                float velocidadeMaxMemento;
+                float vidaMemento;
+                float vidaMaximaMemento;
+                float poderMemento;
+                int alcanceAtaqueMemento;
+                float chanceCriticaMemento;
+                float regeneracaoVidaMemento;
+                int estadoMemento;
+                sf::Clock clockDanoMemento;
+                float tempoDanoMemento;
+                bool invulneravelMemento;
+
+            public:
+                // O construtor recebe o Personagem inteiro e repassa para a Entidade base
+                PersonagemMemento(const Personagem& p) : EntidadeMemento(p),
+                velocidadeMemento(p.velocidade), aceleracaoMemento(p.aceleracao),
+                rectAtualMemento(p.rectAtual), tempoPorFrameMemento(p.tempoPorFrame),
+                frameAcumuladoMemento(p.frameAcumulado), indexFrameAtualMemento(p.indexFrameAtual),
+                totalFramesAnimacaoMemento(p.totalFramesAnimacao), colunasSpritesheetMemento(p.colunasSpritesheet),
+                linhasSpritesheetMemento(p.linhasSpritesheet), frameWidthMemento(p.frameWidth),
+                frameHeightMemento(p.frameHeight), velocidadeMaxMemento(p.velocidadeMax),
+                vidaMemento(p.vida), vidaMaximaMemento(p.vidaMaxima), poderMemento(p.poder),
+                alcanceAtaqueMemento(p.alcanceAtaque), chanceCriticaMemento(p.chanceCritica),
+                regeneracaoVidaMemento(p.regeneracaoVida), estadoMemento(p.estado), tempoDanoMemento(p.tempoDano),
+                invulneravelMemento(p.invulneravel), caminhoArquivoSpriteOciosoMemento(p.caminhoArquivoSpriteOcioso),
+                caminhoArquivoSpriteMovimentoMemento(p.caminhoArquivoSpriteMovimento),
+                caminhoArquivoSpritePuloMemento(p.caminhoArquivoSpritePulo),
+                caminhoArquivoSpriteAtaqueMemento(p.caminhoArquivoSpriteAtaque), texturaAtaqueMemento(p.texturaAtaque),
+                texturaMovimentoMemento(p.texturaMovimento), texturaOciosoMemento(p.texturaOcioso),
+                texturaPuloMemento(p.texturaPulo) {}
+
+                virtual ~PersonagemMemento() {}
+
+                friend class Personagem; // Permite ao Personagem ler os dados privados ao restaurar
+            };
     public:
         Personagem();
         virtual ~Personagem();
+
+        virtual Memento* salvarMemento() const;
+        virtual void restaurarMemento(const Memento* memento);
 
         virtual sf::FloatRect getTamanho() const;
         sf::Vector2f getVelocidade() const { return velocidade; }
@@ -81,22 +139,24 @@ namespace Personagens {
             if (ax != NULL) aceleracao.x = *ax;
             if (ay != NULL) aceleracao.y = *ay;
         }
-        int getVida() const { return vida; }
-        int getVidaMaxima() const { return vidaMaxima; }
-        int getPoder() const { return poder; }
+        float getVida() const { return vida; }
+        float getVidaMaxima() const { return vidaMaxima; }
+        float getPoder() const { return poder; }
         int getAlcanceAtaque() const { return alcanceAtaque; }
-        int getChanceCritica() const { return chanceCritica; }
+        float getChanceCritica() const { return chanceCritica; }
         int getEstado() const { return estado; }
+
         bool estaVivo() const { return vida > 0; }
-        void setVidaMaxima(int valor);
-        void setVida(int valor);
+
+        void setVidaMaxima(float valor);
+        void setVida(float valor);
         void setPoder(int valor) { if (valor >= 0) poder = valor; }
         void setAlcanceAtaque(int valor) { if (valor >= 0) alcanceAtaque = valor; }
-        void setChanceCritica(int valor) { chanceCritica = gerar_num_norm(50, 15.0f, 0.0f, 100.0f); }
+        void setChanceCritica(int valor) { chanceCritica = valor; }
         void setRegeneracaoVida(float valor) { regeneracaoVida = (valor < 0.0f) ? 0.0f : valor; }
         void setEstado(EstadoCombate novoEstado) { estado = static_cast<int>(novoEstado); }
-        int receberDano(int dano);
-        int causarDanoBasico() const;
+        float receberDano(float dano);
+        float causarDanoBasico() const;
         void curar(float valor);
         void regenerarVida(float dt);
         void moverHorizontal(float direcao);

@@ -107,33 +107,93 @@ QWidget #phase2SelectPanel {
     border: 1px solid transparent;
 }
 
-#mainMenuPanel MenuButton,
-#settingsPanel MenuButton,
-#loadGamePanel MenuButton,
-#rankingPanel MenuButton,
-#phase1SelectPanel MenuButton,
-#phase2SelectPanel MenuButton {
-    font-family: "Segoe UI", "Arial", "Helvetica";
-    font-size: 25px;
-    font-weight: 900;
-    color: transparent;
+/* ── MenuButton: layout e espaçamento ─────────────────────────────────────
+   NOTA: font-family/font-size/font-weight/text-align NÃO chegam ao
+   QPainter::drawText() do paintEvent customizado do MenuButton.
+   A fonte é controlada pela propriedade <font> inline no .ui (que o Qt
+   passa para painter.font() antes do paintEvent rodar).
+   Aqui ficam apenas as propriedades que o Qt box-model processa:
+   padding, margin, min/max-size e background. ────────────────────────── */
+
+/* Botões do menu principal: padding-left empurra o texto para coincidir
+   com a animação de deslizamento da entrada. */
+#mainMenuPanel MenuButton {
     background-color: transparent;
     padding: 0px 0px 0px 200px;
     margin: 0px;
 }
 
+/* Botões nos painéis secundários (Voltar / Iniciar):
+   padding zerado para o texto não ficar deslocado. */
 #settingsPanel MenuButton,
 #loadGamePanel MenuButton,
 #rankingPanel MenuButton,
 #phase1SelectPanel MenuButton,
 #phase2SelectPanel MenuButton {
+    background-color: transparent;
+    margin: 0px;
+    padding: 0px;
     min-width: 500px;
     min-height: 48px;
     max-height: 64px;
-    text-align: center;
-    padding: 0px;
 }
 
 #mainMenuPanel {
     max-width: 400px;
+}
+
+/* ── Tabela de Ranking ──────────────────────────────────────────────────── */
+
+#rankingTable {
+    background-color: transparent;
+    border: none;
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    font-size: 16px;
+    color: #000000;
+    outline: none;
+}
+
+/* Cabeçalho das colunas */
+#rankingTable QHeaderView::section {
+    background-color: transparent;
+    font-family: "Segoe UI", "Arial", "Helvetica";
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+    border: none;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+    padding: 8px 10px;
+}
+
+/* Linhas alternadas para facilitar a leitura */
+#rankingTable QTableView {
+    alternate-background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Linha selecionada */
+#rankingTable::item:selected {
+    background-color: rgba(0, 0, 0, 0.10);
+    color: #000000;
+}
+
+/* Separador sutil entre linhas */
+#rankingTable::item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    padding: 4px 10px;
+}
+
+/* Scrollbar discreta dentro da tabela */
+#rankingTable QScrollBar:vertical {
+    width: 6px;
+    background: transparent;
+    margin: 0px;
+}
+#rankingTable QScrollBar::handle:vertical {
+    background: rgba(0, 0, 0, 0.20);
+    border-radius: 3px;
+    min-height: 20px;
+}
+#rankingTable QScrollBar::add-line:vertical,
+#rankingTable QScrollBar::sub-line:vertical {
+    height: 0px;
 }

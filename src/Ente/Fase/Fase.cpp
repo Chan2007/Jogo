@@ -29,18 +29,38 @@ namespace Fases {
                    gerenciadorAudio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
                    gerenciadorInput(Gerenciadores::Gerenciador_Input::getGerenciador()) {
         jogo = Jogo::getJogo();
-        tamanhoJanela = gerenciadorGrafico->getJanela().getSize();
+        tamanhoJanela = gerenciadorGrafico->getSize();
         if (!jogo->getCarregandoSave()) {
             criarInimFaceis();
             criarPlataformas();
             criarJogadores();
+        }
+
+        Personagens::Jogador* j1 = jogo->getJogador1();
+        Personagens::Jogador* j2 = jogo->getJogador2();
+        bool multiplayer = jogo->getJogador2Ativo();
+
+        // Insere o jogador 1 nas listas
+        if (j1) {
+            LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(j1));
+            gerenciadorColisao->incluirEntidade(j1);
+            gerenciadorGravidade.aplicarGravidade(j1, true);
+        }
+
+        // Insere o jogador 2 se o multiplayer estiver ativado
+        if (multiplayer && j2) {
+            LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(j2));
+            gerenciadorColisao->incluirEntidade(j2);
+            gerenciadorGravidade.aplicarGravidade(j2, true);
         }
     }
 
     void Fase::criarPlataformas() {
         Obstaculos::Plataforma* chao = new Obstaculos::Plataforma(Obstaculos::Plataforma::CHAO);
         if (chao) {
-            chao->setPosicao(sf::Vector2f(static_cast<float>(tamanhoJanela.x), static_cast<float>(tamanhoJanela.y) - (chao->getTamanho().height)/2.f));
+            chao->setPosicao(sf::Vector2f(
+                static_cast<float>(tamanhoJanela.width),
+                static_cast<float>(tamanhoJanela.height) - (chao->getTamanho().height)/2.f));
 
             LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(chao));
             gerenciadorColisao->incluirEntidade(chao);
@@ -66,11 +86,11 @@ namespace Fases {
             bool posicaoValida = false;
             int tentativas = 0;
             while (!posicaoValida && tentativas < 500) {
-                const int sizex = tamanhoJanela.x - novaPlat->getTamanho().width;
-                const int sizey = tamanhoJanela.y - novaPlat->getTamanho().height - chao->getTamanho().height / 2 - 200;
+                const int sizex = tamanhoJanela.width - novaPlat->getTamanho().width;
+                const int sizey = tamanhoJanela.height - novaPlat->getTamanho().height - chao->getTamanho().height / 2 - 200;
                 novaPlat->getSprite().setPosition(
-                    static_cast<int>(gerar_num_binom(0, tamanhoJanela.x)) % sizex + novaPlat->getTamanho().width / 2,
-                    static_cast<int>(gerar_num_binom(0, tamanhoJanela.x)) % sizey + novaPlat->getTamanho().height / 2 + 200
+                    static_cast<int>(gerar_num_binom(0, tamanhoJanela.width)) % sizex + novaPlat->getTamanho().width / 2,
+                    static_cast<int>(gerar_num_binom(0, tamanhoJanela.width)) % sizey + novaPlat->getTamanho().height / 2 + 200
                 );
 
                 sf::FloatRect hitboxExpandida = novaPlat->getSprite().getGlobalBounds();
@@ -93,19 +113,19 @@ namespace Fases {
     }
 
     Fase::~Fase() {
-        // Esvazia e deleta os ponteiros de entidades acumulados na fase
-        // LEntidades.limparLista();
-        // Limpa as referências de ponteiros nos gerenciadores para o próximo estado
+        Personagens::Jogador* j1 = jogo->getJogador1();
+        Personagens::Jogador* j2 = jogo->getJogador2();
+        if (j1) LEntidades.removerEntidade(static_cast<Entidades::Entidade*>(j1));
+        if (j2) LEntidades.removerEntidade(static_cast<Entidades::Entidade*>(j2));
+
         gerenciadorColisao->limpar();
         gerenciadorGravidade.limpar();
+
         gerenciadorInput.desinscrever(jogo->getJogador1());
         if (jogo->getJogador2())
             gerenciadorInput.desinscrever(jogo->getJogador2());
         LEntidades.limparLista();
 
-        jogo->setJogador1(NULL);
-        jogo->setJogador2(NULL);
-        jogo->setJogador2Ativo(false);
     }
 
     bool Fase::trocarMusica(const int fase) const {
@@ -130,15 +150,13 @@ namespace Fases {
         return true;
     }
     void Fase::criarInimFaceis(){
-
-        Minion* minion = NULL;
-        Entidades::Projetil* tiroInim1 = NULL;
+        Personagens::Minion* minion = NULL;
         sementear();
         const int fator = rand() % 8 + 3;
         for (int i = 1; i <= fator; i++) {
-            minion = new Minion();
+            minion = new Personagens::Minion();
             if (minion) {
-                minion->setPosicao(sf::Vector2f(150 * i, rand() % tamanhoJanela.y));
+                minion->setPosicao(sf::Vector2f(150 * i, rand() % tamanhoJanela.height));
                 gerenciadorColisao->incluirEntidade(minion);
                 gerenciadorGravidade.aplicarGravidade(minion, true);
                 LEntidades.incluirEntidade(static_cast<Entidades::Entidade*>(minion));
@@ -153,8 +171,8 @@ namespace Fases {
         const sf::Vector2f posicaoAtual = entidade->getPosicao();
         const sf::FloatRect tamanho = entidade->getTamanho();
 
-        float limiteLargura = static_cast<float>(tamanhoJanela.x);
-        float limiteAltura = static_cast<float>(tamanhoJanela.y);
+        float limiteLargura = static_cast<float>(tamanhoJanela.width);
+        float limiteAltura = static_cast<float>(tamanhoJanela.height);
 
         sf::Vector2f novaPosicao = posicaoAtual;
         bool colidiuBorda = false;
@@ -203,7 +221,7 @@ namespace Fases {
             jogo->getJogador1()->setCampeao(Personagens::CAMPEAO_NAAFIRI);
             jogo->getJogador1()->setPosicao(sf::Vector2f(
                 (jogo->getJogador1()->getTamanho().width) / 2,
-                tamanhoJanela.y - (jogo->getJogador1()->getTamanho().height) / 2
+                tamanhoJanela.height - (jogo->getJogador1()->getTamanho().height) / 2
                 ));
             std::cout << "Jogador criado: " << jogo->getJogador1()->getNome() << std::endl;
 
@@ -219,7 +237,7 @@ namespace Fases {
             jogo->getJogador2()->setCampeao(Personagens::CAMPEAO_NAAFIRI);
             jogo->getJogador2()->setPosicao(sf::Vector2f(
                 (jogo->getJogador2()->getTamanho().width) * 2,
-                tamanhoJanela.y - (jogo->getJogador2()->getTamanho().height) / 2
+                tamanhoJanela.height - (jogo->getJogador2()->getTamanho().height) / 2
                 ));
             std::cout << "Jogador criado: " << jogo->getJogador2()->getNome() << std::endl;
 
@@ -404,7 +422,6 @@ namespace Fases {
             std::cerr << "Erro: Jogador 1 nao foi carregado do save." << std::endl;
             carregouTudo = false;
         }
-
         arquivo.close();
 
         if (carregouTudo) { std::cout << "Jogo carregado com sucesso." << std::endl; }
@@ -461,7 +478,7 @@ namespace Fases {
         }
 
         else if (tipo == "INIMIGO_FACIL" || tipo == "MINION") {
-            Minion* minion = new Minion();
+            Personagens::Minion* minion = new Personagens::Minion();
 
             if (!lerDadosEntidade(entrada, minion)) {
                 delete minion;
@@ -486,7 +503,7 @@ namespace Fases {
         }
 
         else if (tipo == "INIMIGO_MEDIO" || tipo == "AZULO") {
-            Azulo* azulo = new Azulo();
+            Personagens::Azulo* azulo = new Personagens::Azulo();
 
             if (!lerDadosEntidade(entrada, azulo)) {
                 delete azulo;
@@ -511,7 +528,7 @@ namespace Fases {
         }
 
         else if (tipo == "DRAGAO_ANCIAO") {
-            DragaoAnciao* dragao = new DragaoAnciao();
+            Personagens::DragaoAnciao* dragao = new Personagens::DragaoAnciao();
 
             if (!lerDadosEntidade(entrada, dragao)) {
                 delete dragao;
@@ -551,7 +568,8 @@ namespace Fases {
         }
 
         else if (tipo == "PROJETIL") {
-            /*Entidades::Projetil* projetil = new Entidades::Projetil();
+            /*
+            Entidades::Projetil* projetil = new Entidades::Projetil();
 
             if (!lerDadosEntidade(entrada, projetil)) {
                 delete projetil;
@@ -574,7 +592,8 @@ namespace Fases {
             projetil->setDoJogador(doJogador != 0);
             projetil->setAtivo(ativo != 0);
 
-            registrarEntidade(projetil);*/
+            registrarEntidade(projetil);
+            */
             return true;
         }
 
@@ -625,6 +644,19 @@ namespace Fases {
         }
 
         return false;
+    }
+    Memento* Fase::salvarMemento() const {
+        return new FaseMemento(*this);
+    }
+
+    void Fase::restaurarMemento(const Memento* memento) {
+        Ente::restaurarMemento(memento);
+        const FaseMemento* pMemento = dynamic_cast<const FaseMemento*>(memento);
+        if (pMemento) {
+            LEntidades = pMemento->LEntidadesMemento;
+            tamanhoJanela = pMemento->tamanhoJanelaMemento;
+            diretorio_Audio = pMemento->diretorio_AudioMemento;
+        }
     }
 
 } // Fases

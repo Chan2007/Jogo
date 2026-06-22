@@ -4,6 +4,7 @@
 
 #include "jogo.h"
 #include "Ente/Fase/Fase.h"
+#include "Ente/Fase/Fase.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 
 class Encontrar_Caminho;
@@ -11,12 +12,22 @@ class Encontrar_Caminho;
 namespace Fases {
     class Primeira_Fase: public Fase {
         private:
-            const int maxInimMedios;
-
+            int maxInimMedios;
+            std::string diretorio_Frames_Fase;
             void processarEventos(const sf::Event &evento);
             void desenhar();
 
-            std::string diretorio_Frames_Fase;
+            class Primeira_FaseMemento: public FaseMemento {
+                private:
+                    const int maxInimMediosMemento;
+                    std::string diretorio_Frames_FaseMemento;
+                    explicit Primeira_FaseMemento(const Primeira_Fase& f) :
+                    FaseMemento(f), maxInimMediosMemento(f.maxInimMedios),
+                    diretorio_Frames_FaseMemento(f.diretorio_Frames_Fase) {}
+
+                    ~Primeira_FaseMemento() {}
+                    friend class Primeira_Fase;
+            };
         protected:
 
             void criarObstaculos() {
@@ -32,7 +43,11 @@ namespace Fases {
 
         public:
             Primeira_Fase();
-            ~Primeira_Fase(){};
+            ~Primeira_Fase(){}
+
+            Memento* salvarMemento() const;
+            void restaurarMemento(const Memento *memento);
+
             void executar();
         };
 } // Fases

@@ -18,13 +18,27 @@ namespace Obstaculos {
 	{
 		perigoso = false;
 
-		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png"; // obtido em https://itch.io/
+		// -------------------------------------------------------------------------
+		// ATRIBUIÇÃO DE ATIVOS (ITCH.IO)
+		// free-pixel-art-tiles criado por TotusLotus.
+		// Disponível em: https://totuslotus.itch.io/free-pixel-art-tiles
+		// Utilizado estritamente para fins acadêmicos e educacionais.
+		// -------------------------------------------------------------------------
+
+		std::string arquivoSprite = "/assets/Tiles_pack/Tileset_12.png";
 		arquivoSprite = Encontrar_Caminho::acharDiretorio_Arquivo(arquivoSprite);
 
-		if (arquivoSprite.empty()) { std::cerr << "Erro: Arquivo não encontrado! Verifique o nome: " << arquivoSprite << std::endl; }
-		else if (getTextura().loadFromFile(arquivoSprite)) { getSprite().setTexture(getTextura()); }
-		else { std::cerr << "Erro: A textura falhou ao carregar: " << arquivoSprite << std::endl; }
+		try {
+			if (arquivoSprite.empty())
+				throw std::runtime_error("Erro: Arquivo não encontrado! Verifique o nome: " + arquivoSprite);
+			if (!getTextura().loadFromFile(arquivoSprite))
+				throw std::runtime_error("Erro: A textura falhou ao carregar: " + arquivoSprite);
 
+			getSprite().setTexture(getTextura());
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+		}
 		getSprite().setOrigin(16.f, 8.f * altura);
 		criar(tipo);
 	}
@@ -75,5 +89,16 @@ namespace Obstaculos {
 			(*buffer) << tipoPlataforma << '\n';
 		}
 	}
+	Memento* Plataforma::salvarMemento() const {
+		return new PlataformaMemento(*this);
+	};
+	void Plataforma::restaurarMemento(const Memento *memento) {
+		Obstaculo::restaurarMemento(memento);
 
+		const PlataformaMemento* pMemento = dynamic_cast<const PlataformaMemento*>(memento);
+		if (pMemento) {
+			altura = pMemento->alturaMemento;
+			tipoPlataforma = pMemento->tipoPlataformaMemento;
+		}
+	}
 } // namespace Obstaculos

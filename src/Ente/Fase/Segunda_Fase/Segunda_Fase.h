@@ -10,12 +10,23 @@
 namespace Fases {
     class Segunda_Fase: public Fase {
         private:
-            const int maxChefoes;
+            int maxChefoes;
+            std::string diretorio_Frames_Fase;
 
             void processarEventos(const sf::Event &evento);
             void desenhar();
 
-            std::string diretorio_Frames_Fase;
+            class Segunda_FaseMemento: public FaseMemento {
+                private:
+                    int maxChefoesMemento;
+                    std::string diretorio_Frames_FaseMemento;
+                    explicit Segunda_FaseMemento(const Segunda_Fase& f) :
+                    FaseMemento(f), maxChefoesMemento(f.maxChefoes),
+                    diretorio_Frames_FaseMemento(f.diretorio_Frames_Fase) {}
+
+                    ~Segunda_FaseMemento() {}
+                    friend class Segunda_Fase; // Permite ao pai acessar os dados privados
+            };
         protected:
             void criarObstaculos() {
                 criarObstDificeis();
@@ -28,10 +39,15 @@ namespace Fases {
             void criarCenario();
 
             void criarObstDificeis();
+
             void criarChefoes();
         public:
             Segunda_Fase();
             ~Segunda_Fase();
+
+            Memento *salvarMemento() const;
+            void restaurarMemento(const Memento *memento);
+
             void executar();
 
     };

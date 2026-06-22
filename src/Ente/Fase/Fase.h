@@ -15,6 +15,7 @@
 #include "Gerenciador/Gerenciador_Audio/Gerenciador_Audio.h"
 #include "Listas/ListaEntidades.h"
 
+class Memento;
 class Jogo;
 
 namespace Gerenciadores {
@@ -48,8 +49,8 @@ namespace Fases {
             bool verificarLimitesJanela(Entidades::Entidade *entidade);
         protected:
             Listas::ListaEntidades LEntidades;
-
-            sf::Vector2u tamanhoJanela;
+            sf::VideoMode tamanhoJanela;
+            std::string diretorio_Audio;
 
             virtual void criarObstaculos() = 0;
             virtual void criarInimigos() = 0;
@@ -76,11 +77,28 @@ namespace Fases {
             Gerenciadores::Gerenciador_Colisao* gerenciadorColisao;
             Gerenciadores::Gerenciador_Audio& gerenciadorAudio;
             Gerenciadores::Gerenciador_Input& gerenciadorInput;
-            std::string diretorio_Audio;
+
+
+            class FaseMemento: public EnteMemento {
+                private:
+                    Listas::ListaEntidades LEntidadesMemento;
+                    sf::VideoMode tamanhoJanelaMemento;
+                    std::string diretorio_AudioMemento;
+                protected:
+                    explicit FaseMemento(const Fase& f) : EnteMemento(f),
+                    LEntidadesMemento(f.LEntidades), tamanhoJanelaMemento(f.tamanhoJanela),
+                    diretorio_AudioMemento(f.diretorio_Audio) {}
+                    virtual ~FaseMemento() {}
+                    friend class Fase;
+            };
 
         public:
-            explicit Fase();
+            Fase();
             virtual ~Fase();
+
+            virtual Memento* salvarMemento() const;
+            virtual void restaurarMemento(const Memento* memento);
+
             void setMusica(const bool ligada) const { gerenciadorAudio.ativarMusica(ligada);}
             void setVolume(const float volume) const { gerenciadorAudio.setVolume(volume);}
             bool tocandoMusica() const { return gerenciadorAudio.isPlaying();}

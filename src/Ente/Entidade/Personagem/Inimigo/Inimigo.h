@@ -23,9 +23,37 @@ namespace Personagens {
             bool elite;
             bool interagindo;
             static std::vector<Jogador*> listaJogadores;
+            class InimigoMemento : public PersonagemMemento {
+                private:
+                    int nivelMaldadeMemento;
+                    int ataqueMemento;
+                    float tempoUltimoAtaqueMemento;
+                    float cooldownAtaqueMemento;
+                    float alcancePerseguicaoMemento;
+                    float direcaoPatrulhaMemento;
+                    float deslocamentoPatrulhaMemento;
+                    float limiteDeslocamentoMemento;
+                    bool eliteMemento;
+                    bool interagindoMemento;
+                    static std::vector<Jogador*> listaJogadoresMemento;
+                protected:
+                    InimigoMemento(const Inimigo& i) : PersonagemMemento(i),
+                    nivelMaldadeMemento(i.nivelMaldade), ataqueMemento(i.ataque),
+                    tempoUltimoAtaqueMemento(i.tempoUltimoAtaque), cooldownAtaqueMemento(i.cooldownAtaque),
+                    alcancePerseguicaoMemento(i.alcancePerseguicao), direcaoPatrulhaMemento(i.direcaoPatrulha),
+                    deslocamentoPatrulhaMemento(i.deslocamentoPatrulha),
+                    limiteDeslocamentoMemento(i.limiteDeslocamento), eliteMemento(i.elite),
+                    interagindoMemento(i.interagindo) {}
+
+                    virtual ~InimigoMemento() {}
+                    friend class Inimigo; // Permite ao pai acessar os dados privados
+            };
         public:
             Inimigo();
             ~Inimigo();
+
+            virtual Memento* salvarMemento() const;
+            virtual void restaurarMemento(const Memento* memento);
 
             void setTempoUltimoAtaque(float tempo) { tempoUltimoAtaque = tempo; }
             void setDeslocamentoPatrulha(float deslocamento) { deslocamentoPatrulha = deslocamento; }

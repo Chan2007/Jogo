@@ -6,11 +6,17 @@
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QParallelAnimationGroup>
+#include <QTableWidget>
+#include <QTableWidgetItem>
+#include <QHeaderView>
+#include <QFont>
+#include <algorithm>
 #include "qtmaterialcheckbox.h"
 #include "qtmaterialslider.h"
 #include "qtmaterialtextfield.h"
 #include "qtmaterialautocomplete.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Gerenciador/Gerenciador_Estado/Caretaker.h"
 
 const QStringList Menu::LISTA_CAMPEOES = {
     "NAAFIRI","JHIN","LUX","EVELYNN",
@@ -269,6 +275,54 @@ void Menu::on_backFromLoadButton_clicked() {
 }
 
 void Menu::on_rankingButton_clicked() {
+    static const int LIMITE_RANKING = 10;
+
+    Caretaker caretaker;
+    std::vector<Caretaker::DadosJogadorSalvo> dados = caretaker.carregarDeArquivoTXT("ranking.txt");
+
+    std::sort(dados.begin(), dados.end(), compararPontos);
+
+    if (static_cast<int>(dados.size()) > LIMITE_RANKING)
+        dados.resize(LIMITE_RANKING);
+
+    QTableWidget* tabela = ui->rankingTable;
+    tabela->setRowCount(0);                  // limpa antes de repopular
+    tabela->setColumnCount(3);
+
+    QFont fonteConteudo;
+    fonteConteudo.setFamily("Segoe UI");
+    fonteConteudo.setPointSize(14);
+    tabela->setFont(fonteConteudo);
+
+    QFont fonteCabecalho;
+    fonteCabecalho.setFamily("Segoe UI");
+    fonteCabecalho.setPointSize(14);
+    fonteCabecalho.setBold(true);
+    tabela->horizontalHeader()->setFont(fonteCabecalho);
+
+    tabela->verticalHeader()->setDefaultSectionSize(44);
+    tabela->verticalHeader()->setVisible(false);
+
+    tabela->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    tabela->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    tabela->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+
+    for (int i = 0; i < static_cast<int>(dados.size()); ++i) {
+        tabela->insertRow(i);
+
+        QTableWidgetItem* itemFase = new QTableWidgetItem(QString::number(dados[i].fase));
+        itemFase->setTextAlignment(Qt::AlignCenter);
+        tabela->setItem(i, 0, itemFase);
+
+        QTableWidgetItem* itemNome = new QTableWidgetItem(QString::fromStdString(dados[i].nome));
+        itemNome->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        tabela->setItem(i, 1, itemNome);
+
+        QString textoPontos = QString::number(static_cast<int>(dados[i].pontos));
+        QTableWidgetItem* itemPontos = new QTableWidgetItem(textoPontos);
+        itemPontos->setTextAlignment(Qt::AlignCenter);
+        tabela->setItem(i, 2, itemPontos);
+    }
     animate_Transition(ui->mainPage, ui->rankingPage, true);
     ui->statusLabel->setText("Ranking.");
 }
@@ -405,6 +459,9 @@ Personagens::EscolhaCampeao Menu::randCharacter()
     const int quantidade = sizeof(campeoes) / sizeof(campeoes[0]);
 
     return campeoes[rand() % quantidade];
+}
+bool Menu::compararPontos(const Caretaker::DadosJogadorSalvo& a, const Caretaker::DadosJogadorSalvo& b) {
+    return a.pontos > b.pontos;
 }
 void Menu::launch_Phase(Jogo::EstadoTela fase, QtMaterialTextField* nameInput1,
                         QtMaterialAutoComplete* combo1, QtMaterialTextField* nameInput2,
