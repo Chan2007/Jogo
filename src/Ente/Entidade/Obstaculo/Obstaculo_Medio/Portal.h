@@ -32,9 +32,6 @@ namespace Obstaculos {
             void restaurarMemento(const Memento *memento);
 
             void executar();
-            void mover() {
-                // Não se move
-            };
             void salvar();
 
             float getAltura() { return altura; }

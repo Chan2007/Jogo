@@ -74,7 +74,6 @@ namespace Entidades {
             void desenhar();
             virtual void executar() = 0;
             virtual void salvar() = 0;
-            virtual void mover() = 0;
             void setBuffer(std::ostream* stream) { buffer = stream; }
             void salvarEm(std::ostream& output);
 

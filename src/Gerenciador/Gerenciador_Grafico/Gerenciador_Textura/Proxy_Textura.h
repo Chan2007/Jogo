@@ -22,7 +22,7 @@ namespace Gerenciadores {
         public:
             explicit Proxy_Textura(Gerenciador_Textura* ger);
             ~Proxy_Textura();
-            sf::Texture *getTexture(const std::string &caminho, bool forcarSincrono = false);
+            sf::Texture *getTexture(const std::string &caminho, bool forcar = false);
 
     };
 }
