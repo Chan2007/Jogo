@@ -1,0 +1,50 @@
+name: Build and Upload Coverage
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+
+jobs:
+  coverage:
+    runs-on: windows-2019
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Qt 5.15.2
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: 5.15.2
+          arch: win64_msvc2019_64
+
+      - name: Install OpenCppCoverage
+        shell: powershell
+        run: |
+          choco install opencppcoverage -y
+
+      - name: Configure CMake
+        shell: cmd
+        run: >
+          cmake -S . -B build
+          -G "Visual Studio 16 2019"
+          -A x64
+          -DCMAKE_PREFIX_PATH="%Qt5_DIR%"
+
+      - name: Build
+        shell: cmd
+        run: cmake --build build --config Debug
+
+      - name: Generate Coverage
+        shell: cmd
+        run: >
+          "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe"
+          --export_type=cobertura:build\coverage.xml
+          --timeout 15
+          --
+          build\Debug\Jogo.exe
+
