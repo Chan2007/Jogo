@@ -3,10 +3,10 @@ name: Build and Upload Coverage
 on:
   push:
     branches:
-      - main
-      - master
-
+      - "**"
   pull_request:
+
+  workflow_dispatch:
 
 jobs:
   coverage:
@@ -48,3 +48,8 @@ jobs:
           --
           build\Debug\Jogo.exe
 
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: build/coverage.xml
+          fail_ci_if_error: true
