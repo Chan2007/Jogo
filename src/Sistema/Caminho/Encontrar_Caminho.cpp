@@ -40,3 +40,10 @@ std::string Encontrar_Caminho::acharDiretorio_Arquivo(const std::string &FileDir
     }
     return std::string();
 }
+std::string Encontrar_Caminho::acharDiretorio_Arquivo(const std::string& FileDirectory1, const std::string& FileDirectory2) {
+    std::string resultado = acharDiretorio_Arquivo(FileDirectory1);
+
+    if (!resultado.empty()) return resultado;
+
+    return acharDiretorio_Arquivo(FileDirectory2);
+}

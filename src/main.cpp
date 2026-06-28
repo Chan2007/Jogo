@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Carrega e aplica stylesheet
-    const std::string qssPath = Encontrar_Caminho::acharDiretorio_Arquivo("src/Ente/Menu/qtstyle.qss");
+    const std::string qssPath =
+    Encontrar_Caminho::acharDiretorio_Arquivo("qtstyle.qss", "src/Ente/Menu/qtstyle.qss");
     if (!qssPath.empty()) {
         QFile styleFile(QString::fromStdString(qssPath));
         if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
