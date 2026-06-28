@@ -1,5 +1,8 @@
 name: Build
-
+permissions:
+  contents: read
+  attestations: write
+  id-token: write
 on:
   push:
     branches:
@@ -59,6 +62,10 @@ jobs:
           name: Jogo-${{ matrix.config }}
           path: build/${{ matrix.config }}/
 
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/${{ matrix.config }}/Jogo.exe
       #- name: Generate Coverage
       #  shell: cmd
       #  run: >
