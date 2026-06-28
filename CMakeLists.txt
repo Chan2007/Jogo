@@ -64,6 +64,11 @@ if(MSVC)
     set_target_properties(Jogo PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
 endif()
 
+if(NOT MSVC)
+    target_compile_options(Jogo PRIVATE --coverage -O0 -g)
+    target_link_options(Jogo PRIVATE --coverage)
+endif()
+
 target_link_libraries(Jogo PRIVATE
         # Qt 5
         Qt5::Core
@@ -103,3 +108,4 @@ if(WIN32)
             "$<TARGET_FILE:Jogo>"
     )
 endif()
+

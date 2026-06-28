@@ -44,8 +44,9 @@ jobs:
         shell: cmd
         run: >
           "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe"
+          --sources="%CD%\src"
           --export_type=cobertura:build\coverage.xml
-          --timeout 15
+          --token: ${{ secrets.CODECOV_TOKEN }}
           --
           build\Debug\Jogo.exe
 
