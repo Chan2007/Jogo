@@ -71,6 +71,14 @@ Certificar-se de ter instalado:
        - No menu superior, vá em ***Build > Rebuild 'Jogo'*** (isso fará o *CMake* a copiar as DLLs necessárias para a pasta do executável).
        - Clique no botão de "*Run*" Verde no topo da tela para iniciar o jogo.
 
+## Integração Contínua (CI)
+
+Este projeto utiliza *GitHub Actions* para:
+
+- Compilar automaticamente em Windows.
+- Gerar builds nas configurações **Debug** e **Release**.
+- Disponibilizar os executáveis como artefatos para download após cada compilação bem-sucedida.
+
 - ### Testes de Segurança
 [![CodeScene Average Code Health](https://codescene.io/projects/81933/status-badges/average-code-health)](https://codescene.io/projects/81933)
 [![CodeScene Hotspot Code Health](https://codescene.io/projects/81933/status-badges/hotspot-code-health)](https://codescene.io/projects/81933)

@@ -64,11 +64,6 @@ if(MSVC)
     set_target_properties(Jogo PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
 endif()
 
-if(NOT MSVC)
-    target_compile_options(Jogo PRIVATE --coverage -O0 -g)
-    target_link_options(Jogo PRIVATE --coverage)
-endif()
-
 target_link_libraries(Jogo PRIVATE
         # Qt 5
         Qt5::Core
@@ -106,6 +101,26 @@ if(WIN32)
             "$<$<CONFIG:Debug>:--debug>"
             "$<$<CONFIG:Release>:--release>"
             "$<TARGET_FILE:Jogo>"
+    )
+
+    # Copia o arquivo de estilo do Qt
+    add_custom_command(TARGET Jogo POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/src/Ente/Menu/qtstyle.qss"
+            "$<TARGET_FILE_DIR:Jogo>/qtstyle.qss"
+    )
+
+    # Copia todas as fontes do qt-material-widgets
+    add_custom_command(TARGET Jogo POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/qt-material-widgets/fonts"
+            "$<TARGET_FILE_DIR:Jogo>/fonts"
+    )
+    # Copia todos os assets do jogo
+    add_custom_command(TARGET Jogo POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/assets"
+            "$<TARGET_FILE_DIR:Jogo>/assets"
     )
 endif()
 
