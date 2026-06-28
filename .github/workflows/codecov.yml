@@ -46,12 +46,12 @@ jobs:
           "C:\Program Files\OpenCppCoverage\OpenCppCoverage.exe"
           --sources="%CD%\src"
           --export_type=cobertura:build\coverage.xml
-          --token: ${{ secrets.CODECOV_TOKEN }}
           --
           build\Debug\Jogo.exe
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: build/coverage.xml
           fail_ci_if_error: true
