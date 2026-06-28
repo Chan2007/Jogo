@@ -1,6 +1,6 @@
 
 
-Este é um projeto desenvolvido em C++ que integra a interface gráfica do **Qt 5** (para menus, configurações e telas de interface) com a biblioteca de jogos **SFML 2.6.0** (para o motor do jogo, renderização e áudio).
+Este é um projeto desenvolvido em C++ e em Windows que integra a interface gráfica do **Qt 5** (para menus, configurações e telas de interface) com a biblioteca de jogos **SFML 2.6.0** (para o motor do jogo, renderização e áudio).
 
 O projeto foi estruturado utilizando padrões estritos do **C++03 / C++98** e com  a biblioteca SFML, facilitando o compartilhamento e execução em diferentes ambientes de desenvolvimento (IDEs) sem a necessidade de reconfigurações complexas de caminhos no sistema.
 
@@ -71,6 +71,11 @@ Certificar-se de ter instalado:
        - No menu superior, vá em ***Build > Rebuild 'Jogo'*** (isso fará o *CMake* a copiar as DLLs necessárias para a pasta do executável).
        - Clique no botão de "*Run*" Verde no topo da tela para iniciar o jogo.
 
+- ### Testes de Segurança
+[![CodeScene Average Code Health](https://codescene.io/projects/81933/status-badges/average-code-health)](https://codescene.io/projects/81933)
+[![CodeScene Hotspot Code Health](https://codescene.io/projects/81933/status-badges/hotspot-code-health)](https://codescene.io/projects/81933)
+[![CodeScene System Mastery](https://codescene.io/projects/81933/status-badges/system-mastery)](https://codescene.io/projects/81933)
+[![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/81933)
 
 <!--
 Música de fundo:
