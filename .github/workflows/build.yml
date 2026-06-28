@@ -25,6 +25,11 @@ jobs:
           version: 5.15.2
           arch: win64_msvc2019_64
 
+      #- name: Install OpenCppCoverage
+      #  shell: powershell
+      #  run: |
+      #    choco install opencppcoverage -y
+
       - name: Configure CMake
         shell: cmd
         run: >

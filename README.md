@@ -77,6 +77,8 @@ Certificar-se de ter instalado:
 [![CodeScene System Mastery](https://codescene.io/projects/81933/status-badges/system-mastery)](https://codescene.io/projects/81933)
 [![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/81933)
 
+[![Build](https://github.com/Chan2007/Jogo/actions/workflows/actions.yml/badge.svg?branch=teste-github-actions)](.github/workflows/build.yml)
+
 <!--
 Música de fundo:
 
