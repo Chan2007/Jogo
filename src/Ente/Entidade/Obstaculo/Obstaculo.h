@@ -30,8 +30,8 @@ namespace Obstaculos {
             Obstaculo();
             virtual ~Obstaculo();
 
-            virtual Memento* salvarMemento() const;
-            virtual void restaurarMemento(const Memento* memento);
+            virtual Gerenciadores::Memento* salvarMemento() const;
+            virtual void restaurarMemento(const Gerenciadores::Memento* memento);
 
             virtual void executar() = 0;
             virtual void salvar() = 0;

@@ -36,8 +36,8 @@ namespace Obstaculos{
                 Plataforma(TipoPlataforma tipo = NORMAL1);
                 ~Plataforma();
 
-                Memento* salvarMemento() const;
-                void restaurarMemento(const Memento* memento);
+                Gerenciadores::Memento* salvarMemento() const;
+                void restaurarMemento(const Gerenciadores::Memento* memento);
 
                 void criar(TipoPlataforma tipo = NORMAL1);
                 void executar(){};

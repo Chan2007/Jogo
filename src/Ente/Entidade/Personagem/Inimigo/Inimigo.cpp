@@ -6,8 +6,6 @@
 
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Ente/Entidade/Projetil/Projetil.h"
-#include "Sistema/Fisica/Visitor_Colisao.h"
 
 std::vector<Personagens::Jogador*> Personagens::Inimigo::listaJogadores;
 
@@ -23,11 +21,11 @@ namespace Personagens {
         limiteDeslocamento(120.f),
         interagindo(false)
     {
-        setNome("Inimigo");
-        setVidaMaxima(450);
-        setVida(450);
-        setPoder(45);
-        setAlcanceAtaque(175);
+        nome = "Inimigo";
+        alcanceAtaque = 175;
+        vidaMaxima = 450;
+        vida = 450;
+        poder = 45;
     }
 
     Inimigo::~Inimigo() {}
@@ -47,14 +45,14 @@ namespace Personagens {
         direcaoPatrulha *= -1.f;
         deslocamentoPatrulha = 0.f;
 
-        float escalaX = std::abs(getSprite().getScale().x);
-        float escalaY = getSprite().getScale().y;
+        float escalaX = std::abs(sprite.getScale().x);
+        float escalaY = sprite.getScale().y;
 
         // direcaoPatrulha > 0 = indo para direita = inverte X
         if (direcaoPatrulha > 0.f)
-            getSprite().setScale(escalaX, escalaY);
+            sprite.setScale(escalaX, escalaY);
         else
-            getSprite().setScale(-escalaX, escalaY);
+            sprite.setScale(-escalaX, escalaY);
     }
 
     /*
@@ -73,11 +71,11 @@ namespace Personagens {
                 << interagindo << ' ';
         }
     }
-    Memento* Inimigo::salvarMemento() const  {
+    Gerenciadores::Memento* Inimigo::salvarMemento() const  {
         return new InimigoMemento(*this);
     }
 
-    void Inimigo::restaurarMemento(const Memento* memento) {
+    void Inimigo::restaurarMemento(const Gerenciadores::Memento* memento) {
         if (!memento) return;
         Personagem::restaurarMemento(memento);
 

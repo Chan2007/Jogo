@@ -52,16 +52,16 @@ namespace Personagens {
             Inimigo();
             ~Inimigo();
 
-            virtual Memento* salvarMemento() const;
-            virtual void restaurarMemento(const Memento* memento);
+            virtual Gerenciadores::Memento* salvarMemento() const;
+            virtual void restaurarMemento(const Gerenciadores::Memento* memento);
 
             void setTempoUltimoAtaque(float tempo) { tempoUltimoAtaque = tempo; }
             void setDeslocamentoPatrulha(float deslocamento) { deslocamentoPatrulha = deslocamento; }
             void setElite(bool e) { elite = e; }
             void setInteragindo(bool i) { interagindo = i; }
             void setDirecaoPatrulha(float direcao) { direcaoPatrulha = direcao; }
-            float getDirecaoPatrulha() const { return direcaoPatrulha; }
 
+            float getDirecaoPatrulha() const { return direcaoPatrulha; }
             bool estaEmAlcance(const sf::Vector2f& alvo) const;
             void inverterPatrulha();
 

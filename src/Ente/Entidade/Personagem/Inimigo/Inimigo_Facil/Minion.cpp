@@ -5,15 +5,16 @@
 #include "Ente/Entidade/Entidade.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
+#include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
     Minion::Minion() : Inimigo(), raio(200.f) {
         sementear();
 
-        setNome("Minion"),
+        nome = "Minion";
         velocidadeMax = 250.f;
         nivelMaldade = 32;
-        setVida(170);
+        vida = 170;
         alcancePerseguicao = 300;
         alcanceAtaque = 150;
         elite = rand() % 10 < 5;
@@ -61,8 +62,8 @@ namespace Personagens {
 
         if (tempoUltimoAtaque >= cooldownAtaque) {
             if (J && !J->getInvulneravel()) {
-                J->receberDano(causarDanoBasico());
-                std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoBasico() << std::endl;
+                J->receberDano(causarDanoNormal());
+                std::cout << getNome() << " atacou o jogador! Dano causado: " << causarDanoNormal() << std::endl;
             }
             tempoUltimoAtaque = 0.0f;
         }
@@ -120,7 +121,7 @@ namespace Personagens {
         Jogador* alvoMaisProximo = NULL;
         float menorDistancia = -1.f;
 
-        for (size_t i = 0; i < listaJogadores.size(); ++i) {
+        for (int i = 0; i < listaJogadores.size(); ++i) {
             Jogador* j = listaJogadores[i];
 
             if (j != NULL && j->estaVivo()) {
@@ -144,7 +145,7 @@ namespace Personagens {
             float dy = posAlvo.y - posInimigo.y;
 
             // Comportamento de Atacar
-            if (menorDistancia <= getAlcanceAtaque()) {
+            if (menorDistancia <= alcanceAtaque) {
 
                 danificar(alvoMaisProximo);
 
@@ -191,11 +192,11 @@ namespace Personagens {
             (*buffer) << raio << '\n';
         }
     }
-    Memento* Minion::salvarMemento() const  {
+    Gerenciadores::Memento* Minion::salvarMemento() const  {
         return new MinionMemento(*this);
     }
 
-    void Minion::restaurarMemento(const Memento* memento) {
+    void Minion::restaurarMemento(const Gerenciadores::Memento* memento) {
         if (!memento) return;
         Inimigo::restaurarMemento(memento);
 

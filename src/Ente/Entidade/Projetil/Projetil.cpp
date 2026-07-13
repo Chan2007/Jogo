@@ -5,12 +5,9 @@
 #include "Projetil.h"
 
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
-#include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 #include <iostream>
 
-#include "Sistema/Fisica/Visitor_Colisao.h"
 
 namespace Entidades {
     Projetil::Projetil() :
@@ -20,7 +17,7 @@ namespace Entidades {
         doJogador(false)
     {
         setVelocidade(velocidade);
-        setPosicao(sf::Vector2f(0.f, 1080.f));
+        sprite.setPosition(sf::Vector2f(0.f, 1080.f));
 
         std::string arquivosprite = Encontrar_Caminho::acharDiretorio_Arquivo("assets/sprites/spritesheets/Inimigos/projetilinimigo2.png"); // obtido em: https://www.pinterest.com/pin/550424385709405186/
         if (!arquivosprite.empty()) {
@@ -36,7 +33,7 @@ namespace Entidades {
             }
         }
         getSprite().setOrigin(96.f / 2.f, 91.f / 2.f);
-        getSprite().setScale(0.15f, 0.15f);
+        getSprite().setScale(0.05f, 0.05f);
     }
 
     Projetil::~Projetil() {}
@@ -47,7 +44,7 @@ namespace Entidades {
             sf::Vector2f posicao = getPosicao();
             posicao.x += velocidade.x * (dt + 0.02);
             posicao.y += velocidade.y * dt;
-            setPosicao(posicao);
+            sprite.setPosition(posicao);
         }
     }
 
@@ -72,7 +69,7 @@ namespace Entidades {
     }
 
     sf::FloatRect Projetil::getTamanho() const {
-        sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
+        sf::FloatRect caixaImagem = sprite.getGlobalBounds();
         float largura = 90.f;
         float altura = 70.f;
         return sf::FloatRect(
@@ -87,10 +84,10 @@ namespace Entidades {
         if (visitor) visitor->colidir(this);
     }
     */
-    Memento* Projetil::salvarMemento() const {
+    Gerenciadores::Memento* Projetil::salvarMemento() const {
         return new ProjetilMemento(*this);
     }
-    void Projetil::restaurarMemento(const Memento* memento) {
+    void Projetil::restaurarMemento(const Gerenciadores::Memento* memento) {
         Entidade::restaurarMemento(memento);
         const ProjetilMemento* pMemento = dynamic_cast<const ProjetilMemento*>(memento);
         if (pMemento) {

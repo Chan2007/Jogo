@@ -13,6 +13,8 @@
 #include "Sistema/Fisica/Visitor_Colisao_Jogador.h"
 #include <iostream>
 
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
+
 namespace Gerenciadores {
     class Observer_Colisao;
 }

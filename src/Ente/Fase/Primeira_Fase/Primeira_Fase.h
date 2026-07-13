@@ -42,11 +42,12 @@ namespace Fases {
             void criarObstMedios();
 
         public:
-            Primeira_Fase();
+            Primeira_Fase(Jogo* pJogo,  const std::string& nomeJ1 = "", const QString& campeaoJ1 = "",
+                          const std::string& nomeJ2 = "", const QString& campeaoJ2 = "", bool jogador2Ativo = false);
             ~Primeira_Fase(){}
 
-            Memento* salvarMemento() const;
-            void restaurarMemento(const Memento *memento);
+            Gerenciadores::Memento* salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento *memento);
 
             void executar();
         };

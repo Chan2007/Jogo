@@ -3,9 +3,8 @@
 
 #include <string>
 
+#include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Azulo.h"
 #include "Ente/Fase/Fase.h"
-#include "Gerenciador/Gerenciador_Estado/Caretaker.h"
-
 
 class Pausa;
 
@@ -15,32 +14,25 @@ namespace Fases {
 
 namespace Gerenciadores {
     class Gerenciador_Estado;
-    class Gerenciador_Gravidade;
 }
 
-class Jogo {
+class Jogo: public Gerenciadores::Observador_Input {
     private:
-        static Jogo* jogo;
         Fases::Fase* faseAtual;
-        Caretaker* zelador;
         Pausa* telaPausa;
 
-        Personagens::Jogador* jogador1;
-        Personagens::Jogador* jogador2;
         Gerenciadores::Gerenciador_Textura gerenciadorTextura;
         Gerenciadores::Gerenciador_Audio& gerenciadorAudio;
         Gerenciadores::Gerenciador_Grafico& gerenciadorGrafico;
         Gerenciadores::Gerenciador_Estado& gerenciadorEstado;
-
-        sf::Clock relogio;
+        Gerenciadores::Gerenciador_Input& gerenciadorInput;
 
         sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 
-        bool multiplayer;
         static bool inicializado;
         bool musicaLigada;
         bool carregandoSave;
-        Jogo();
+
     public:
         enum EstadoTela {
             TelaMenu,
@@ -48,34 +40,20 @@ class Jogo {
             TelaFase2,
             TelaPausa
         };
-        static Jogo* getJogo() {
-            if (!jogo) jogo = new Jogo();
-            return jogo;
-        }
+        EstadoTela estadoTela;
+        EstadoTela telaAnterior;
+
         EstadoTela getEstadoTela() const { return estadoTela; }
+        Jogo();
         ~Jogo();
 
         void inicializar();
-        void mudarEstado(EstadoTela novoEstado);
-
+        void mudarEstado(EstadoTela novoEstado, const std::string& nomeJ1 = "", const QString& campeaoJ1 = "",
+                         const std::string& nomeJ2 = "", const QString& campeaoJ2 = "", bool multiplayer = false);
         void setMusica(bool ligada);
         void setVolume(float volume) const;
 
-        void setJogador1(Personagens::Jogador* j1) {jogador1 = j1;}
-        void setJogador2(Personagens::Jogador* j2) {jogador2 = j2;}
-        void setJogador2Ativo(bool ativo) {
-            if (ativo) multiplayer = true;
-            else multiplayer = false;
-        }
-        int getJogador2Ativo() const {
-            return multiplayer;
-        }
-        Personagens::Jogador* getJogador1() const { return jogador1; }
-        Personagens::Jogador* getJogador2() const { return jogador2; }
-
-        static bool estaAberto() {
-            return inicializado && Gerenciadores::Gerenciador_Grafico::getGerenciador().isOpen();
-        }
+        static bool estaAberto() { return inicializado && Gerenciadores::Gerenciador_Grafico::getGerenciador().isOpen(); }
         void executar();
 
         bool carregarJogo(const std::string& caminho);
@@ -83,13 +61,10 @@ class Jogo {
 
         void setCarregandoSave(bool carregando) { carregandoSave = carregando; }
         bool getCarregandoSave() const { return carregandoSave; }
-        void conferirJogadores();
-        void solicitarPausa();
-        void processarCliqueBotaoPausa(int indice);
 
-    private:
-        EstadoTela estadoTela;
-        EstadoTela telaAnterior;
+        void gerenciarPausa();
+        void onClickPausa(int indice);
+        void aoApertarTecla(const Gerenciadores::Tecla& evento);
 };
 
 #endif // JOGO_H

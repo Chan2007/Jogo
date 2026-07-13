@@ -6,12 +6,14 @@
 #define JOGO_MEMENTO_H
 #include <fstream>
 #include <string>
-class Memento {
-public:
-    virtual ~Memento() {};
-    virtual void gravarNoArquivo(std::ofstream& arquivo, int fase) const {}
+namespace Gerenciadores {
+    class Memento {
+        public:
+            virtual ~Memento() {};
+            virtual void gravarNoArquivo(std::ofstream& arquivo, int fase) const {}
 
-    virtual std::string getTipo() const { return ""; }
-};
+            virtual std::string getTipo() const { return ""; }
+    };
+}
 
 #endif //JOGO_MEMENTO_H

@@ -84,14 +84,14 @@ namespace Personagens {
             vida = valor;
         if (vida <= 0) {
             estado = static_cast<int>(ESTADO_MORTO);
-            setVigente(false);
+            vigente = false;
         }
         
     }
 
     float Personagem::receberDano(float dano) {
         if (dano <= 0 || !estaVivo()) return 0;
-        setVida(vida - dano);
+        vida -= dano;
         std::cout << getNome() << " recebeu " << dano << " de dano. Vida: " << vida << std::endl;
         getSprite().setColor(sf::Color(255, 80, 80, 255));
         if (vida <= 0) estado = static_cast<int>(ESTADO_MORTO);
@@ -101,7 +101,7 @@ namespace Personagens {
     }
 
 
-    float Personagem::causarDanoBasico() const {
+    float Personagem::causarDanoNormal() const {
         return rand() % 101 < chanceCritica ? poder * (1 + chanceCritica/100) : poder;
     }
 
@@ -141,11 +141,11 @@ namespace Personagens {
                 << invulneravel << ' ';
         }
     }
-    Memento* Personagem::salvarMemento() const  {
+    Gerenciadores::Memento* Personagem::salvarMemento() const  {
         return new PersonagemMemento(*this);
     }
 
-    void Personagem::restaurarMemento(const Memento* memento) {
+    void Personagem::restaurarMemento(const Gerenciadores::Memento* memento) {
         if (!memento) return;
         Entidade::restaurarMemento(memento);
 

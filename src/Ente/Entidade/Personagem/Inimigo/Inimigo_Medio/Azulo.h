@@ -5,7 +5,6 @@
 #ifndef JOGO_INIMIGO_MEDIO_H
 #define JOGO_INIMIGO_MEDIO_H
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
-#include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
 
 namespace Personagens {
     class Jogador;
@@ -26,9 +25,9 @@ namespace Personagens {
         public:
             Azulo();
             ~Azulo();
-            Memento* salvarMemento() const;
-            void restaurarMemento(const Memento* memento);
-            void danificar(Personagens::Jogador* J);
+            Gerenciadores::Memento* salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento* memento);
+            void danificar(Jogador* J);
             void executar();
             void salvar();
             sf::FloatRect getTamanho() const;

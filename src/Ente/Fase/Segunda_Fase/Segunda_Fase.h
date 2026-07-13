@@ -42,11 +42,12 @@ namespace Fases {
 
             void criarChefoes();
         public:
-            Segunda_Fase();
+            Segunda_Fase(Jogo* pJogo,  const std::string& nomeJ1 = "", const QString& campeaoJ1 = "",
+                         const std::string& nomeJ2 = "", const QString& campeaoJ2 = "", bool jogador2Ativo = false);
             ~Segunda_Fase();
 
-            Memento *salvarMemento() const;
-            void restaurarMemento(const Memento *memento);
+            Gerenciadores::Memento *salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento *memento);
 
             void executar();
 

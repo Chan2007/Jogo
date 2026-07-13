@@ -8,35 +8,24 @@
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 
-Pausa::Pausa() :
-    Ente(),
-    texturaFundo(),
-    indiceSelecionado(0)
+Pausa::Pausa() : Ente(), texturaFundo(), index(0)
 {
     gerenciadorGrafico = &Gerenciadores::Gerenciador_Grafico::getGerenciador();
 
-    std::string caminhoFundo = "assets/bg_frames/bg_derived.jpg";
-    std::string caminhoRealFundo = Encontrar_Caminho::acharDiretorio_Arquivo(caminhoFundo);
+    std::string caminhoFundo = Encontrar_Caminho::acharDiretorio_Arquivo("assets/bg_frames/bg_derived.jpg");
 
-    if (!caminhoRealFundo.empty()) {
-        if (texturaFundo.loadFromFile(caminhoRealFundo)) { // Carrega direto do arquivo para o objeto da classe
+    if (!caminhoFundo.empty()) {
+        if (texturaFundo.loadFromFile(caminhoFundo))
             spriteFundo.setTexture(texturaFundo);
-
-            spriteFundo.setScale(
-                static_cast<float>(gerenciadorGrafico->getSize().width) / texturaFundo.getSize().x,
-                static_cast<float>(gerenciadorGrafico->getSize().height) / texturaFundo.getSize().y
-            );
-        }
         else
             std::cerr << "Erro fatal: SFML nao conseguiu decodificar a imagem!" << std::endl;
 
     }
-    std::string caminhoFonte = "qt-material-widgets/fonts/Roboto/Roboto-Medium.ttf";
-    std::string caminhoRealFonte = Encontrar_Caminho::acharDiretorio_Arquivo(caminhoFonte);
-    if (caminhoRealFonte.empty())
+    std::string caminhoFonte = Encontrar_Caminho::acharDiretorio_Arquivo("qt-material-widgets/fonts/Roboto/Roboto-Medium.ttf");
+    if (!caminhoFonte.empty())
+        Fonte.loadFromFile(caminhoFonte);
+    else
         std::cerr << "Aviso: Fonte de pausa nao encontrada no caminho padrao." << std::endl;
-
-    fonte.loadFromFile(caminhoRealFonte);
 
     const std::string retomar = "Retomar Jogo";
     const std::string salvar = "Salvar Jogo";
@@ -44,65 +33,59 @@ Pausa::Pausa() :
     textosBotoes.push_back(retomar);
     textosBotoes.push_back(salvar);
     textosBotoes.push_back(voltar);
-    inicializarBotoes();
+    initBotoes();
 }
 
 Pausa::~Pausa() {
-    botoes.clear();
+    Botoes.clear();
+    textosBotoes.clear();
 }
 
-void Pausa::inicializarBotoes() {
-    botoes.clear();
+void Pausa::initBotoes() {
+    Botoes.clear();
     sf::VideoMode tamanhoJanela = gerenciadorGrafico->getSize();
     float startY = tamanhoJanela.height / 2.0f - 50.0f;
 
     for (int i = 0; i < textosBotoes.size(); ++i) {
         sf::Text texto;
-        texto.setFont(fonte);
+        texto.setFont(Fonte);
         texto.setString(textosBotoes[i]);
         texto.setCharacterSize(45);
-
-        // Destaca o item selecionado
-        if (i == indiceSelecionado) {
-            texto.setFillColor(sf::Color::Red);
-            texto.setStyle(sf::Text::Bold);
-        }
-        else
-            texto.setFillColor(sf::Color::Black);
+        texto.setFillColor(sf::Color::Black);
 
         // Centraliza o texto horizontalmente de acordo com o tamanho dele
         sf::FloatRect textRect = texto.getLocalBounds();
         texto.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
         texto.setPosition(sf::Vector2f(tamanhoJanela.width / 2.0f, startY + i * 80.0f));
 
-        botoes.push_back(texto);
+        Botoes.push_back(texto);
     }
 }
 
-void Pausa::atualizarItemSelecionado(int direcao) {
+void Pausa::atualizarItem(int direcao) {
     // Restaura cor do botão anteriormente focado
-    botoes[indiceSelecionado].setFillColor(sf::Color::Black);
-    botoes[indiceSelecionado].setStyle(sf::Text::Regular);
+    Botoes[index].setFillColor(sf::Color::Black);
+    Botoes[index].setStyle(sf::Text::Regular);
 
-    indiceSelecionado += direcao;
-    if (indiceSelecionado < 0) {
-        indiceSelecionado = botoes.size() - 1;
+    index += direcao;
+    if (index < 0) {
+        index = Botoes.size() - 1;
     }
-    else if (indiceSelecionado >= static_cast<int>(botoes.size())) {
-        indiceSelecionado = 0;
+    else if (index >= static_cast<int>(Botoes.size())) {
+        index = 0;
     }
 
     // Aplica destaque ao novo item focado
-    botoes[indiceSelecionado].setFillColor(sf::Color::Red);
-    botoes[indiceSelecionado].setStyle(sf::Text::Bold);
+    Botoes[index].setFillColor(sf::Color::Red);
+    Botoes[index].setStyle(sf::Text::Bold);
 }
 
-int Pausa::cliqueMouse() {
+int Pausa::clicado() {
     if (!gerenciadorGrafico) return -1;
 
-    sf::Vector2i mousePos = gerenciadorGrafico->getMousePosition();
-    for (int i = 0; i < botoes.size(); ++i) {
-        if (botoes[i].getGlobalBounds().contains(mousePos.x,mousePos.y))
+    const sf::Vector2i mousePos = gerenciadorGrafico->getMousePosition();
+    for (int i = 0; i < Botoes.size(); ++i) {
+        if (Botoes[i].getGlobalBounds().contains(mousePos.x,mousePos.y))
             return i;
     }
     return -1; // Nenhum item clicado
@@ -115,12 +98,12 @@ void Pausa::desenhar() {
     gerenciadorGrafico->setView(gerenciadorGrafico->getDefaultView());
     gerenciadorGrafico->draw(spriteFundo);
 
-    for (int i = 0; i < botoes.size(); ++i)
-        gerenciadorGrafico->draw(botoes[i]);
+    for (int i = 0; i < Botoes.size(); ++i)
+        gerenciadorGrafico->draw(Botoes[i]);
 
     gerenciadorGrafico->setView(visaoAnterior);
 }
-void Pausa::ajustarPosicoes() {
+void Pausa::redimensionarTela() {
     if (!gerenciadorGrafico) return;
 
     sf::VideoMode tamanhoJanela = gerenciadorGrafico->getSize();
@@ -131,10 +114,19 @@ void Pausa::ajustarPosicoes() {
     );
 
 
-    float startY = tamanhoJanela.height / 2.0f - (botoes.size() * 80.0f) / 2.0f;
-    for (size_t i = 0; i < botoes.size(); ++i) {
+    float startY = tamanhoJanela.height / 2.0f - (Botoes.size() * 80.0f) / 2.0f;
+    for (int i = 0; i < static_cast<int>(Botoes.size()); ++i) {
         float xPos = tamanhoJanela.width / 2.0f;
         float yPos = startY + i * 80.0f;
-        botoes[i].setPosition(sf::Vector2f(xPos, yPos));
+        Botoes[i].setPosition(sf::Vector2f(xPos, yPos));
     }
 }
+void Pausa::aoApertarTecla(const Gerenciadores::Tecla& evento) {
+    if (!evento.pressionada) return;
+
+    if (evento.acao == "pausa_cima")
+        atualizarItem(-1);
+    else if (evento.acao == "pausa_baixo")
+        atualizarItem(1);
+}
+

@@ -8,6 +8,7 @@
 
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 
 namespace Obstaculos {
 
@@ -34,12 +35,12 @@ namespace Obstaculos {
 			if (!getTextura().loadFromFile(arquivoSprite))
 				throw std::runtime_error("Erro: A textura falhou ao carregar: " + arquivoSprite);
 
-			getSprite().setTexture(getTextura());
+			sprite.setTexture(getTextura());
 		}
 		catch (const std::exception& e) {
 			std::cerr << e.what() << std::endl;
 		}
-		getSprite().setOrigin(16.f, 8.f * altura);
+		sprite.setOrigin(16.f, 8.f * altura);
 		criar(tipo);
 	}
 
@@ -89,10 +90,10 @@ namespace Obstaculos {
 			(*buffer) << tipoPlataforma << '\n';
 		}
 	}
-	Memento* Plataforma::salvarMemento() const {
+	Gerenciadores::Memento* Plataforma::salvarMemento() const {
 		return new PlataformaMemento(*this);
 	};
-	void Plataforma::restaurarMemento(const Memento *memento) {
+	void Plataforma::restaurarMemento(const Gerenciadores::Memento *memento) {
 		Obstaculo::restaurarMemento(memento);
 
 		const PlataformaMemento* pMemento = dynamic_cast<const PlataformaMemento*>(memento);

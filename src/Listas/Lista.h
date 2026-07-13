@@ -38,7 +38,7 @@ class Lista {
 
                 bool operator==(Elemento* E) { return pInfo == E->getInfo(); }
         };
-        class IteratorLista : public Iterator<tipo> {
+        class IteratorLista : public Listas::Iterator<tipo> {
             private:
                 Elemento* pElemento;
             public:
@@ -81,14 +81,14 @@ class Lista {
 
                 // Compara se dois iteradores estão em posições diferentes.
                 // Bom para criar condições de parada em loops.
-                bool operator!=(const Iterator<tipo>& it) const {
+                bool operator!=(const Listas::Iterator<tipo>& it) const {
                     const IteratorLista* tipoCertoIt = dynamic_cast<const IteratorLista*>(&it);
                     if (tipoCertoIt) return pElemento != tipoCertoIt->pElemento;
 
                     // Se forem de tipos de iteradores diferentes, obviamente são diferentes
                     return true;
                 }
-                bool operator==(const Iterator<tipo>& it) const {
+                bool operator==(const Listas::Iterator<tipo>& it) const {
                     const IteratorLista* tipoCertoIt = dynamic_cast<const IteratorLista*>(&it);
                     if (tipoCertoIt) return pElemento == tipoCertoIt->pElemento;
 

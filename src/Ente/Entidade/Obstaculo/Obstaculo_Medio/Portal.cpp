@@ -14,7 +14,7 @@ namespace Obstaculos {
 		altura(2002),
 		largura(1548)
 	{
-		setNome("Portal");
+		nome = "Portal";
 		perigoso = false;
 
 		// -------------------------------------------------------------------------
@@ -76,10 +76,10 @@ namespace Obstaculos {
 			(*buffer) << '\n';
 		}
 	}
-	Memento* Portal::salvarMemento() const {
+	Gerenciadores::Memento* Portal::salvarMemento() const {
 		return new PortalMemento(*this);
 	};
-	void Portal::restaurarMemento(const Memento *memento) {
+	void Portal::restaurarMemento(const Gerenciadores::Memento *memento) {
 		Obstaculo::restaurarMemento(memento);
 
 		const PortalMemento* pMemento = dynamic_cast<const PortalMemento*>(memento);

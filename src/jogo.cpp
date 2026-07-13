@@ -10,74 +10,49 @@
 #include "Ente/Menu/Pausa.h"
 #include "Gerenciador/Gerenciador_Estado/Caretaker.h"
 #include "Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h"
+#include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 
-Jogo* Jogo::jogo = NULL;
 bool Jogo::inicializado = false;
 
-Jogo::Jogo() : faseAtual(NULL),
-               zelador(new Caretaker()),
-               telaPausa(new Pausa()),
-               jogador1(),
-               jogador2(),
-               gerenciadorTextura(),
+Jogo::Jogo() : faseAtual(NULL), telaPausa(new Pausa()), gerenciadorTextura(),
                gerenciadorAudio(Gerenciadores::Gerenciador_Audio::getGerenciador()),
                gerenciadorGrafico(Gerenciadores::Gerenciador_Grafico::getGerenciador()),
                gerenciadorEstado(Gerenciadores::Gerenciador_Estado::getGerenciador()),
-               multiplayer(false),
-               musicaLigada(true),
-               carregandoSave(false),
-               estadoTela(TelaMenu),
-               telaAnterior(TelaMenu)
+               gerenciadorInput(Gerenciadores::Gerenciador_Input::getGerenciador()),
+               musicaLigada(true), carregandoSave(false), estadoTela(TelaMenu), telaAnterior(TelaMenu)
 {
     gerenciadorEstado.setJogo(this);
-    jogador1 = new Personagens::Jogador(sf::Vector2f(50.0, 50.0), sf::Color::Green);
-    jogador2 = new Personagens::Jogador(sf::Vector2f(
-            desktop.width - 800.0, 50), sf::Color::Blue);
-
 }
 
 Jogo::~Jogo() {
-    if (gerenciadorGrafico.isOpen()) {
+    if (gerenciadorGrafico.isOpen())
         gerenciadorGrafico.close();
-    }
     if (faseAtual) {
         delete faseAtual;
         faseAtual = NULL;
-    }
-    if (zelador) {
-        delete zelador;
-        zelador = NULL;
     }
     if (telaPausa) {
         delete telaPausa;
         telaPausa = NULL;
     }
-    if (jogador1) {
-        delete jogador1;
-        jogador1 = NULL;
-    }
-    if (jogador2) {
-        delete jogador2;
-        jogador2 = NULL;
-    }
     inicializado = false;
 }
 
 void Jogo::inicializar() {
-    if (inicializado && gerenciadorGrafico.isOpen()) return;
+    if (estaAberto()) return;
 
     sf::VideoMode videoMode = sf::VideoMode::getDesktopMode();
 
     gerenciadorGrafico.setSize(videoMode);
 
-    gerenciadorGrafico.create(videoMode, "Jogo League++", sf::Style::Default);
+    gerenciadorGrafico.create(videoMode, "League++", sf::Style::Default);
     gerenciadorGrafico.setFramerateLimit(60);
 
     inicializado = true;
-    relogio.restart();
 }
-void Jogo::mudarEstado(const EstadoTela novoEstado) {
-
+void Jogo::mudarEstado(EstadoTela novoEstado, const std::string& nomeJ1, const QString& campeaoJ1,
+                       const std::string& nomeJ2, const QString& campeaoJ2, bool multiplayer)
+{
     switch (novoEstado) {
         case TelaFase1:
             if (estadoTela == TelaPausa)
@@ -87,9 +62,7 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
                     delete faseAtual;
                     faseAtual = NULL;
                 }
-                inicializar();
-                if (!carregandoSave) { conferirJogadores(); }
-                faseAtual = new Fases::Primeira_Fase();
+                faseAtual = new Fases::Primeira_Fase(this, nomeJ1, campeaoJ1, nomeJ2, campeaoJ2, multiplayer);
                 estadoTela = novoEstado;
             }
             break;
@@ -102,9 +75,7 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
                     delete faseAtual;
                     faseAtual = NULL;
                 }
-                inicializar();
-                if (!carregandoSave) { conferirJogadores(); }
-                faseAtual = new Fases::Segunda_Fase();
+                faseAtual = new Fases::Segunda_Fase(this, nomeJ1, campeaoJ1, nomeJ2, campeaoJ2, multiplayer);
                 estadoTela = novoEstado;
             }
             break;
@@ -118,26 +89,15 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
                 delete telaPausa;
                 telaPausa = NULL;
             }
-            if (jogador1) {
-                delete jogador1;
-                jogador1 = NULL;
-            }
-            if (jogador2) {
-                delete jogador2;
-                jogador2 = NULL;
-            }
             estadoTela = TelaMenu;
             gerenciadorGrafico.close();
             break;
 
         case TelaPausa:
-            // Salva qual fase o jogador estava jogando (TelaFase1 ou TelaFase2)
             if (estadoTela == TelaFase1 || estadoTela == TelaFase2 || estadoTela == TelaMenu)
                 telaAnterior = estadoTela;
 
-            if (!telaPausa)
-                telaPausa = new Pausa();
-
+            if (!telaPausa) telaPausa = new Pausa();
             estadoTela = TelaPausa;
             break;
 
@@ -146,50 +106,35 @@ void Jogo::mudarEstado(const EstadoTela novoEstado) {
     }
 }
 void Jogo::executar() {
+    gerenciadorInput.inscrever(this);
     while (gerenciadorGrafico.isOpen()) {
 
         sf::Event evento;
         bool estadoMudouNesteFrame = false;
 
         while (gerenciadorGrafico.pollEvent(evento)) {
-            if (evento.type == sf::Event::Closed) gerenciadorGrafico.close();
-
-            if (evento.type == sf::Event::KeyPressed) {
-                if (evento.key.code == sf::Keyboard::F5) {
-                    salvarJogoAtual("save.txt");
-                    continue;
-                }
-                if (evento.key.code == sf::Keyboard::F9) {
-                    carregarJogo("save.txt");
-                    continue;
-                }
+            if (evento.type == sf::Event::Closed) {
+                gerenciadorGrafico.close();
+                break;
             }
 
-            if (estadoTela == TelaPausa && telaPausa) {
-                if (evento.type == sf::Event::KeyPressed) {
-                    if (evento.key.code == sf::Keyboard::Up) {
-                        telaPausa->atualizarItemSelecionado(-1);
-                    }
-                    else if (evento.key.code == sf::Keyboard::Down) {
-                        telaPausa->atualizarItemSelecionado(1);
-                    }
-                    else if (evento.key.code == sf::Keyboard::Enter) {
-                        processarCliqueBotaoPausa(telaPausa->getIndiceSelecionado());
-                        estadoMudouNesteFrame = true;
-                        break;
-                    }
-                }
-                if (evento.type == sf::Event::MouseButtonPressed && evento.mouseButton.button == sf::Mouse::Left) {
-                    int botaoClicado = telaPausa->cliqueMouse();
-                    if (botaoClicado != -1) {
-                        processarCliqueBotaoPausa(botaoClicado);
-                        estadoMudouNesteFrame = true;
-                        break;
-                    }
-                }
+            EstadoTela estadoAntes = estadoTela;
+            gerenciadorInput.notificarObservadores(evento);
+
+            if (estadoTela != estadoAntes) {
+                estadoMudouNesteFrame = true;
+                break;
             }
-            else if (faseAtual && (estadoTela == TelaFase1 || estadoTela == TelaFase2)) {
-                faseAtual->processarEventos(evento);
+
+            if (estadoTela == TelaPausa && telaPausa && evento.type == sf::Event::MouseButtonPressed &&
+                evento.mouseButton.button == sf::Mouse::Left)
+            {
+                int clicado = telaPausa->clicado();
+                if (clicado != -1) {
+                    onClickPausa(clicado);
+                    estadoMudouNesteFrame = true;
+                    break;
+                }
             }
         }
 
@@ -218,6 +163,7 @@ void Jogo::executar() {
     }
 
     gerenciadorAudio.stop();
+    gerenciadorInput.desinscrever(this);
     inicializado = false;
     if (faseAtual) {
         delete faseAtual;
@@ -305,74 +251,50 @@ bool Jogo::carregarJogo(const std::string& caminho) {
 }
 
 bool Jogo::salvarJogoAtual(const std::string& caminho) {
-    if (!faseAtual) {
-        std::cerr << "Nenhuma fase atual para salvar." << std::endl;
-        return false;
-    }
-
-    int numeroFase = 0;
-
-    if (estadoTela == TelaFase1) {
-        numeroFase = 1;
-    }
-    else if (estadoTela == TelaFase2) {
-        numeroFase = 2;
-    }
-    else if (estadoTela == TelaPausa) {
-        numeroFase = (telaAnterior == TelaFase1) ? 1 : (telaAnterior == TelaFase2) ? 2 : 0;
-    }
-    else {
-        std::cerr << "Estado atual nao e uma fase." << std::endl;
-        return false;
-    }
-
-    // Cria os mementos usando as funções de JogadorMemento
-    if (jogador1)
-        zelador->addMemento(jogador1->salvarMemento());
-
-    if (multiplayer && jogador2)
-        zelador->addMemento(jogador2->salvarMemento());
-
-    zelador->salvarEmArquivoTXT("ranking.txt", numeroFase);
+    if (!faseAtual) return false;
+    int numeroFase = (estadoTela == TelaFase1) ? 1 : 2;
     return faseAtual->salvarJogo(caminho, numeroFase);
 }
-
-void Jogo::conferirJogadores() {
-    if (jogador1 == NULL) {
-        jogador1 = new Personagens::Jogador(sf::Vector2f(50.0f, 50.0f), sf::Color::Green);
-    }
-
-    if (jogador2 == NULL) {
-        jogador2 = new Personagens::Jogador(sf::Vector2f(desktop.width - 800.0f, 50.0f), sf::Color::Blue);
-    }
-}
-void Jogo::solicitarPausa() {
+void Jogo::gerenciarPausa() {
     if (estadoTela == TelaFase1 || estadoTela == TelaFase2) {
         mudarEstado(TelaPausa);
-
-        if (telaPausa != NULL)
-            telaPausa->ajustarPosicoes();
+        if (telaPausa != NULL) {
+            telaPausa->redimensionarTela();
+            gerenciadorInput.inscrever(telaPausa);
+        }
     }
     else if (estadoTela == TelaPausa) {
+        gerenciadorInput.desinscrever(telaPausa);
         mudarEstado(telaAnterior);
     }
 }
-void Jogo::processarCliqueBotaoPausa(int indice) {
+void Jogo::onClickPausa(int indice) {
     switch (indice) {
-        case 0: // Retomar Jogo
-            mudarEstado(telaAnterior);
+        case 0:
+            gerenciarPausa();
             break;
-
-        case 1: // Salvar Jogo
-            if (salvarJogoAtual("save.txt"))
-                std::cout << "Jogo Salvo com Sucesso a partir da Pausa!" << std::endl;
+        case 1:
+            if (salvarJogoAtual("save.txt") )
+                std::cout << "Jogo salvo com sucesso!" << std::endl;
             else
-                std::cerr << "Falha ao salvar o jogo." << std::endl;
+                std::cout << "Erro ao salvar o jogo" << std::endl;
             break;
-        case 2: // Voltar para o Menu
+        case 2:
             mudarEstado(TelaMenu);
             break;
         default:
             break;
     }
+}
+void Jogo::aoApertarTecla(const Gerenciadores::Tecla& evento) {
+    if (!evento.pressionada) return;
+
+    if (evento.acao == "salvar")
+        salvarJogoAtual("save.txt");
+    else if (evento.acao == "carregar")
+        carregarJogo("save.txt");
+    else if (evento.acao == "pausar")
+        gerenciarPausa();
+    else if (evento.acao == "pausa_confirmar" && estadoTela == TelaPausa && telaPausa)
+        onClickPausa(telaPausa->getIndex());
 }

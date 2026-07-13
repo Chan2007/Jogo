@@ -2,36 +2,18 @@
 #include "ui_menu.h"
 
 #include <QString>
-#include <QSizePolicy>
 #include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
-#include <QParallelAnimationGroup>
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QHeaderView>
 #include <QFont>
-#include <algorithm>
 #include "qtmaterialcheckbox.h"
 #include "qtmaterialslider.h"
 #include "qtmaterialtextfield.h"
 #include "qtmaterialautocomplete.h"
-#include "Ente/Entidade/Personagem/Jogador/Jogador.h"
-#include "Gerenciador/Gerenciador_Estado/Caretaker.h"
+#include "Widgets/Ranking.h"
 
-const QStringList Menu::LISTA_CAMPEOES = {
-    "NAAFIRI","JHIN","LUX","EVELYNN",
-    "GWEN",   "PYKE","SETT","SHACO","VIEGO"
-};
 
-Menu::Menu(QWidget *parent): QMainWindow(parent)
-    , ui(new Ui::Menu)
-    , jogo(Jogo::getJogo())
-    , jogoInicializado(false)
-    , telas()
-    , particulas(NULL)
+Menu::Menu(QWidget *parent, Jogo* j): QMainWindow(parent), ui(new Ui::Menu), jogo(j), Stack(), ParticleWidget(NULL)
 {
     ui->setupUi(this);
-
 
     QtMaterialCheckBox *materialMusic = qobject_cast<QtMaterialCheckBox*>(ui->musicCheckBox);
     if (materialMusic) {
@@ -41,39 +23,34 @@ Menu::Menu(QWidget *parent): QMainWindow(parent)
     }
 
     QtMaterialSlider *materialSlider = qobject_cast<QtMaterialSlider*>(ui->volumeSlider);
-    if (materialSlider) {
+    if (materialSlider)
         materialSlider->setThumbColor(QColor(0, 0, 0));
-    }
 
-    init_MainMenu();
-    init_ConfigMenu();
-    telas.setContainer(ui->stackedWidget);
-    telas.setInitialScreen(ui->mainPage);
+    init_InputPlayer();
+    Stack.setContainer(ui->stackedWidget);
+    Stack.setInitialScreen(ui->mainPage);
 
-    ui->stackedWidget->raise();
-    ui->centralwidget->raise();
-
-    particulas = new Widgets::ParticleWidget(ui->mainPage);
-    particulas->lower();
-    particulas->show();
-    update_Particle();
+    ParticleWidget = new Widgets::ParticleWidget(ui->mainPage);
+    ParticleWidget->show();
+    ParticleWidget->lower();
+    ParticleWidget->updateWidget();
     update_Stack();
 
-    ui->musicCheckBox->setChecked(true);
-    ui->volumeSlider->setRange(0, 100);
-    ui->volumeSlider->setValue(50);
     update_VolumeText(ui->volumeSlider->value());
 
     // Animações de entrada dos botões
-    ui->phase1Button->iniciarAnimacaoEntrada(0);
-    ui->settingsButton->iniciarAnimacaoEntrada(80);
-    ui->exitButton->iniciarAnimacaoEntrada(160);
-    ui->backFromSettingsButton->iniciarAnimacaoEntrada(0);
-    ui->phase2Button->iniciarAnimacaoEntrada(80);
-    ui->loadGameButton->iniciarAnimacaoEntrada(160);
-    ui->rankingButton->iniciarAnimacaoEntrada(240);
-    ui->backFromPhase1SelectButton->iniciarAnimacaoEntrada(0);
-    ui->backFromPhase2SelectButton->iniciarAnimacaoEntrada(0);
+    ui->phase1Button->init_Animation(0);
+    ui->phase2Button->init_Animation(0);
+    ui->loadGameButton->init_Animation(0);
+    ui->rankingButton->init_Animation(0);
+    ui->settingsButton->init_Animation(0);
+    ui->exitButton->init_Animation(0);
+
+    ui->backFromSettingsButton->init_Animation(0);
+    ui->backFromPhase1SelectButton->init_Animation(0);
+    ui->backFromPhase2SelectButton->init_Animation(0);
+    ui->backFromLoadButton->init_Animation(0);
+    ui->backFromRankingButton->init_Animation(0);
 
     ui->startPhase1Button->setAutoFillBackground(true);
     ui->startPhase1Button->setForegroundColor(QColor(255, 255, 255));
@@ -90,153 +67,26 @@ Menu::Menu(QWidget *parent): QMainWindow(parent)
 
 Menu::~Menu() { delete ui; }
 
-void Menu::resizeEvent(QResizeEvent *event) {
-    QMainWindow::resizeEvent(event);
-    update_Particle();
-}
 
-void Menu::init_MainMenu() {
-    ui->menuPanelLayout->setAlignment(Qt::AlignTop);
-    ui->heroTitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    ui->heroSubtitleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    ui->statusLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    ui->phase1Button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    ui->settingsButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    ui->exitButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    ui->phase1Button->setMaximumHeight(100);
-    ui->settingsButton->setMaximumHeight(100);
-    ui->exitButton->setMaximumHeight(100);
-}
 
-void Menu::init_ConfigMenu() {
-    // Configurações
-    ui->settingsPageLayout->setAlignment(ui->settingsPanel, Qt::AlignHCenter);
-    ui->settingsTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->settingsSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->sectionTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->backFromSettingsButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    ui->settingsPanel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->settingsPanel->setAutoFillBackground(false);
-    ui->backFromSettingsButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
+void Menu::init_InputPlayer() {
 
-    // Carregar jogo
-    ui->loadGamePanel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->loadGamePanel->setAutoFillBackground(false);
-    ui->loadGamePageLayout->setAlignment(ui->loadGamePanel, Qt::AlignHCenter);
-    ui->loadGameTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->loadGameSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->backFromLoadButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
-
-    // Ranking
-    ui->rankingPanel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->rankingPanel->setAutoFillBackground(false);
-    ui->rankingPageLayout->setAlignment(ui->rankingPanel, Qt::AlignHCenter);
-    ui->rankingTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->rankingSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->backFromRankingButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
-
-    // Fase 1
-    ui->phase1SelectPanel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->phase1SelectPanel->setAutoFillBackground(false);
-    ui->phase1SelectPageLayout->setAlignment(ui->phase1SelectPanel, Qt::AlignHCenter);
-    ui->phase1SelectPageTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->phase1SelectPageSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->backFromPhase1SelectButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
     init_MaterialInputs(
         ui->p1Phase1NameInput, ui->p1Phase1ChampionCombo,
         ui->p2Phase1NameInput, ui->p2Phase1ChampionCombo
     );
-
-    // Fase 2
-    ui->phase2SelectPanel->setAttribute(Qt::WA_TranslucentBackground);
-    ui->phase2SelectPanel->setAutoFillBackground(false);
-    ui->phase2SelectPageLayout->setAlignment(ui->phase2SelectPanel, Qt::AlignHCenter);
-    ui->phase2SelectPageTitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->phase2SelectPageSubtitleLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->backFromPhase2SelectButton->setAlinhamento(Qt::AlignCenter | Qt::AlignVCenter);
     init_MaterialInputs(
         ui->p1Phase2NameInput, ui->p1Phase2ChampionCombo,
         ui->p2Phase2NameInput, ui->p2Phase2ChampionCombo
     );
 }
 
-void Menu::animate_Transition(QWidget *origem, QWidget *destino, bool empilhar) {
-    if (!origem || !destino || origem == destino) return;
-    destino->move(0, 0);
-    destino->resize(ui->stackedWidget->size());
-    if (empilhar) telas.pushScreen(destino);
-    else telas.popScreen();
-
-    destino->setGeometry(ui->centralwidget->rect());
-    destino->show();
-    destino->raise();
-
-    QGraphicsOpacityEffect *efeitoOrigem = qobject_cast<QGraphicsOpacityEffect*>(origem->graphicsEffect());
-    if (!efeitoOrigem) {
-        efeitoOrigem = new QGraphicsOpacityEffect(origem);
-        origem->setGraphicsEffect(efeitoOrigem);
-    }
-
-    QGraphicsOpacityEffect *efeitoDestino = qobject_cast<QGraphicsOpacityEffect*>(destino->graphicsEffect());
-    if (!efeitoDestino) {
-        efeitoDestino = new QGraphicsOpacityEffect(destino);
-        destino->setGraphicsEffect(efeitoDestino);
-    }
-
-    efeitoOrigem->setOpacity(1.0);
-    efeitoDestino->setOpacity(0.0);
-
-    QPropertyAnimation *fadeOut = new QPropertyAnimation(efeitoOrigem, "opacity");
-    fadeOut->setDuration(1000);
-    fadeOut->setStartValue(1.0);
-    fadeOut->setEndValue(0.0);
-
-    QPropertyAnimation *fadeIn = new QPropertyAnimation(efeitoDestino, "opacity");
-    fadeIn->setDuration(1000);
-    fadeIn->setStartValue(0.0);
-    fadeIn->setEndValue(1.0);
-
-    m_destino = destino;
-    m_efeitoOrigem = efeitoOrigem;
-    m_efeitoDestino = efeitoDestino;
-    connect(fadeOut, SIGNAL(finished()), this, SLOT(onFadeOutFinished()));
-
-    fadeOut->start(QAbstractAnimation::DeleteWhenStopped);
-    fadeIn->start(QAbstractAnimation::DeleteWhenStopped);
-
-    ui->centralwidget->update();
-    update();
-}
-
-void Menu::update_Particle() {
-    if (!particulas || !ui || !ui->centralwidget) return;
-
-    const int larguraBase = ui->mainPage->width();
-    const int alturaBase  = ui->mainPage->height();
-    if (larguraBase <= 0 || alturaBase <= 0) return;
-
-    int largura = static_cast<int>(larguraBase * 2.0f / 5.0f);
-    int altura  = static_cast<int>(alturaBase  * 1.5f);
-    if (largura < 1) largura = 1;
-    if (altura  < 1) altura  = 1;
-
-    const int margemDireita   = 0;
-    const int margemInferior  = 0;
-    int x = larguraBase - largura - margemDireita;
-    int y = alturaBase  - altura  - margemInferior;
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-
-    particulas->setGeometry(x, y, largura, altura);
-    particulas->lower();
-}
-
 void Menu::update_Stack() {
-    if (!particulas || !ui || !ui->stackedWidget) return;
+    if (!ParticleWidget || !ui || !ui->stackedWidget) return;
 
     const bool visivel = ui->stackedWidget->currentWidget() == ui->mainPage;
-    particulas->setVisible(visivel);
-    if (visivel) particulas->lower();
+    ParticleWidget->setVisible(visivel);
+    if (visivel) ParticleWidget->lower();
 }
 
 void Menu::update_VolumeText(float value) {
@@ -245,90 +95,43 @@ void Menu::update_VolumeText(float value) {
 }
 
 void Menu::on_phase1Button_clicked() {
-    animate_Transition(ui->mainPage, ui->phase1SelectPage, true);
+    Stack.pushScreen(ui->phase1SelectPage);
     ui->statusLabel->setText("Seleção de personagens — Fase 1");
 }
 
 void Menu::on_phase2Button_clicked() {
-    animate_Transition(ui->mainPage, ui->phase2SelectPage, true);
+    Stack.pushScreen(ui->phase2SelectPage);
     ui->statusLabel->setText("Seleção de personagens — Fase 2");
 }
 
 void Menu::on_settingsButton_clicked() {
-    animate_Transition(ui->mainPage, ui->settingsPage, true);
+    Stack.pushScreen(ui->settingsPage);
     ui->statusLabel->setText("Configurações abertas.");
 }
 
 void Menu::on_backFromSettingsButton_clicked() {
-    animate_Transition(ui->settingsPage, ui->mainPage, false);
+    Stack.popScreen();
     ui->statusLabel->setText("Menu principal");
 }
 
 void Menu::on_loadGameButton_clicked() {
-    animate_Transition(ui->mainPage, ui->loadGamePage, true);
+    Stack.pushScreen(ui->loadGamePage);
     ui->statusLabel->setText("Carregar jogo.");
 }
 
 void Menu::on_backFromLoadButton_clicked() {
-    animate_Transition(ui->loadGamePage, ui->mainPage, false);
+    Stack.popScreen();
     ui->statusLabel->setText("Menu principal");
 }
 
 void Menu::on_rankingButton_clicked() {
-    static const int LIMITE_RANKING = 10;
-
-    Caretaker caretaker;
-    std::vector<Caretaker::DadosJogadorSalvo> dados = caretaker.carregarDeArquivoTXT("ranking.txt");
-
-    std::sort(dados.begin(), dados.end(), compararPontos);
-
-    if (static_cast<int>(dados.size()) > LIMITE_RANKING)
-        dados.resize(LIMITE_RANKING);
-
-    QTableWidget* tabela = ui->rankingTable;
-    tabela->setRowCount(0);                  // limpa antes de repopular
-    tabela->setColumnCount(3);
-
-    QFont fonteConteudo;
-    fonteConteudo.setFamily("Segoe UI");
-    fonteConteudo.setPointSize(14);
-    tabela->setFont(fonteConteudo);
-
-    QFont fonteCabecalho;
-    fonteCabecalho.setFamily("Segoe UI");
-    fonteCabecalho.setPointSize(14);
-    fonteCabecalho.setBold(true);
-    tabela->horizontalHeader()->setFont(fonteCabecalho);
-
-    tabela->verticalHeader()->setDefaultSectionSize(44);
-    tabela->verticalHeader()->setVisible(false);
-
-    tabela->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    tabela->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    tabela->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-
-    for (int i = 0; i < static_cast<int>(dados.size()); ++i) {
-        tabela->insertRow(i);
-
-        QTableWidgetItem* itemFase = new QTableWidgetItem(QString::number(dados[i].fase));
-        itemFase->setTextAlignment(Qt::AlignCenter);
-        tabela->setItem(i, 0, itemFase);
-
-        QTableWidgetItem* itemNome = new QTableWidgetItem(QString::fromStdString(dados[i].nome));
-        itemNome->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        tabela->setItem(i, 1, itemNome);
-
-        QString textoPontos = QString::number(static_cast<int>(dados[i].pontos));
-        QTableWidgetItem* itemPontos = new QTableWidgetItem(textoPontos);
-        itemPontos->setTextAlignment(Qt::AlignCenter);
-        tabela->setItem(i, 2, itemPontos);
-    }
-    animate_Transition(ui->mainPage, ui->rankingPage, true);
+    Widgets::Ranking::loadRanking(ui->rankingTable);
+    Stack.pushScreen(ui->rankingPage);
     ui->statusLabel->setText("Ranking.");
 }
 
 void Menu::on_backFromRankingButton_clicked() {
-    animate_Transition(ui->rankingPage, ui->mainPage, false);
+    Stack.popScreen();
     ui->statusLabel->setText("Menu principal");
 }
 
@@ -336,17 +139,6 @@ void Menu::on_exitButton_clicked() {
     close();
 }
 
-void Menu::onFadeOutFinished() {
-    ui->stackedWidget->setCurrentWidget(m_destino);
-    if (m_efeitoOrigem) {
-        QWidget* origemWidget = qobject_cast<QWidget*>(m_efeitoOrigem->parent());
-        if (origemWidget) origemWidget->setGraphicsEffect(nullptr);
-    }
-    if (m_efeitoDestino) {
-        m_destino->setGraphicsEffect(nullptr);
-    }
-    update_Stack();
-}
 void Menu::on_musicCheckBox_toggled(bool checked) {
     ui->musicCheckBox->setText(checked ? "Ativada" : "Desativada");
 }
@@ -354,6 +146,34 @@ void Menu::on_musicCheckBox_toggled(bool checked) {
 void Menu::on_volumeSlider_valueChanged(int value) {
     update_VolumeText(static_cast<float>(value));
 }
+
+void Menu::on_backFromPhase1SelectButton_clicked() {
+    Stack.popScreen();
+    ui->statusLabel->setText("Menu principal");
+}
+
+void Menu::on_startPhase1Button_clicked() {
+    executar(Jogo::TelaFase1,
+       ui->p1Phase1NameInput, ui->p1Phase1ChampionCombo,
+       ui->p2Phase1NameInput, ui->p2Phase1ChampionCombo);
+}
+
+void Menu::on_backFromPhase2SelectButton_clicked() {
+    Stack.popScreen();
+    ui->statusLabel->setText("Menu principal");
+}
+
+void Menu::on_startPhase2Button_clicked() {
+    executar(Jogo::TelaFase2,
+       ui->p1Phase2NameInput, ui->p1Phase2ChampionCombo,
+       ui->p2Phase2NameInput, ui->p2Phase2ChampionCombo);
+}
+
+// -------------------------------------------------------------------------
+// COMPONENTES DE INTERFACE (QT-MATERIAL-WIDGETS)
+// Baseado no código open-source de laserpants (Licença BSD 3-Clause).
+// Repositório original: https://github.com/laserpants/qt-material-widgets
+// -------------------------------------------------------------------------
 
 void Menu::init_MaterialInputs(QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
                                QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2)
@@ -372,140 +192,25 @@ void Menu::init_MaterialInputs(QtMaterialTextField* nameInput1, QtMaterialAutoCo
     }
 
     // Alimenta o AutoComplete com a lista de campeões disponíveis
-    if (combo1) combo1->setDataSource(LISTA_CAMPEOES);
-    if (combo2) combo2->setDataSource(LISTA_CAMPEOES);
+    if (combo1) combo1->setDataSource(Fases::Fase::CAMPEOES);
+    if (combo2) combo2->setDataSource(Fases::Fase::CAMPEOES);
 }
 
-void Menu::apply_PlayerSetup(QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
-                             QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2)
-{
-    // Jogador 1
-    QString nomeJ1 = nameInput1 ? nameInput1->text().trimmed() : QString();
-    if (nomeJ1.isEmpty()) nomeJ1 = "Anônimo";
-
-    QString textoCombo1 = (combo1 && !combo1->text().trimmed().isEmpty())
-                          ? combo1->text().trimmed()
-                          : LISTA_CAMPEOES.first();
-    Personagens::EscolhaCampeao campeaoJ1 = champChoice(textoCombo1);
-
-    if (jogo->getJogador1()) {
-        jogo->getJogador1()->setNome(nomeJ1.toStdString());
-        jogo->getJogador1()->setCampeao(campeaoJ1);
-    }
-
-    // Jogador 2
-    QString nomeJ2 = nameInput2 ? nameInput2->text().trimmed() : QString();
-    if (!nomeJ2.isEmpty()) {
-        QString textoCombo2 = (combo2 && !combo2->text().trimmed().isEmpty())
-                              ? combo2->text().trimmed()
-                              : LISTA_CAMPEOES.first();
-        Personagens::EscolhaCampeao campeaoJ2 = champChoice(textoCombo2);
-
-        if (jogo->getJogador2()) {
-            jogo->getJogador2()->setNome(nomeJ2.toStdString());
-            jogo->getJogador2()->setCampeao(campeaoJ2);
-            jogo->setJogador2Ativo(true);
-        }
-    } else {
-        jogo->setJogador2Ativo(false);
-    }
-}
-Personagens::EscolhaCampeao Menu::champChoice(const QString& texto) {
-
-    // Mapeia o texto digitado/selecionado de volta para o enum EscolhaCampeao
-    static QMap<QString, Personagens::EscolhaCampeao> tabela;
-
-    if (tabela.isEmpty()) {
-        tabela.insert("NAAFIRI", Personagens::CAMPEAO_NAAFIRI);
-        tabela.insert("JHIN", Personagens::CAMPEAO_JHIN);
-        tabela.insert("LUX", Personagens::CAMPEAO_LUX);
-        tabela.insert("EVELYNN", Personagens::CAMPEAO_EVELYNN);
-        tabela.insert("GWEN", Personagens::CAMPEAO_GWEN);
-        tabela.insert("PYKE", Personagens::CAMPEAO_PYKE);
-        tabela.insert("SETT", Personagens::CAMPEAO_SETT);
-        tabela.insert("SHACO", Personagens::CAMPEAO_SHACO);
-        tabela.insert("VIEGO", Personagens::CAMPEAO_VIEGO);
-    }
-
-    QString chave = texto.toUpper();
-    if (tabela.contains(chave)) return tabela[chave];
-
-    return Personagens::CAMPEAO_NAAFIRI; // Valor padrão caso o texto não corresponda a nenhum campeão
-    // return randCharacter(); -> TODO (Para depois da definição de outros personagens)
-}
-Personagens::EscolhaCampeao Menu::randCharacter()
-{
-    static bool inicializado = false;
-
-    if (!inicializado)
-    {
-        srand((unsigned int)time(NULL));
-        inicializado = true;
-    }
-
-    Personagens::EscolhaCampeao campeoes[] =
-    {
-        Personagens::CAMPEAO_NAAFIRI,
-        Personagens::CAMPEAO_JHIN,
-        Personagens::CAMPEAO_LUX,
-        Personagens::CAMPEAO_EVELYNN,
-        Personagens::CAMPEAO_GWEN,
-        Personagens::CAMPEAO_PYKE,
-        Personagens::CAMPEAO_SETT,
-        Personagens::CAMPEAO_SHACO,
-        Personagens::CAMPEAO_VIEGO
-    };
-
-    const int quantidade = sizeof(campeoes) / sizeof(campeoes[0]);
-
-    return campeoes[rand() % quantidade];
-}
-bool Menu::compararPontos(const Caretaker::DadosJogadorSalvo& a, const Caretaker::DadosJogadorSalvo& b) {
-    return a.pontos > b.pontos;
-}
-void Menu::launch_Phase(Jogo::EstadoTela fase, QtMaterialTextField* nameInput1,
-                        QtMaterialAutoComplete* combo1, QtMaterialTextField* nameInput2,
-                        QtMaterialAutoComplete* combo2)
+void Menu::executar(Jogo::EstadoTela fase, QtMaterialTextField* nameInput1, QtMaterialAutoComplete* combo1,
+               QtMaterialTextField* nameInput2, QtMaterialAutoComplete* combo2)
 {
     if (Jogo::estaAberto()) return;
 
-    jogo->conferirJogadores();
+    std::string nomeJ1 = nameInput1 ? nameInput1->text().trimmed().toStdString() : "";
+    QString campJ1 = combo1 ? combo1->text().trimmed() : "";
 
-    apply_PlayerSetup(nameInput1, combo1, nameInput2, combo2);
+    std::string nomeJ2 = nameInput2 ? nameInput2->text().trimmed().toStdString() : "";
+    QString campJ2 = combo2 ? combo2->text().trimmed() : "";
+    bool j2Ativo = !nomeJ2.empty();
 
     hide();
     jogo->inicializar();
-    jogo->setVolume(static_cast<float>(ui->volumeSlider->value()));
-    jogo->setMusica(ui->musicCheckBox->isChecked());
-    jogo->mudarEstado(fase);
-    jogo->executar(); // bloqueia aqui durante o gameplay
-
-    showNormal();
-    raise();
-    activateWindow();
-    ui->statusLabel->setText("Menu principal");
-}
-
-
-void Menu::on_backFromPhase1SelectButton_clicked() {
-    animate_Transition(ui->phase1SelectPage, ui->mainPage, false);
-    ui->statusLabel->setText("Menu principal");
-}
-
-void Menu::on_startPhase1Button_clicked() {
-    // apply_PlayerSetup decide se é 1 ou 2 jogadores
-    launch_Phase(Jogo::TelaFase1,
-       ui->p1Phase1NameInput, ui->p1Phase1ChampionCombo,
-       ui->p2Phase1NameInput, ui->p2Phase1ChampionCombo);
-}
-
-void Menu::on_backFromPhase2SelectButton_clicked() {
-    animate_Transition(ui->phase2SelectPage, ui->mainPage, false);
-    ui->statusLabel->setText("Menu principal");
-}
-
-void Menu::on_startPhase2Button_clicked() {
-    launch_Phase(Jogo::TelaFase2,
-       ui->p1Phase2NameInput, ui->p1Phase2ChampionCombo,
-       ui->p2Phase2NameInput, ui->p2Phase2ChampionCombo);
+    jogo->mudarEstado(fase, nomeJ1, campJ1, nomeJ2, campJ2, j2Ativo);
+    jogo->executar();
+    this->show();
 }

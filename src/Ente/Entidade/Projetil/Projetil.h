@@ -6,7 +6,6 @@
 #define JOGO_PROJETIL_H
 
 #include "Ente/Entidade/Entidade.h"
-#include "Ente/Entidade/Personagem/Personagem.h"
 
 namespace Entidades {
     class Projetil : public Entidade {
@@ -36,8 +35,8 @@ namespace Entidades {
         void salvar();
         void executar();
 
-        Memento* salvarMemento() const;
-        void restaurarMemento(const Memento* memento);
+        Gerenciadores::Memento* salvarMemento() const;
+        void restaurarMemento(const Gerenciadores::Memento* memento);
 
 
         void setVelocidade(sf::Vector2f v) {
@@ -51,9 +50,8 @@ namespace Entidades {
         sf::Vector2f getVelocidade() const { return velocidade; }
         void setAtivo(bool a) {
             ativo = a;
-            setVigente(ativo);
+            vigente = ativo;
         }
-        bool getAtivo() { return ativo; }
         int getDano() const { return dano; }
         void setDano(int valor) { if (valor >= 0) dano = valor; }
 

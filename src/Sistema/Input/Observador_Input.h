@@ -15,8 +15,20 @@ namespace Gerenciadores {
     };
 
     class Observador_Input {
+        private:
+            std::string lastAcao;
+            bool wasPressionada;
         public:
+            Observador_Input(){};
             virtual ~Observador_Input() {}
+            void processarInput(const Tecla& evento) {
+                // Evita "tempestade de ações"
+                if (evento.acao == lastAcao && evento.pressionada && wasPressionada) return;
+                lastAcao = evento.acao;
+                wasPressionada = evento.pressionada;
+
+                aoApertarTecla(evento);
+            }
             virtual void aoApertarTecla(const Tecla& evento) = 0;
     };
 
