@@ -85,6 +85,15 @@ Este projeto utiliza *GitHub Actions* para:
 [![CodeScene System Mastery](https://codescene.io/projects/81933/status-badges/system-mastery)](https://codescene.io/projects/81933)
 [![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/81933)
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=Chan2007%2FJogo.git&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&theme=dark&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
+ </picture>
+</a>
 [![Build](https://github.com/Chan2007/Jogo/actions/workflows/actions.yml/badge.svg?branch=teste-github-actions)](.github/workflows/build.yml)
 
 <!--
