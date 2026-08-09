@@ -94,6 +94,7 @@ Este projeto utiliza *GitHub Actions* para:
    <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
  </picture>
 </a>
+
 [![Build](https://github.com/Chan2007/Jogo/actions/workflows/actions.yml/badge.svg?branch=teste-github-actions)](.github/workflows/build.yml)
 
 <!--
