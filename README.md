@@ -1,8 +1,8 @@
 
 
-Este é um projeto desenvolvido em C++ que integra a interface gráfica do **Qt 5** (para menus, configurações e telas de interface) com a biblioteca de jogos **SFML 2.6.0** (para o motor do jogo, renderização e áudio).
+Este é um projeto desenvolvido em C++ e em Windows que integra a interface gráfica do **Qt 5** (para menus, configurações e telas de interface) com a biblioteca de jogos **SFML 2.6.0** (para o motor do jogo, renderização e áudio).
 
-O projeto foi estruturado utilizando padrões estritos do **C++03 / C++98** e com  a biblioteca SFML, facilitando o compartilhamento e execução em diferentes ambientes de desenvolvimento (IDEs) sem a necessidade de reconfigurações complexas de caminhos no sistema.
+O projeto foi estruturado utilizando padrões estritos do **C++03** e com  a biblioteca SFML, facilitando o compartilhamento e execução em diferentes ambientes de desenvolvimento (IDEs) sem a necessidade de reconfigurações complexas de caminhos no sistema.
 
 ---
 
@@ -13,16 +13,16 @@ Este é um projeto acadêmico e sem fins lucrativos. Para detalhes sobre o uso d
 
 Certificar-se de ter instalado:
 1. **Compilador MSVC (Microsoft Visual Studio 2019 ou superior):** Com *"Desenvolvimento para desktop com C++"* ativada.
-2. **Qt 5.15 (MSVC 2019 64-bit):** Instalado no diretório padrão (ex: `C:\\Qt\\5.15.19\\msvc2019_64`).
+2. **Qt 5.15.x (MSVC 2019 64-bit):** Instalado no diretório padrão (ex: `C:\\Qt\\5.15.x\\msvc2019_64`).
 
-*Nota: O SFML 2.6.0 (versão de 64 bits para MSVC) já está incluso na raiz do projeto dentro da pasta `/SFML-2.6.0`, portanto **não** é necessário baixá-lo ou instalá-lo manualmente.*
+*Obs: O SFML 2.6.0 (versão de 64 bits para MSVC) já está incluso na raiz do projeto dentro da pasta `/SFML-2.6.0`, portanto **não** é necessário baixá-lo ou instalá-lo manualmente.*
 
 ---
 
 ## Execução
 1. Clone o Repositório.
 2. Dependendo do IDE:
-- ### ***Qt Creator*** 
+- ### ***Qt Creator***  (suporte a esse IDE foi descontinuado)
     O Qt Creator utiliza o arquivo de configuração ```.pro``` para mapear o projeto de forma direta.
   - Abra o **Qt Creator**.
   - Clique em **Open Project** (Abrir Projeto) e selecione o arquivo ```GUI_Jogo.pro``` localizado na raiz da pasta do projeto.
@@ -71,6 +71,31 @@ Certificar-se de ter instalado:
        - No menu superior, vá em ***Build > Rebuild 'Jogo'*** (isso fará o *CMake* a copiar as DLLs necessárias para a pasta do executável).
        - Clique no botão de "*Run*" Verde no topo da tela para iniciar o jogo.
 
+## Integração Contínua (CI)
+
+Este projeto utiliza *GitHub Actions* para:
+
+- Compilar automaticamente em Windows.
+- Gerar builds nas configurações **Debug** e **Release**.
+- Disponibilizar os executáveis como artefatos para download após cada compilação bem-sucedida.
+
+- ### Testes de Segurança
+[![CodeScene Average Code Health](https://codescene.io/projects/81933/status-badges/average-code-health)](https://codescene.io/projects/81933)
+[![CodeScene Hotspot Code Health](https://codescene.io/projects/81933/status-badges/hotspot-code-health)](https://codescene.io/projects/81933)
+[![CodeScene System Mastery](https://codescene.io/projects/81933/status-badges/system-mastery)](https://codescene.io/projects/81933)
+[![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/81933)
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=Chan2007%2FJogo.git&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&theme=dark&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Chan2007/Jogo.git&type=date&legend=top-left&sealed_token=UpIKj-r32UEKI39mHPy9ljx2eZPdn4mnojvgM0m2f0XrzfKm2x5Ar92Sj73cBJDbjNmu6VkmcUTYojWprR6331XkJmHRz-y90AhpJ6H9psZiqslEavfnPIz6qd7adUqn9SOUhHneo4Rd_D-uKN6pMbH0PjEx38d4kkLIm2Vuk3pCHkG4dgmmAp7wZ2ap" />
+ </picture>
+</a>
+
+[![Build](https://github.com/Chan2007/Jogo/actions/workflows/actions.yml/badge.svg?branch=teste-github-actions)](.github/workflows/build.yml)
 
 <!--
 Música de fundo:

@@ -5,8 +5,10 @@ set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Ajustar este caminho abaixo para a pasta exata onde o Qt 5 foi instalado
-set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/msvc2019_64")
+# Usa o Qt informado pelo ambiente. Caso não existir, utiliza o caminho padrão da máquina local.
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/msvc2019_64")
+endif()
 
 # Ativa os compiladores automáticos do Qt para ler a interface (.ui) e eventos (MOC)
 set(CMAKE_AUTOMOC ON)
@@ -14,17 +16,14 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(OpenGL REQUIRED)
+
 # Encontra os pacotes do Qt 5 necessários para a interface
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
-# Adiciona 'Svg' na lista de REQUIRED
-find_package(Qt5 COMPONENTS Core Gui Widgets Svg REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Svg)
 
 set(SFML_ROOT "${CMAKE_SOURCE_DIR}/SFML-2.6.0")
 set(SFML_INCLUDE_DIR "${SFML_ROOT}/include")
 set(SFML_LIBRARY_DIR "${SFML_ROOT}/lib")
 set(SFML_BINARY_DIR "${SFML_ROOT}/bin")
-set(QT_BINARY_DIR "C:/Qt/5.15.2/msvc2019_64/bin")
-set(QT_PLATFORMS_DIR "C:/Qt/5.15.2/msvc2019_64/plugins/platforms")
 
 # Procura os arquivos do jogo recursivamente
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp" "src/*.h")
@@ -85,7 +84,7 @@ target_link_libraries(Jogo PRIVATE
 )
 
 if(WIN32)
-    # Copia AUTOMATICAMENTE as DLLs do SFML correspondentes ao modo ativo (CORRIGIDO)
+    # Copia AUTOMATICAMENTE as DLLs do SFML correspondentes ao modo ativo
     add_custom_command(TARGET Jogo POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "$<$<CONFIG:Debug>:${SFML_BINARY_DIR}/sfml-graphics-d-2.dll>$<$<NOT:$<CONFIG:Debug>>:${SFML_BINARY_DIR}/sfml-graphics-2.dll>"
@@ -98,14 +97,30 @@ if(WIN32)
 
     # Copia AUTOMATICAMENTE as DLLs do Qt correspondentes ao modo ativo mais as dependências gráficos
     add_custom_command(TARGET Jogo POST_BUILD
-    COMMAND "$<TARGET_FILE_DIR:Qt5::Core>/windeployqt.exe" --debug "$<TARGET_FILE:Jogo>"
-)
+            COMMAND "$<TARGET_FILE_DIR:Qt5::Core>/windeployqt.exe"
+            "$<$<CONFIG:Debug>:--debug>"
+            "$<$<CONFIG:Release>:--release>"
+            "$<TARGET_FILE:Jogo>"
+    )
 
-    # Cria a pasta 'platforms' essencial do Qt e copia a DLL de janelas correta
+    # Copia o arquivo de estilo do Qt
     add_custom_command(TARGET Jogo POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Jogo>/platforms"
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "$<$<CONFIG:Debug>:${QT_PLATFORMS_DIR}/qwindowsd.dll>$<$<NOT:$<CONFIG:Debug>>:${QT_PLATFORMS_DIR}/qwindows.dll>"
-            "$<TARGET_FILE_DIR:Jogo>/platforms/"
+            "${CMAKE_SOURCE_DIR}/src/Ente/Menu/qtstyle.qss"
+            "$<TARGET_FILE_DIR:Jogo>/qtstyle.qss"
+    )
+
+    # Copia todas as fontes do qt-material-widgets
+    add_custom_command(TARGET Jogo POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/qt-material-widgets/fonts"
+            "$<TARGET_FILE_DIR:Jogo>/fonts"
+    )
+    # Copia todos os assets do jogo
+    add_custom_command(TARGET Jogo POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/assets"
+            "$<TARGET_FILE_DIR:Jogo>/assets"
     )
 endif()
+
