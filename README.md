@@ -2,7 +2,7 @@
 
 Este é um projeto desenvolvido em C++ e em Windows que integra a interface gráfica do **Qt 5** (para menus, configurações e telas de interface) com a biblioteca de jogos **SFML 2.6.0** (para o motor do jogo, renderização e áudio).
 
-O projeto foi estruturado utilizando padrões estritos do **C++03 / C++98** e com  a biblioteca SFML, facilitando o compartilhamento e execução em diferentes ambientes de desenvolvimento (IDEs) sem a necessidade de reconfigurações complexas de caminhos no sistema.
+O projeto foi estruturado utilizando padrões estritos do **C++03** e com  a biblioteca SFML, facilitando o compartilhamento e execução em diferentes ambientes de desenvolvimento (IDEs) sem a necessidade de reconfigurações complexas de caminhos no sistema.
 
 ---
 
@@ -13,16 +13,16 @@ Este é um projeto acadêmico e sem fins lucrativos. Para detalhes sobre o uso d
 
 Certificar-se de ter instalado:
 1. **Compilador MSVC (Microsoft Visual Studio 2019 ou superior):** Com *"Desenvolvimento para desktop com C++"* ativada.
-2. **Qt 5.15 (MSVC 2019 64-bit):** Instalado no diretório padrão (ex: `C:\\Qt\\5.15.19\\msvc2019_64`).
+2. **Qt 5.15.x (MSVC 2019 64-bit):** Instalado no diretório padrão (ex: `C:\\Qt\\5.15.x\\msvc2019_64`).
 
-*Nota: O SFML 2.6.0 (versão de 64 bits para MSVC) já está incluso na raiz do projeto dentro da pasta `/SFML-2.6.0`, portanto **não** é necessário baixá-lo ou instalá-lo manualmente.*
+*Obs: O SFML 2.6.0 (versão de 64 bits para MSVC) já está incluso na raiz do projeto dentro da pasta `/SFML-2.6.0`, portanto **não** é necessário baixá-lo ou instalá-lo manualmente.*
 
 ---
 
 ## Execução
 1. Clone o Repositório.
 2. Dependendo do IDE:
-- ### ***Qt Creator*** 
+- ### ***Qt Creator***  (suporte a esse IDE foi descontinuado)
     O Qt Creator utiliza o arquivo de configuração ```.pro``` para mapear o projeto de forma direta.
   - Abra o **Qt Creator**.
   - Clique em **Open Project** (Abrir Projeto) e selecione o arquivo ```GUI_Jogo.pro``` localizado na raiz da pasta do projeto.
