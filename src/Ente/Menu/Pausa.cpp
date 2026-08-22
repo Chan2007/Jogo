@@ -21,11 +21,11 @@ Pausa::Pausa() : Ente(), texturaFundo(), index(0)
             std::cerr << "Erro fatal: SFML nao conseguiu decodificar a imagem!" << std::endl;
 
     }
-    std::string caminhoFonte = Encontrar_Caminho::acharDiretorio_Arquivo("qt-material-widgets/fonts/Roboto/Roboto-Medium.ttf");
-    if (!caminhoFonte.empty())
-        Fonte.loadFromFile(caminhoFonte);
-    else
+    std::string caminhoFonte = Encontrar_Caminho::acharDiretorio_Arquivo("fonts/Roboto/Roboto-Medium.ttf", "qt-material-widgets/fonts/Roboto/Roboto-Medium.ttf");
+    if (caminhoFonte.empty())
         std::cerr << "Aviso: Fonte de pausa nao encontrada no caminho padrao." << std::endl;
+
+    fonte.loadFromFile(caminhoFonte);
 
     const std::string retomar = "Retomar Jogo";
     const std::string salvar = "Salvar Jogo";
