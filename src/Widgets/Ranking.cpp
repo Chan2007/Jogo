@@ -4,6 +4,7 @@
 
 #include "Ranking.h"
 
+#include <algorithm>
 #include <QFont>
 #include <QHeaderView>
 #include <QTableWidgetItem>
