@@ -17,19 +17,6 @@ namespace Obstaculos {
  
 namespace Personagens {
     class Inimigo;
-
-    enum EscolhaCampeao {
-        CAMPEAO_NAAFIRI,
-        CAMPEAO_JHIN,
-        CAMPEAO_LUX,
-        CAMPEAO_EVELYNN,
-        CAMPEAO_GWEN,
-        CAMPEAO_PYKE,
-        CAMPEAO_SETT,
-        CAMPEAO_SHACO,
-        CAMPEAO_VIEGO
-    };
-
     class Jogador : public Personagem, public Gerenciadores::Observador_Input {
         private:
             bool movendoEsquerda;
@@ -95,29 +82,33 @@ namespace Personagens {
                     }
             };
         public:
-            Jogador(sf::Vector2f posicao = sf::Vector2f(20.0f, 40.0f),
-                    sf::Color corBarra = sf::Color(0, 255, 0));
+            enum Campeao {
+                NAAFIRI, JHIN, LUX, EVELYNN, GWEN, PYKE, SETT, SHACO, VIEGO
+            };
+            Jogador(sf::Vector2f posicao = sf::Vector2f(20.0f, 40.0f), sf::Color corBarra = sf::Color(0, 255, 0));
             ~Jogador();
 
-            Memento* salvarMemento() const;
-            void restaurarMemento(const Memento* memento);
+            Gerenciadores::Memento* salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento* memento);
 
             void aoApertarTecla(const Gerenciadores::Tecla& evento);
 
             void executar();
             void salvar();
             void mover();
-            void setCampeao(EscolhaCampeao campeao);
+            void setCampeao(Campeao c);
 
             sf::Texture* carregarTextura(const std::string &caminho);
-            void setIdJogador(const int id) { idJogador = id; }
 
+            void setIdJogador(const int id) { idJogador = id; }
             int getIdJogador() const { return idJogador; }
-            void setPontos(float p) { pontos = p; }
+
             float getPontos() const { return pontos; }
+            void setPontos(float p) { pontos = p; }
+
             void setAbates(int a) { abates = a; }
-            int getAbates() const { return abates; }
-            void adicionarPontos(float valor);
+
+            void mudarPontos(float valor);
             void registrarAbate();
 
             // void aceitar(VisitorColisao *visitor);

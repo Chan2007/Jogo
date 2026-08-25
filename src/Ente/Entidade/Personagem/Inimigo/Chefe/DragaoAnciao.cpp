@@ -12,12 +12,12 @@ namespace Personagens {
     DragaoAnciao::DragaoAnciao() : Inimigo(), forca(2), bolaDeFogo(NULL) {
         sementear();
 
-        setNome("DragaoAnciao"),
+        nome = "DragaoAnciao";
         velocidadeMax = 220.f;
         nivelMaldade = 200;
         poder = 80 * log(nivelMaldade * 10);
-        setVidaMaxima(1200);
-        setVida(1200);
+        vidaMaxima = 1200;
+        vida = 1200;
         alcancePerseguicao = 400;
         alcanceAtaque = 250;
         elite = rand() % 10 < 1;
@@ -68,14 +68,14 @@ namespace Personagens {
         float menorDistancia = std::sqrt(dx * dx + dy * dy);
 
         // Comportamento de Atacar
-        if (menorDistancia <= getAlcanceAtaque() && !J->getInvulneravel()) {
+        if (menorDistancia <= alcanceAtaque && !J->getInvulneravel()) {
             setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
             //setEstado(ESTADO_OCIOSO);
             interagindo = true;
 
             if (tempoUltimoAtaque >= cooldownAtaque) {
-                J->receberDano(causarDanoBasico());
-                std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
+                J->receberDano(causarDanoNormal());
+                std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoNormal() << std::endl;
                 tempoUltimoAtaque = 0.0f;
             }
         }
@@ -191,11 +191,11 @@ namespace Personagens {
             (*buffer) << forca << '\n';
         }
     }
-    Memento* DragaoAnciao::salvarMemento() const  {
+    Gerenciadores::Memento* DragaoAnciao::salvarMemento() const  {
         return new DragaoAnciaoMemento(*this);
     }
 
-    void DragaoAnciao::restaurarMemento(const Memento* memento) {
+    void DragaoAnciao::restaurarMemento(const Gerenciadores::Memento* memento) {
         if (!memento) return;
         Inimigo::restaurarMemento(memento);
 

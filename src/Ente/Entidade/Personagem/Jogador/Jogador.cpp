@@ -6,10 +6,8 @@
 #include "jogo.h"
 #include "Ente/Entidade/Obstaculo/Obstaculo.h"
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
-#include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h"
 #include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
-#include "Sistema/Fisica/Visitor_Colisao.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Personagens {
@@ -38,12 +36,12 @@ namespace Personagens {
         std::cout << "ALERTA: JOGADOR FOI DELETADO!" << std::endl;
     }
 
-    void Jogador::setCampeao(EscolhaCampeao campeao) {
-        switch (campeao) {
-            case CAMPEAO_NAAFIRI:
-                setVidaMaxima(620);
-                setVida(620);
-                setPoder(1999);
+    void Jogador::setCampeao(Campeao c) {
+        switch (c) {
+            case NAAFIRI:
+                vidaMaxima = 620;
+                vida = 620;
+                poder = 1999;
 
 
                 totalFramesAnimacao = 8;
@@ -62,9 +60,9 @@ namespace Personagens {
                 caminhoArquivoSpritePulo = "assets/sprites/spritesheets/Naafiri/Naafiri_ToS_Basic_Attack_Sprite_Sheet1.png";
                 break;
             default:
-                setNome("Campeao Generico");
-                setVidaMaxima(500);
-                setVida(500);
+                nome = "Campeão";
+                vidaMaxima = 500;
+                vida = 500;
                 totalFramesAnimacao = 1;
                 colunasSpritesheet = 1;
                 frameWidth = 32;
@@ -198,14 +196,14 @@ namespace Personagens {
         setPosicao(posicao);
     }
 
-    void Jogador::adicionarPontos(float valor) {
+    void Jogador::mudarPontos(float valor) {
         pontos += valor;
         //std::cout << getNome() << " recebeu " << valor << " pontos. Pontuacao atual: " << pontos << std::endl;
     }
 
     void Jogador::registrarAbate() {
         ++abates;
-        adicionarPontos(150.0f);
+        mudarPontos(150.0f);
     }
     /*
     void Jogador::aceitar(VisitorColisao* visitor) {
@@ -213,14 +211,6 @@ namespace Personagens {
     }
     */
     void Jogador::aoApertarTecla(const Gerenciadores::Tecla& evento) {
-        // Se o jogo estiver pausado, o jogador ignora comandos do teclado
-        Jogo* pJogo = Jogo::getJogo();
-        if (evento.acao == "pausar" && evento.pressionada) {
-            if (idJogador == 1 && pJogo) pJogo->solicitarPausa();
-            return;
-        }
-        if (pJogo && pJogo->getEstadoTela() == Jogo::TelaPausa) return;
-
         std::string prefixo = "j" + std::to_string(idJogador) + "_";
         if (evento.acao.rfind(prefixo, 0) != 0) return;
         std::string acao = evento.acao.substr(prefixo.length());
@@ -254,14 +244,14 @@ namespace Personagens {
         gerenciadorGrafico->draw(barraVida);
     }
     void Jogador::atualizarBarra() {
-        float proporcaoVida = static_cast<float>(getVida()) / static_cast<float>(getVidaMaxima());
+        float proporcaoVida = static_cast<float>(vida) / static_cast<float>(vidaMaxima);
         barraVida.setSize(sf::Vector2f(700.0f * proporcaoVida, 50.0f));
     }
-    Memento* Jogador::salvarMemento() const {
+    Gerenciadores::Memento* Jogador::salvarMemento() const {
         return new JogadorMemento(*this);
     }
 
-    void Jogador::restaurarMemento(const Memento* memento) {
+    void Jogador::restaurarMemento(const Gerenciadores::Memento* memento) {
         if (!memento) return;
         Personagem::restaurarMemento(memento);
 

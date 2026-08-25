@@ -46,7 +46,15 @@ int main(int argc, char *argv[]) {
     else
         std::cerr << "Arquivo de estilização não encontrado." << std::endl;
 
-    Menu w;
-    w.showMaximized(); // Abre a interface do Qt em tela cheia
-    return qtWindow.exec();
+    Jogo* jogoPrincipal = new Jogo();
+    Menu menuPrincipal(NULL, jogoPrincipal);
+
+    // Abre a interface do Qt em tela cheia
+    menuPrincipal.showMaximized();
+
+    int resultado = qtWindow.exec();
+
+    // Desaloca quando o aplicativo é fechado
+    delete jogoPrincipal;
+    return resultado;
 }

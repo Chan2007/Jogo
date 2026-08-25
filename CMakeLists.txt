@@ -42,10 +42,6 @@ add_executable(Jogo ${SOURCES}
         src/Ente/Menu/Menu.cpp
         src/Ente/Menu/Menu.h
         src/Ente/Menu/Menu.ui
-        src/Widgets/qsfmlwidget.cpp
-        src/Widgets/qsfmlwidget.h
-        src/Widgets/particlewidget.cpp
-        src/Widgets/particlewidget.h
 
         qt-material-widgets/components/resources.qrc
         ${MATERIAL_WIDGETS_SRC}

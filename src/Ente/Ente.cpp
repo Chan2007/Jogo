@@ -59,11 +59,11 @@ double Ente::gerar_num_binom(double a, double b, int numero_tentativas, double p
     if (resultado < a) return a;
     return resultado;
 }
-Memento* Ente::salvarMemento() const {
+Gerenciadores::Memento* Ente::salvarMemento() const {
     return new EnteMemento(*this);
 }
 
-void Ente::restaurarMemento(const Memento* memento) {
+void Ente::restaurarMemento(const Gerenciadores::Memento* memento) {
     const EnteMemento* pMemento = dynamic_cast<const EnteMemento*>(memento);
     if (pMemento) {
         id = pMemento->idMemento;

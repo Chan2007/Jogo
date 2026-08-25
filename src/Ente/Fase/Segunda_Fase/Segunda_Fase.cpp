@@ -10,25 +10,29 @@
 #include "Ente/Entidade/Projetil/Projetil.h"
 #include "Gerenciador/Gerenciador_Colisao/Gerenciador_Colisao.h"
 #include "Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h"
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 
 
 namespace Fases {
-    Segunda_Fase::Segunda_Fase() : Fase(), maxChefoes(5) {
+    Segunda_Fase::Segunda_Fase(Jogo* pJogo,  const std::string& nomeJ1, const QString& campeaoJ1,
+                               const std::string& nomeJ2, const QString& campeaoJ2, bool jogador2Ativo) :
+    Fase(pJogo, nomeJ1, campeaoJ1, nomeJ2, campeaoJ2, jogador2Ativo), maxChefoes(5)
+    {
         Segunda_Fase::criarCenario();
 
-        if (jogo->getJogador1())
-            jogo->getJogador1()->setPosicao(sf::Vector2f(50.0f, 300.0f));
+        if (jogador1)
+            jogador1->setPosicao(sf::Vector2f(50.0f, 300.0f));
 
-        if (jogo->getJogador2Ativo() && jogo->getJogador2())
-            jogo->getJogador2()->setPosicao(sf::Vector2f(100.0f, 300.0f));
+        if (multiplayer && jogador2)
+            jogador2->setPosicao(sf::Vector2f(100.0f, 300.0f));
 
         if (!jogo->getCarregandoSave()) {
             Segunda_Fase::criarObstaculos();
             Segunda_Fase::criarInimigos();
-            Segunda_Fase::criarProjeteis();
+            criarProjeteis();
         }
     }
 
@@ -67,9 +71,9 @@ namespace Fases {
         bool existemInimigos = false;
         while (it != fim) {
             if (it->getVigente()) {
-                if (it->getNome() == jogo->getJogador1()->getNome())
+                if (it->getNome() == jogador1->getNome())
                     jogador1Vivo = true;
-                else if (jogo->getJogador2Ativo() && it->getNome() == jogo->getJogador2()->getNome())
+                else if (multiplayer && it->getNome() == jogador2->getNome())
                     jogador2Vivo = true;
                 else if (it->getNome() == "Minion" || it->getNome() == "DragaoAnciao")
                     existemInimigos = true;
@@ -96,15 +100,15 @@ namespace Fases {
     void Segunda_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
         LEntidades.desenharTodas();
-        if (jogo->getJogador1()) {
-            jogo->getJogador1()->desenharBarra();
-            jogo->getJogador1()->atualizarBarra();
+        if (jogador1) {
+            jogador1->desenharBarra();
+            jogador1->atualizarBarra();
         }
 
         // JOGADOR 2: Fixo no Canto Superior Direito
-        if (jogo->getJogador2() && jogo->getJogador2Ativo()) {
-            jogo->getJogador2()->desenharBarra();
-            jogo->getJogador2()->atualizarBarra();
+        if (jogador2 && multiplayer) {
+            jogador2->desenharBarra();
+            jogador2->atualizarBarra();
         }
     }
     void Segunda_Fase::criarChefoes() {
@@ -155,11 +159,11 @@ namespace Fases {
             Pinstouro = NULL;
         }
     }
-    Memento* Segunda_Fase::salvarMemento() const {
+    Gerenciadores::Memento* Segunda_Fase::salvarMemento() const {
         return new Segunda_FaseMemento(*this);
     }
 
-    void Segunda_Fase::restaurarMemento(const Memento* memento) {
+    void Segunda_Fase::restaurarMemento(const Gerenciadores::Memento* memento) {
         Fase::restaurarMemento(memento);
         const Segunda_FaseMemento* pMemento = dynamic_cast<const Segunda_FaseMemento*>(memento);
         if (pMemento) {

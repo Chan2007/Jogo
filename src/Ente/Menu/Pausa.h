@@ -12,29 +12,31 @@
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Text.hpp"
+#include "Sistema/Input/Observador_Input.h"
 
-class Pausa: public Ente {
+class Pausa: public Ente, public Gerenciadores::Observador_Input {
     private:
         sf::Sprite spriteFundo;
         sf::Texture texturaFundo;
 
-        sf::Font fonte;
-        std::vector<sf::Text> botoes;
+        sf::Font Fonte;
+        std::vector<sf::Text> Botoes;
         std::vector<std::string> textosBotoes;
-        int indiceSelecionado;
+        int index;
 
-        void inicializarBotoes();
+        void initBotoes();
 
 
     public:
         Pausa();
         ~Pausa();
 
-        void ajustarPosicoes();
-        void atualizarItemSelecionado(int direcao); // -1 para cima, 1 para baixo
+        void redimensionarTela();
+        void atualizarItem(int direcao); // -1 para cima, 1 para baixo
         virtual void executar() {}
-        int cliqueMouse();
-        int getIndiceSelecionado() const { return indiceSelecionado; }
+        int clicado();
+        int getIndex() const { return index; }
+        void aoApertarTecla(const Gerenciadores::Tecla& evento);
 
         void desenhar();
 };

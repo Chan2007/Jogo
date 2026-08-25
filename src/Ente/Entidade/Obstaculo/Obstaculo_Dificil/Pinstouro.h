@@ -29,8 +29,8 @@ namespace Obstaculos {
             Pinstouro();
             ~Pinstouro();
 
-            Memento* salvarMemento() const;
-            void restaurarMemento(const Memento *memento);
+            Gerenciadores::Memento* salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento *memento);
 
             void executar();
             void salvar();

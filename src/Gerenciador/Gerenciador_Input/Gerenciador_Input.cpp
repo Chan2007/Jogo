@@ -43,7 +43,7 @@ namespace Gerenciadores {
             e.acao = acaoFinal;
             e.pressionada = pressionada;
             for (int i = 0; i < static_cast<int>(observadores.size()); i++)
-                observadores[i]->aoApertarTecla(e);
+                observadores[i]->processarInput(e);
             return;
         }
 
@@ -74,7 +74,7 @@ namespace Gerenciadores {
                     }
 
                     for (int i = 0; i < static_cast<int>(observadores.size()); i++) {
-                        observadores[i]->aoApertarTecla(eDireita);
+                        observadores[i]->processarInput(eDireita);
                         observadores[i]->aoApertarTecla(eEsquerda);
                     }
                 }

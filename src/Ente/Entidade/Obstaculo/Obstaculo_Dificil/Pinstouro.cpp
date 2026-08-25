@@ -17,7 +17,7 @@ namespace Obstaculos {
 	danosidade(60)
 	{
 		perigoso = true;
-		setNome("Pinstouro");
+		nome = "Pinstouro";
 
 		// -------------------------------------------------------------------------
 		// ATRIBUIÇÃO DE ATIVOS (MODELVIEWER.LOL / KHADA)
@@ -93,10 +93,10 @@ namespace Obstaculos {
 			(*buffer) << '\n';
 		}
 	}
-	Memento* Pinstouro::salvarMemento() const {
+	Gerenciadores::Memento* Pinstouro::salvarMemento() const {
 		return new PinstouroMemento(*this);
 	};
-	void Pinstouro::restaurarMemento(const Memento *memento) {
+	void Pinstouro::restaurarMemento(const Gerenciadores::Memento *memento) {
 		Obstaculo::restaurarMemento(memento);
 
 		const PinstouroMemento* pMemento = dynamic_cast<const PinstouroMemento*>(memento);

@@ -5,7 +5,6 @@
 #ifndef JOGO_INIMIGO_FACIL_H
 #define JOGO_INIMIGO_FACIL_H
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo.h"
-#include "Sistema/Caminho/Encontrar_Caminho.h"
 #include "Ente/Entidade/Projetil/Projetil.h"
 
 namespace Personagens {
@@ -28,15 +27,14 @@ namespace Personagens {
             Minion();
             ~Minion();
 
-            Memento* salvarMemento() const;
-            void restaurarMemento(const Memento *memento);
+            Gerenciadores::Memento* salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento *memento);
 
             void executar();
             void salvar();
             void danificar(Jogador* J);
 
             sf::FloatRect getTamanho() const;
-            float getRaio() { return raio; }
     };
 }
 

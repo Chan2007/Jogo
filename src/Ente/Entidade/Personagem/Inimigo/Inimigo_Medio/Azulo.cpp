@@ -9,11 +9,11 @@ namespace Personagens {
     Azulo::Azulo() : Inimigo(), tamanho(40) {
         sementear();
 
-        setNome("Azulo"),
+        nome = "Azulo";
         velocidadeMax = 60.f;
         nivelMaldade = 64;
         poder = 100.0 * pow(1 - vida / vidaMaxima, 2) + (elite? 0: 1) * nivelMaldade;
-        setVida(450);
+        vida = 450;
         alcancePerseguicao = 0;
         alcanceAtaque = 200;
         elite = gerar_num_binom(0.0, 0.0, 20) > 5;
@@ -56,16 +56,16 @@ namespace Personagens {
 
     void Azulo::danificar(Jogador* J) {
         if (J) {
-            J->receberDano(causarDanoBasico());
-            std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoBasico() << std::endl;
-            J->adicionarPontos(-50);
+            J->receberDano(causarDanoNormal());
+            std::cout << getNome() << " atacou o jogador! Dano causado : " << causarDanoNormal() << std::endl;
+            J->mudarPontos(-50);
             std::cout << J->getNome() << " perdeu 50 pontos. Pontuacao atual: " << J->getPontos() << std::endl;
         }
     }
 
     sf::FloatRect Azulo::getTamanho() const {
         sf::FloatRect caixaImagem = getSprite().getGlobalBounds();
-        // sprite: 128*2.5 = 320x320, origin no centro
+        // sprite: 128*2.5 = 320x320, origem no centro
         // hitbox menor e centralizada verticalmente no personagem
         float largura = 110.f;
         float altura = 140.f;
@@ -139,7 +139,7 @@ namespace Personagens {
             float dx = posAlvo.x - posInimigo.x;
 
             // Comportamento de Atacar
-            if (menorDistancia <= getAlcanceAtaque()) {
+            if (menorDistancia <= alcanceAtaque) {
                 setVelocidade(sf::Vector2f(0.f, getVelocidade().y));
                 atacando = true;
 
@@ -185,11 +185,11 @@ namespace Personagens {
             (*buffer) << tamanho << '\n';
         }
     }
-    Memento* Azulo::salvarMemento() const  {
+    Gerenciadores::Memento* Azulo::salvarMemento() const  {
         return new AzuloMemento(*this);
     }
 
-    void Azulo::restaurarMemento(const Memento* memento) {
+    void Azulo::restaurarMemento(const Gerenciadores::Memento* memento) {
         if (!memento) return;
         Inimigo::restaurarMemento(memento);
 

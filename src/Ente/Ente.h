@@ -13,7 +13,7 @@ class Ente {
 		int id;
 		static int contId;
 		static Gerenciadores::Gerenciador_Grafico *gerenciadorGrafico;
-		class EnteMemento: public Memento {
+		class EnteMemento: public Gerenciadores::Memento {
 			private:
 				int idMemento;
 			protected:
@@ -34,10 +34,10 @@ class Ente {
 		static double gerar_num_binom(double a = 0, double b = 10, int numero_tentativas = 10, double p_sucesso = 0.5);
 
 		Ente();
-		virtual ~Ente(){ contId -= 1; }
+		virtual ~Ente() { contId -= 1; }
 
-		virtual Memento* salvarMemento() const;
-		virtual void restaurarMemento(const Memento* memento);
+		virtual Gerenciadores::Memento* salvarMemento() const;
+		virtual void restaurarMemento(const Gerenciadores::Memento* memento);
 
 		void setId(int i) { id = i; }
 		int getId() { return id; }

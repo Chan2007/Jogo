@@ -31,6 +31,12 @@ namespace Gerenciadores {
 
         mapeamento_teclas[sf::Keyboard::Escape] = "pausar";
         mapeamento_teclas[sf::Keyboard::Space] = "escudo";
+
+        mapeamento_teclas[sf::Keyboard::F5] = "salvar";
+        mapeamento_teclas[sf::Keyboard::F9] = "carregar";
+        mapeamento_teclas[sf::Keyboard::Up] = "pausa_cima";
+        mapeamento_teclas[sf::Keyboard::Down] = "pausa_baixo";
+        mapeamento_teclas[sf::Keyboard::Enter] = "pausa_confirmar";
     }
     void Mapeador_Input::padraoJoystick() {
         // Botão A (Xbox) ou X (PS)

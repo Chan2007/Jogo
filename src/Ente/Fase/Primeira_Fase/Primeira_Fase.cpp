@@ -6,17 +6,21 @@
 #include "Ente/Entidade/Personagem/Inimigo/Inimigo_Medio/Azulo.h"
 #include "Ente/Entidade/Personagem/Jogador/Jogador.h"
 #include "Gerenciador/Gerenciador_Estado/Gerenciador_Estado.h"
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
 #include "Gerenciador/Gerenciador_Input/Gerenciador_Input.h"
 #include "Sistema/Caminho/Encontrar_Caminho.h"
 
 namespace Fases {
-    Primeira_Fase::Primeira_Fase() : Fase(), maxInimMedios(5) {
+    Primeira_Fase::Primeira_Fase(Jogo* pJogo,  const std::string& nomeJ1, const QString& campeaoJ1,
+                                 const std::string& nomeJ2, const QString& campeaoJ2, bool jogador2Ativo) :
+    Fase(pJogo, nomeJ1, campeaoJ1, nomeJ2, campeaoJ2, jogador2Ativo), maxInimMedios(5)
+    {
         Primeira_Fase::criarCenario();
-        if (jogo->getJogador1())
-            jogo->getJogador1()->setPosicao(sf::Vector2f(50.0f, 50.0f));
+        if (jogador1)
+            jogador1->setPosicao(sf::Vector2f(50.0f, 50.0f));
 
-        if (jogo->getJogador2Ativo() && jogo->getJogador2())
-            jogo->getJogador2()->setPosicao(sf::Vector2f(100.0f, 50.0f));
+        if (multiplayer && jogador2)
+            jogador2->setPosicao(sf::Vector2f(tamanhoJanela.width - 50.0f, 50.0f));
 
         if (!jogo->getCarregandoSave()) {
             Primeira_Fase::criarObstaculos();
@@ -42,6 +46,16 @@ namespace Fases {
 
     // Inputs específicos da Fase 1
     void Primeira_Fase::processarEventos(const sf::Event& evento) {
+        if (evento.type == sf::Event::KeyPressed) {
+            std::string acao = gerenciadorInput.getMapeador()->getAcao(evento.key.code);
+            if (acao == "pausar") {
+                if (jogo) jogo->gerenciarPausa();
+                return; // Corta a execução para não enviar esse input para mais ninguém
+            }
+    }
+
+    // 2. Se não for a pausa, segue o fluxo normal notificando os jogadores
+    gerenciadorInput.notificarObservadores(evento);
         gerenciadorInput.notificarObservadores(evento);
     }
 
@@ -56,9 +70,9 @@ namespace Fases {
         bool existemInimigos = false;
         while (it != fim) {
             if (it->getVigente()) {
-                if (it->getNome() == jogo->getJogador1()->getNome())
+                if (it->getNome() == jogador1->getNome())
                     jogador1Vivo = true;
-                else if (jogo->getJogador2Ativo() && it->getNome() == jogo->getJogador2()->getNome())
+                else if (multiplayer && it->getNome() == jogador2->getNome())
                     jogador2Vivo = true;
                 else if (it->getNome() == "Minion" || it->getNome() == "Azulo")
                     existemInimigos = true;
@@ -83,15 +97,13 @@ namespace Fases {
     void Primeira_Fase::desenhar() {
         gerenciadorGrafico->drawAnimation();
         LEntidades.desenharTodas();
-        if (jogo->getJogador1()) {
-            jogo->getJogador1()->desenharBarra();
-            jogo->getJogador1()->atualizarBarra();
+        if (jogador1) {
+            jogador1->desenharBarra();
+            jogador1->atualizarBarra();
         }
-
-        // JOGADOR 2: Fixo no Canto Superior Direito
-        if (jogo->getJogador2() && jogo->getJogador2Ativo()) {
-            jogo->getJogador2()->desenharBarra();
-            jogo->getJogador2()->atualizarBarra();
+        if (jogador2 && multiplayer) {
+            jogador2->desenharBarra();
+            jogador2->atualizarBarra();
         }
     }
     
@@ -128,11 +140,11 @@ namespace Fases {
         }
         portal = NULL;
     }
-    Memento* Primeira_Fase::salvarMemento() const {
+    Gerenciadores::Memento* Primeira_Fase::salvarMemento() const {
         return new Primeira_FaseMemento(*this);
     }
 
-    void Primeira_Fase::restaurarMemento(const Memento* memento) {
+    void Primeira_Fase::restaurarMemento(const Gerenciadores::Memento* memento) {
         Fase::restaurarMemento(memento);
         const Primeira_FaseMemento* pMemento = dynamic_cast<const Primeira_FaseMemento*>(memento);
         if (pMemento) {

@@ -4,6 +4,8 @@
 
 #include "Entidade.h"
 
+#include "Gerenciador/Gerenciador_Gravidade/Gerenciador_Gravidade.h"
+
 namespace Entidades {
 
     void Entidade::desenhar() {
@@ -62,11 +64,11 @@ namespace Entidades {
         buffer = bufferAnterior;
     }
 
-    Memento* Entidade::salvarMemento() const {
+    Gerenciadores::Memento* Entidade::salvarMemento() const {
         return new EntidadeMemento(*this);
     }
 
-    void Entidade::restaurarMemento(const Memento* memento) {
+    void Entidade::restaurarMemento(const Gerenciadores::Memento* memento) {
         Ente::restaurarMemento(memento);
         const EntidadeMemento* pMemento = dynamic_cast<const EntidadeMemento*>(memento);
         if (pMemento) {

@@ -29,15 +29,17 @@ namespace Personagens {
             DragaoAnciao();
             ~DragaoAnciao();
 
-            Memento* salvarMemento() const;
-            void restaurarMemento(const Memento *memento);
+            Gerenciadores::Memento* salvarMemento() const;
+            void restaurarMemento(const Gerenciadores::Memento *memento);
 
             void danificar(Jogador* J);
             void executar();
             void salvar();
 
             sf::FloatRect getTamanho() const;
-            void setProjetil(Entidades::Projetil* p) { if (p) { bolaDeFogo = p; } }
+            void setProjetil(Entidades::Projetil* p) {
+                if (p) bolaDeFogo = p;
+            }
             Entidades::Projetil* getProjetil() { return bolaDeFogo; }
             short int getForca() { return forca; }
     };

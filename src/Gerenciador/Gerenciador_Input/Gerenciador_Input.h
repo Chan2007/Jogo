@@ -25,12 +25,7 @@ namespace Gerenciadores {
                 static Gerenciador_Input gerenciador;
                 return gerenciador;
             }
-            ~Gerenciador_Input(){
-                for (int i = 0; i < observadores.size(); i++) {
-                    if (observadores[i]) delete observadores[i];
-                }
-                observadores.clear();
-            }
+            ~Gerenciador_Input(){ observadores.clear(); }
 
             // Padrão observer
             void inscrever(Observador_Input* obs){if (obs) observadores.push_back(obs); }
