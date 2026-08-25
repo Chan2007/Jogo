@@ -1,11 +1,12 @@
 #ifndef SCREEN_STACK_H
 #define SCREEN_STACK_H
+
 #include <QObject>
+#include <QVector>
 
-
+class QWidget;
 class QStackedWidget;
 class QGraphicsOpacityEffect;
-
 namespace Widgets {
     class Stack: public QObject {
         Q_OBJECT
